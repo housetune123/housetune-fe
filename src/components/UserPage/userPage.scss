@@ -1,0 +1,67 @@
+// .accoun-input{
+//     background-color:#fff !important;
+// $input-bg:#F5F4F6;
+// $input-border-color:#B7B0BF;
+
+// }
+.user-menu{
+    transition: .3s;
+    .form-control{
+        background: #fff;
+        box-shadow: none;
+    }
+    .form-control:focus{
+        background: #fff;
+        box-shadow: none;
+    }
+    .bg-orange{
+        background-color: #FFFAF7 !important;
+    }
+    .table tbody tr td{
+        line-height: 4rem;
+    }
+    .tdHeight{
+        min-height: 15vh;
+        line-height: 1.5rem !important;
+    
+    }
+    .open-detail{
+        td{
+            border-bottom: 0;
+        }
+    }
+    .cash-detail{
+        div{
+            display: flex;
+            justify-content:space-between ;
+        }
+    }
+    .every-details{
+        .text-align{
+            text-align: left;
+        }
+        .title{
+            font-weight: bold;
+            font-size: 1.3rem;
+        }
+    }
+    .btn-active{
+        transition: .3s;
+    }
+    .change-tag{
+        transition: .2s;
+    }
+    // 測試
+    .hide{
+        transition: .3s;
+        height: 0;
+        overflow: hidden;
+    }
+    .show{
+        height: 880px;
+        transition: .3s;
+    }
+    .vh100{
+        height: 100vh;
+    }
+}
