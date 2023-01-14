@@ -1,0 +1,17 @@
+.product {
+  .card {
+    width: 15rem;
+  }
+
+  .card-shadow {
+    box-shadow: 0px 2px 10px 0px #10385b1f;
+  }
+
+  .card-btn {
+    position: absolute;
+  }
+
+  .card:hover .card-btn {
+    transform: translateY(0);
+  }
+}
