@@ -59,6 +59,7 @@ $theme-colors: (
 
 // bootstrap 樣式
 $accordion-button-active-color: shade-color(#343a40);
+$accordion-border-width: 0px;
 
 @import '~bootstrap/scss/bootstrap';
 

@@ -12,6 +12,7 @@ import InspDetail1 from './components/Inspiration/Insp_detail1';
 import AddUsedProducts from './components/UsedProducts/AddUsedProducts';
 import UsedProductList from './components/UsedProducts/UsedProductList';
 // home-page branch
+import PersonalStore from './components/Products/PersonalStore';
 import Main from './components/Main';
 import Products from './components/Products/Products';
 import ProductDetail from './components/Products/ProductsDetail';
@@ -48,6 +49,7 @@ function App() {
         </Route>
 
         <Route path="usedproduct" element={<UsedProductList />} />
+        <Route path="usedstore" element={<PersonalStore />}></Route>
         <Route path="usedproduct/add" element={<AddUsedProducts />} />
 
         <Route path="login" element={<Login />} />
