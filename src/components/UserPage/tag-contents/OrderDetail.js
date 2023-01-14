@@ -5,41 +5,8 @@ function OrderDetail(props) {
   return (
     <>
       {/* 購買商品清單 */}
-      <td className="col-2">
-        <div className="tdHeight  d-flex flex-column justify-content-center">
-          <img
-            className="w-100"
-            src={`${process.env.REACT_APP_IMAGE_URL}images/products/ordimg1.png`}
-            alt="img1"
-          />
-        </div>
-      </td>
-      <td className="col-4">
-        <div className="tdHeight text-start d-flex flex-column justify-content-center">
-          <p className="fw-bold">
-            Menu Curiosity Cabinet H168cm珍古系列 橡木收納櫥櫃
-          </p>
-          <div className="text-gray-200">款式 : 橡木原色(Natural Oak)</div>
-        </div>
-      </td>
-      <td className="col-2">
-        <div className="tdHeight text-info d-flex flex-column justify-content-center">
-          NT$ 12,000
-        </div>
-      </td>
-      <td className="col-2">
-        <div className="tdHeight text-info  d-flex flex-column justify-content-center">
-          2
-        </div>
-      </td>
-      <td className="col-2">
-        <div className="tdHeight text-info  d-flex flex-column justify-content-center">
-          NT$ 24,000
-        </div>
-      </td>
-      {/* 購買商品2 */}
-      <td className="col-2">
-        <div className="tdHeight  d-flex flex-column justify-content-center">
+      <td className="col-sm-2 col-12 justify-content-center">
+        <div className="tdHeight  d-flex flex-column  justify-content-center">
           <img
             className="w-100"
             src={`${process.env.REACT_APP_IMAGE_URL}/images/products/ordimg1.png`}
@@ -55,40 +22,68 @@ function OrderDetail(props) {
           <div className="text-gray-200">款式 : 橡木原色(Natural Oak)</div>
         </div>
       </td>
-      <td className="col-2">
+      <td className="col-2 d-flex align-items-center" data-th="價格">
         <div className="tdHeight text-info d-flex flex-column justify-content-center">
           NT$ 12,000
         </div>
       </td>
-      <td className="col-2">
+      <td className="col-2 d-flex align-items-center" data-th="數量">
         <div className="tdHeight text-info  d-flex flex-column justify-content-center">
           2
         </div>
       </td>
-      <td className="col-2">
+      <td className="col-2 d-flex align-items-center" data-th="小計">
+        <div className="tdHeight text-info  d-flex flex-column justify-content-center">
+          NT$ 24,000
+        </div>
+      </td>
+      {/* 購買商品2 */}
+      <td className="col-sm-2 col-12 justify-content-center">
+        <div className="tdHeight  d-flex flex-column  justify-content-center">
+          <img
+            className="w-100"
+            src={`${process.env.REACT_APP_IMAGE_URL}/images/products/ordimg1.png`}
+            alt="img1"
+          />
+        </div>
+      </td>
+      <td className="col-4">
+        <div className="tdHeight text-start d-flex flex-column justify-content-center">
+          <p className="fw-bold">
+            Menu Curiosity Cabinet H168cm珍古系列 橡木收納櫥櫃
+          </p>
+          <div className="text-gray-200">款式 : 橡木原色(Natural Oak)</div>
+        </div>
+      </td>
+      <td className="col-2 d-flex align-items-center" data-th="價格">
+        <div className="tdHeight text-info d-flex flex-column justify-content-center">
+          NT$ 12,000
+        </div>
+      </td>
+      <td className="col-2 d-flex align-items-center" data-th="數量">
+        <div className="tdHeight text-info  d-flex flex-column justify-content-center">
+          2
+        </div>
+      </td>
+      <td className="col-2 d-flex align-items-center" data-th="小計">
         <div className="tdHeight text-info  d-flex flex-column justify-content-center">
           NT$ 24,000
         </div>
       </td>
 
-      <td>
-        <hr className="col-12 py-0" />
-      </td>
-
       {/* <hr className="col-12 py-0" /> */}
       {/* 金額 */}
       <td>
-        <div className="total-cash">
-          <div className="row text-start">
-            <div className="col-8"></div>
-            <div className="col-4 cash-detail">
-              <div>
+        <div className="total-cash ">
+          <div className="d-sm-flex justify-content-sm-end border-primary-100  border-top border-bottom">
+            <div className=" cash-detail ">
+              <div className="d-flex ">
                 小計:<span>NT$48,000</span>
               </div>
-              <div>
+              <div className="d-flex justify-content-between">
                 優惠券折扣:<span>-NT$2,000</span>
               </div>
-              <div>
+              <div className="d-flex justify-content-between">
                 運費:<span>NT$1,000</span>
               </div>
               <div>
@@ -96,11 +91,11 @@ function OrderDetail(props) {
               </div>
             </div>
           </div>
-          <hr className="col-12 py-0" />
+
           {/* <hr className="col-12 py-0" /> */}
           {/* 詳細資訊 */}
-          <div className="every-details row">
-            <div className="about-order col-6">
+          <div className="every-details row ">
+            <div className="about-order col-12 col-md-6">
               <ul className="list-unstyled text-align">
                 <li className="title">
                   <span>訂單資訊</span>
@@ -123,7 +118,7 @@ function OrderDetail(props) {
                 </li>
               </ul>
             </div>
-            <div className="about-customer col-6">
+            <div className="about-customer col-12 col-md-6">
               <ul className="list-unstyled text-align">
                 <li className="title">
                   <span className="">顧客資訊</span>
@@ -138,7 +133,7 @@ function OrderDetail(props) {
                 </li>
               </ul>
             </div>
-            <div className="about-deliever col-6">
+            <div className="about-deliever col-12 col-md-6">
               <ul className="list-unstyled text-align">
                 <li className="title">
                   <span>送貨資訊</span>
@@ -169,7 +164,7 @@ function OrderDetail(props) {
                 </li>
               </ul>
             </div>
-            <div className="about-payments col-6">
+            <div className="about-payments col-12 col-md-6">
               <ul className="list-unstyled text-align">
                 <li className="title">
                   <span className="">付款方式</span>
@@ -190,10 +185,6 @@ function OrderDetail(props) {
             </div>
           </div>
         </div>
-      </td>
-
-      <td>
-        <hr className="py-0" />
       </td>
 
       {/* <hr className="py-0" /> */}
