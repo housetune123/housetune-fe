@@ -1,10 +1,9 @@
-import { Link } from 'react-router-dom';
-import BreadCrumb from '../Layout/BreadCrumb';
-import './Products.scss';
-import axios from 'axios';
 import { useEffect, useState } from 'react';
+import './PersonalStore.scss';
+import axios from 'axios';
+import BreadCrumb from '../Layout/BreadCrumb';
 
-function Products() {
+function PersonalStore() {
   const [products, setProducts] = useState([]);
 
   // 儲存 select 狀態
@@ -12,14 +11,6 @@ function Products() {
   const [amount, setAmount] = useState('');
   // 抓取點擊購物車的資料
   const [cart, setCart] = useState([]);
-
-  function Number(min, max) {
-    const array = [];
-    for (let i = min; i <= max; i++) {
-      array.push(i);
-    }
-    return array;
-  }
 
   useEffect(() => {
     async function getProducts() {
@@ -31,120 +22,16 @@ function Products() {
   }, []);
   return (
     <>
-      <main className="bg-orange product">
+      <main className="bg-orange personal-store">
         <div className="container">
           <BreadCrumb />
-          <h3 className="mb-5 text-info-dark">新品推薦/New Arrival</h3>
           <div className="d-flex justify-content-between border-0">
             {/* 左側條件設定 */}
             <div className="col-2 d-none d-lg-block ">
+              <h3 className="mb-5 text-info-dark">Alice 的賣場</h3>
               <h5 className="text-info">條件設定</h5>
               <hr className="simple" />
               <div className="accordion accordion-flush">
-                {/* 供貨情況 */}
-                <div className="accordion-item">
-                  <h2
-                    className="accordion-header"
-                    id="panelsStayOpen-headingOne"
-                  >
-                    <button
-                      className="accordion-button bg-orange ps-0"
-                      type="button"
-                      data-bs-toggle="collapse"
-                      data-bs-target="#panelsStayOpen-collapseOne"
-                      aria-expanded="true"
-                      aria-controls="panelsStayOpen-collapseOne"
-                    >
-                      供貨情況
-                    </button>
-                  </h2>
-                  <div
-                    id="panelsStayOpen-collapseOne"
-                    className="accordion-collapse collapse show"
-                    aria-labelledby="panelsStayOpen-headingOne"
-                  >
-                    <div className="accordion-body bg-orange ps-0">
-                      <div className="form-check">
-                        <input
-                          className="form-check-input"
-                          type="checkbox"
-                          value=""
-                          id="flexCheckDefault"
-                        />
-                        <label
-                          className="form-check-label fs-sml text-info"
-                          htmlFor="flexCheckDefault"
-                        >
-                          有庫存(180)
-                        </label>
-                      </div>
-                      <div className="form-check">
-                        <input
-                          className="form-check-input"
-                          type="checkbox"
-                          value=""
-                          id="flexCheckChecked"
-                        />
-                        <label
-                          className="form-check-label fs-sml text-info"
-                          htmlFor="flexCheckChecked"
-                        >
-                          無庫存(3)
-                        </label>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-                {/* 價格 */}
-                <div className="accordion-item">
-                  <h2
-                    className="accordion-header"
-                    id="panelsStayOpen-headingTwo"
-                  >
-                    <button
-                      className="accordion-button collapsed bg-orange ps-0"
-                      type="button"
-                      data-bs-toggle="collapse"
-                      data-bs-target="#panelsStayOpen-collapseTwo"
-                      aria-expanded="false"
-                      aria-controls="panelsStayOpen-collapseTwo"
-                    >
-                      價格
-                    </button>
-                  </h2>
-                  <div
-                    id="panelsStayOpen-collapseTwo"
-                    className="accordion-collapse collapse"
-                    aria-labelledby="panelsStayOpen-headingTwo"
-                  >
-                    <div className="accordion-body bg-orange ps-0">
-                      <div className="d-flex pb-2 align-items-center">
-                        <h6 className="px-1 text-primary-200 mb-0 fs-sml">$</h6>
-                        <input
-                          type="number"
-                          name="points"
-                          min="0"
-                          max="10"
-                          value=""
-                          placeholder="From"
-                          className="w-100 fs-sml"
-                        />
-                      </div>
-                      <div className="d-flex align-items-center">
-                        <h6 className="px-1 text-primary-200 mb-0 fs-sml">$</h6>
-                        <input
-                          type="number"
-                          name="points"
-                          min="0"
-                          max="10"
-                          value=""
-                          placeholder="To"
-                          className="w-100 fs-sml"
-                        />
-                      </div>
-                    </div>
-                  </div>
-                </div>
                 {/* 分類 */}
                 <div className="accordion-item">
                   <h2
@@ -311,13 +198,172 @@ function Products() {
                     </div>
                   </div>
                 </div>
+                {/* 價格 */}
+                <div className="accordion-item">
+                  <h2
+                    className="accordion-header"
+                    id="panelsStayOpen-headingTwo"
+                  >
+                    <button
+                      className="accordion-button collapsed bg-orange ps-0"
+                      type="button"
+                      data-bs-toggle="collapse"
+                      data-bs-target="#panelsStayOpen-collapseTwo"
+                      aria-expanded="false"
+                      aria-controls="panelsStayOpen-collapseTwo"
+                    >
+                      價格
+                    </button>
+                  </h2>
+                  <div
+                    id="panelsStayOpen-collapseTwo"
+                    className="accordion-collapse collapse"
+                    aria-labelledby="panelsStayOpen-headingTwo"
+                  >
+                    <div className="accordion-body bg-orange ps-0">
+                      <div className="d-flex pb-2 align-items-center">
+                        <h6 className="px-1 text-primary-200 mb-0 fs-sml">$</h6>
+                        <input
+                          type="number"
+                          name="points"
+                          min="0"
+                          max="10"
+                          value=""
+                          placeholder="From"
+                          className="w-100 fs-sml"
+                        />
+                      </div>
+                      <div className="d-flex align-items-center">
+                        <h6 className="px-1 text-primary-200 mb-0 fs-sml">$</h6>
+                        <input
+                          type="number"
+                          name="points"
+                          min="0"
+                          max="10"
+                          value=""
+                          placeholder="To"
+                          className="w-100 fs-sml"
+                        />
+                      </div>
+                    </div>
+                  </div>
+                </div>
+                {/* 使用情況 */}
+                <div className="accordion-item">
+                  <h2
+                    className="accordion-header"
+                    id="panelsStayOpen-headingOne"
+                  >
+                    <button
+                      className="accordion-button bg-orange ps-0"
+                      type="button"
+                      data-bs-toggle="collapse"
+                      data-bs-target="#panelsStayOpen-collapseOne"
+                      aria-expanded="true"
+                      aria-controls="panelsStayOpen-collapseOne"
+                    >
+                      使用情況
+                    </button>
+                  </h2>
+                  <div
+                    id="panelsStayOpen-collapseOne"
+                    className="accordion-collapse collapse show"
+                    aria-labelledby="panelsStayOpen-headingOne"
+                  >
+                    <div className="accordion-body bg-orange ps-0">
+                      <div className="form-check">
+                        <input
+                          className="form-check-input"
+                          type="checkbox"
+                          value=""
+                          id="flexCheckDefault"
+                        />
+                        <label
+                          className="form-check-label fs-sml text-info"
+                          htmlFor="flexCheckDefault"
+                        >
+                          1年內 (10)
+                        </label>
+                      </div>
+                      <div className="form-check">
+                        <input
+                          className="form-check-input"
+                          type="checkbox"
+                          value=""
+                          id="flexCheckChecked"
+                        />
+                        <label
+                          className="form-check-label fs-sml text-info"
+                          htmlFor="flexCheckChecked"
+                        >
+                          1 - 3年 (3)
+                        </label>
+                      </div>
+                      <div className="form-check">
+                        <input
+                          className="form-check-input"
+                          type="checkbox"
+                          value=""
+                          id="flexCheckChecked"
+                        />
+                        <label
+                          className="form-check-label fs-sml text-info"
+                          htmlFor="flexCheckChecked"
+                        >
+                          3 - 5年 (15)
+                        </label>
+                      </div>
+                      <div className="form-check">
+                        <input
+                          className="form-check-input"
+                          type="checkbox"
+                          value=""
+                          id="flexCheckChecked"
+                        />
+                        <label
+                          className="form-check-label fs-sml text-info"
+                          htmlFor="flexCheckChecked"
+                        >
+                          5 - 10年 (8)
+                        </label>
+                      </div>
+                      <div className="form-check">
+                        <input
+                          className="form-check-input"
+                          type="checkbox"
+                          value=""
+                          id="flexCheckChecked"
+                        />
+                        <label
+                          className="form-check-label fs-sml text-info"
+                          htmlFor="flexCheckChecked"
+                        >
+                          10年以上(11)
+                        </label>
+                      </div>
+                    </div>
+                  </div>
+                </div>
               </div>
             </div>
 
             {/* 右側排序、商品列表 */}
-            <div className="col-12 col-lg-9 ">
+            <div className="col-12 col-lg-9">
+              <h3 className="text-info-dark d-block d-md-none my-2">
+                Alice 的賣場
+              </h3>
+              <div className="bg-white p-4">
+                <p className="text-info-dark">4項商品</p>
+                <p className="text-info-dark">
+                  評價 4.7
+                  <span>
+                    <i className="fa-solid fa-star-half-stroke"></i>
+                  </span>
+                  (17個評價)
+                </p>
+              </div>
               {/* 條件設定、排序依據 */}
-              <div className="d-flex">
+              <div className="d-flex mt-3">
                 {/* 條件設定 */}
                 <div className="d-flex align-items-center d-md-none">
                   <div className="pe-3">
@@ -421,9 +467,125 @@ function Products() {
                   );
                 })}
               </div>
+              {/* 賣場評價 */}
+              <section className="container pb-md-5 pb-3 px-0">
+                <div className="bg-gray p-md-5 p-3">
+                  <p className="text-info-dark">賣場評價</p>
+                  <div className="bg-white p-3">
+                    <div>
+                      <p className="h3 text-info-dark">
+                        <span className="fw-bold">0</span>/5
+                      </p>
+                    </div>
+                    {/* 星星 */}
+                    <div>
+                      <p className="text-danger mb-0">
+                        <span>
+                          <i className="fa-solid fa-star"></i>
+                        </span>
+                        <span>
+                          <i className="fa-solid fa-star"></i>
+                        </span>
+                        <span>
+                          <i className="fa-solid fa-star"></i>
+                        </span>
+                        <span>
+                          <i className="fa-solid fa-star"></i>
+                        </span>
+                        <span>
+                          <i className="fa-solid fa-star-half-stroke"></i>
+                        </span>
+                      </p>
+                    </div>
+                  </div>
+                  <div>
+                    <div className="pt-3 border-bottom border-1 border-gray-200">
+                      <div className="d-md-flex justify-content-between">
+                        <p className="mb-2">Ariel Shao</p>
+                        <p className="text-gray-200 mb-2">
+                          15小時前
+                          <span className="text-gray-400 ps-2">
+                            <span>
+                              <i className="fa-solid fa-star"></i>
+                            </span>
+                            <span>
+                              <i className="fa-solid fa-star"></i>
+                            </span>
+                            <span>
+                              <i className="fa-solid fa-star"></i>
+                            </span>
+                            <span>
+                              <i className="fa-solid fa-star"></i>
+                            </span>
+                            <span>
+                              <i className="fa-solid fa-star-half-stroke"></i>
+                            </span>
+                          </span>
+                        </p>
+                      </div>
+                      <div className="d-md-flex align-items-center">
+                        <div className="col-3 col-md-2">
+                          <img
+                            src="https://tw.portal-pokemon.com/play/resources/pokedex/img/pm/2b3f6ff00db7a1efae21d85cfb8995eaff2da8d8.png"
+                            alt=""
+                            className="object-cover"
+                          />
+                        </div>
+                        <p className="col-md-6 text-gray-300">
+                          珍古系列 橡木櫥櫃
+                        </p>
+                        <p className="text-gray-400 mb-2 col-md-4 text-md-end">
+                          很喜歡，簡單，精緻
+                        </p>
+                      </div>
+                    </div>
+                    <div className="pt-3 border-bottom border-1 border-gray-200">
+                      <div className="d-md-flex justify-content-between">
+                        <p className="mb-2">Ariel Shao</p>
+                        <p className="text-gray-200 mb-2">
+                          15小時前
+                          <span className="text-gray-400 ps-2">
+                            <span>
+                              <i className="fa-solid fa-star"></i>
+                            </span>
+                            <span>
+                              <i className="fa-solid fa-star"></i>
+                            </span>
+                            <span>
+                              <i className="fa-solid fa-star"></i>
+                            </span>
+                            <span>
+                              <i className="fa-solid fa-star"></i>
+                            </span>
+                            <span>
+                              <i className="fa-solid fa-star-half-stroke"></i>
+                            </span>
+                          </span>
+                        </p>
+                      </div>
+                      <div className="d-md-flex align-items-center">
+                        <div className="col-3 col-md-2">
+                          <img
+                            src="https://tw.portal-pokemon.com/play/resources/pokedex/img/pm/2b3f6ff00db7a1efae21d85cfb8995eaff2da8d8.png"
+                            alt=""
+                            className="object-cover"
+                          />
+                        </div>
+                        <p className="col-md-6 text-gray-300">
+                          珍古系列 橡木櫥櫃
+                        </p>
+                        <p className="text-gray-400 mb-2 col-md-4 text-md-end">
+                          很喜歡，簡單，精緻
+                        </p>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </section>
             </div>
           </div>
         </div>
+
         {/* modal Filter 彈跳視窗 */}
         <div
           className="modal fade"
@@ -911,4 +1073,4 @@ function Products() {
   );
 }
 
-export default Products;
+export default PersonalStore;
