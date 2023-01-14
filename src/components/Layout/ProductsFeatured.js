@@ -1,7 +1,7 @@
 import Slider from 'react-slick';
 import 'slick-carousel/slick/slick.css';
 import 'slick-carousel/slick/slick-theme.css';
-import '../main/main.scss';
+import '../Main/main.scss';
 import { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 

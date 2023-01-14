@@ -2,10 +2,10 @@ import { useParams } from 'react-router-dom';
 import Slider from 'react-slick';
 import 'slick-carousel/slick/slick.css';
 import 'slick-carousel/slick/slick-theme.css';
-import BreadCrumb from '../layout/BreadCrumb';
+import BreadCrumb from '../Layout/BreadCrumb';
 import './ProductsDetail.scss';
-import ProductsFeatured from '../layout/ProductsFeatured';
-import ProductsBrowse from '../layout/ProductsBrowse';
+import ProductsFeatured from '../Layout/ProductsFeatured';
+import ProductsBrowse from '../Layout/ProductsBrowse';
 import axios from 'axios';
 import { useEffect, useState } from 'react';
 
