@@ -1,9 +1,6 @@
 import { useState, useEffect, Fragment } from 'react';
-import { Link, animateScroll as scroll, Element } from 'react-scroll';
 import OrderDetail from './OrderDetail';
 import OrderComment from './OrderComment';
-
-// Or Access Link,Element,etc as follows
 
 function Orders() {
   // 將訂單 map 出來
@@ -22,6 +19,13 @@ function Orders() {
       Total: '6000',
       Status: '未出貨',
     },
+    {
+      Id: '3',
+      orderNumber: '2022112000000e',
+      Date: '2022/11/21',
+      Total: '8000',
+      Status: '未出貨',
+    },
   ];
 
   // 查閱和評價的手風琴
@@ -29,42 +33,27 @@ function Orders() {
   const [openComment, setOpenComment] = useState(-1);
 
   useEffect(() => {
-    console.log('渲染');
+    console.log('render');
+    console.log(open);
   }, [open]);
 
   return (
     <>
-      {/* <Link to="section1">跳轉到指定區塊</Link> */}
-      {/* <Link
-        activeClass="active"
-        to="textBlock2"
-        spy={true}
-        smooth={true}
-        offset={-70}
-        duration={500}
-      >
-        跳轉到指定區塊
-      </Link> */}
       <div className="user-coupons pt-2">
         <div className="coupon-informations pb-1">
           {/* 內容 */}
           <div className="receive-coupons">
             {/* 優惠券列表 */}
             <div className="px-3 pt-4 d-flex">
-              <table className="order-table text-gray-300 border-primary-100 w-100">
+              <table className="order-table table table-rwd text-gray-300 text-center w-100">
                 {/* 標題 */}
                 <thead>
-                  <tr className="row text-center ">
+                  <tr className="row text-center border-bottom border-primary-100 pb-3 tr-only-hide">
                     <th className="col-3">訂單號碼</th>
                     <th className="col-2">訂單日期</th>
                     <th className="col-2">合計</th>
                     <th className="col-2">訂單狀態</th>
                     <th className="col-3"></th>
-                  </tr>
-                  <tr>
-                    <th>
-                      <hr />
-                    </th>
                   </tr>
                 </thead>
                 {/* 優惠券詳細內容 */}
@@ -73,67 +62,60 @@ function Orders() {
                     return (
                       <Fragment key={val.Id}>
                         <tr
-                          className="row text-center align-items-center"
+                          className={`row text-center align-items-center  ${
+                            index === 0 ? '' : 'border-top'
+                          }`}
                           id={val.Id}
                         >
-                          <td className="col-3">{val.orderNumber}</td>
-                          <td className="col-2">{val.Date}</td>
-                          <td className="col-2">NT${val.Total}</td>
-                          <td className="col-2">{val.Status}</td>
-                          <td className="col-3 row justify-content-around">
+                          <td className="col-3" data-th="訂單號碼">
+                            {val.orderNumber}
+                          </td>
+                          <td className="col-2" data-th="訂單日期">
+                            {val.Date}
+                          </td>
+                          <td className="col-2" data-th="合計">
+                            NT${val.Total}
+                          </td>
+                          <td className="col-2" data-th="訂單狀態">
+                            {val.Status}
+                          </td>
+                          <td
+                            className="col-3 row justify-content-around"
+                            data-th=""
+                          >
                             <button
                               className={`btn ${
                                 val.Id === open
                                   ? 'btn-primary-300'
                                   : 'btn-white bg-orange'
-                              }  col-4`}
-                              onClick={() => {
+                              }  col-5`}
+                              onClick={(e) => {
+                                // 錯誤邏輯
                                 // if (open === -1) {
                                 //   setOpen(val.Id);
                                 // }
                                 // if (open === val.Id) {
                                 //   setOpen(-1);
                                 // }
-
+                                e.preventDefault();
+                                // 若點擊的 id 值等於狀態 則讓狀態關閉
+                                // 否則關閉
                                 if (val.Id === open) {
                                   setOpen(-1);
-                                  return (
-                                    <Link
-                                      to={val.Id}
-                                      smooth={true}
-                                      duration={0}
-                                    ></Link>
-                                  );
                                 } else {
                                   setOpen(val.Id);
                                 }
                               }}
                             >
-                              {/* <Link
-                                className={`btn ${
-                                  val.Id === open
-                                    ? 'btn-primary-300'
-                                    : 'btn-white bg-orange'
-                                }  col-4`}
-                                to={val.Id}
-                                smooth={true}
-                                duration={0}
-                              > */}
                               查閱 {val.Id === open ? '-' : '+'}
-                              {/* </Link> */}
                             </button>
                             <button
                               className={`btn ${
                                 val.Id === openComment
                                   ? 'btn-primary-300'
                                   : 'btn-white bg-orange'
-                              }  col-4`}
+                              }  col-5`}
                               onClick={() => {
-                                // if (openComment === -1) {
-                                //   setOpenComment(val.Id);
-                                // } else {
-                                //   setOpenComment(-1);
-                                // }
                                 if (val.Id === openComment) {
                                   setOpenComment(-1);
                                 } else {
@@ -145,14 +127,8 @@ function Orders() {
                             </button>
                           </td>
                         </tr>
-                        <tr>
-                          <td>
-                            <hr />
-                          </td>
-                        </tr>
                         <tr
-                          // ref={detailRef}
-                          className={`open-detail row text-center align-items-center  ${
+                          className={`open-detail row text-center align-items-center ${
                             val.Id === open ? 'show' : 'hide'
                           }`}
                           id={val.Id}
@@ -160,8 +136,10 @@ function Orders() {
                           <OrderDetail index={val.Id} open={open} />
                         </tr>
                         <tr
-                          // ref={commentRef}
-                          className={`open-detail row text-center align-items-center`}
+                          className={`open-detail row text-center align-items-center ${
+                            val.Id === openComment ? 'show' : 'hide'
+                          }`}
+                          id={val.Id}
                         >
                           <OrderComment
                             index={val.Id}
@@ -176,13 +154,6 @@ function Orders() {
             </div>
           </div>
         </div>
-      </div>
-      {/* 測試 */}
-      <div className="vh100" id="textBlock1">
-        測試區域
-      </div>
-      <div className="vh100" id="textBlock2">
-        測試區域
       </div>
     </>
   );

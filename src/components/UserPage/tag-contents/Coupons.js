@@ -16,7 +16,7 @@ function Coupons(props) {
           <div className="receive-coupons">
             {/* 輸入欄 */}
             <div className="row">
-              <div className="col-6 d-flex align-items-center justify-content-evenly">
+              <div className="col-12 col-md-6  d-flex align-items-center justify-content-evenly">
                 <input
                   type="text"
                   className="form-control w-75"
@@ -27,10 +27,10 @@ function Coupons(props) {
             </div>
             {/* 優惠券列表 */}
             <div className="px-3 pt-4">
-              <table className="table text-gray-300 border-primary-100">
+              <table className="table table-rwd text-gray-300 text-center w-100">
                 {/* 標題 */}
                 <thead>
-                  <tr className="row text-center ">
+                  <tr className="row text-center tr-only-hide">
                     <th className="col-2">優惠券項目</th>
                     <th className="col-2">折扣</th>
                     <th className="col-2">優惠券類型</th>
@@ -42,23 +42,53 @@ function Coupons(props) {
                 {/* 優惠券詳細內容 */}
                 <tbody>
                   <tr className="row text-center align-items-center">
-                    <td className="col-2">歡慶開幕禮!</td>
-                    <td className="col-2">$1000</td>
-                    <td className="col-2">滿額折扣</td>
-                    <td className="col-2">低消 $12000</td>
-                    <td className="col-2">2022/10/31</td>
-                    <td className="col-2">
-                      <button className="btn btn-white bg-orange">使用</button>
+                    <td className="col-2" data-th="優惠券項目">
+                      歡慶開幕禮!
+                    </td>
+                    <td className="col-2" data-th="折扣">
+                      $1000
+                    </td>
+                    <td className="col-2" data-th="優惠券類型">
+                      滿額折扣
+                    </td>
+                    <td className="col-2" data-th="使用門檻">
+                      低消 $12000
+                    </td>
+                    <td className="col-2" data-th="使用期限">
+                      2022/10/31
+                    </td>
+                    <td
+                      className="col-2 d-flex justify-content-center"
+                      data-th=""
+                    >
+                      <button className="col-12 counponHover btn btn-white bg-orange">
+                        使用
+                      </button>
                     </td>
                   </tr>
                   <tr className="row text-center align-items-center">
-                    <td className="col-2">雙11限量折扣!</td>
-                    <td className="col-2">$1111</td>
-                    <td className="col-2">滿額折扣</td>
-                    <td className="col-2">低消 $8000</td>
-                    <td className="col-2">2022/11/12</td>
-                    <td className="col-2">
-                      <button className="btn btn-white bg-orange">使用</button>
+                    <td className="col-2" data-th="優惠券項目">
+                      歡慶開幕禮!
+                    </td>
+                    <td className="col-2" data-th="折扣">
+                      $1000
+                    </td>
+                    <td className="col-2" data-th="優惠券類型">
+                      滿額折扣
+                    </td>
+                    <td className="col-2" data-th="使用門檻">
+                      低消 $12000
+                    </td>
+                    <td className="col-2" data-th="使用期限">
+                      2022/10/31
+                    </td>
+                    <td
+                      className="col-2 d-flex justify-content-center"
+                      data-th=""
+                    >
+                      <button className="col-12 counponHover btn btn-white bg-orange">
+                        使用
+                      </button>
                     </td>
                   </tr>
                 </tbody>
