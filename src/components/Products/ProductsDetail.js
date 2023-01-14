@@ -2,10 +2,10 @@ import { useParams } from 'react-router-dom';
 import Slider from 'react-slick';
 import 'slick-carousel/slick/slick.css';
 import 'slick-carousel/slick/slick-theme.css';
-import BreadCrumb from '../Layout/BreadCrumb';
+import BreadCrumb from '../layout/BreadCrumb';
 import './ProductsDetail.scss';
-import ProductsFeatured from '../Layout/ProductsFeatured';
-import ProductsBrowse from '../Layout/ProductsBrowse';
+import ProductsFeatured from '../layout/ProductsFeatured';
+import ProductsBrowse from '../layout/ProductsBrowse';
 import axios from 'axios';
 import { useEffect, useState } from 'react';
 
@@ -18,8 +18,12 @@ function ProductsDetail() {
     }
     return array;
   }
+  // 抓取產品名稱、分類資料
   const [product, setProdcut] = useState([]);
   const [catagory, setCategory] = useState(0);
+  // 儲存 select 狀態
+  const [shape, setShape] = useState('');
+  const [amount, setAmount] = useState('');
 
   // TODO: 網頁名稱 id 改用商品名稱
   // TODO: 不確定程式碼正不正確
@@ -30,7 +34,7 @@ function ProductsDetail() {
       setProdcut(res.data);
       async function getCategory() {
         let res2 = await axios.get(
-          `http://localhost:3001/Category/${res.data[0].category_room}`
+          `http://localhost:3001/Category/${res.data[0].category_room}/${prodId}`
         );
         // console.log(res2.data);
         setCategory(res2.data);
@@ -38,7 +42,7 @@ function ProductsDetail() {
       getCategory();
     }
     getProd();
-  }, []);
+  }, [prodId]);
 
   const settings = {
     customPaging: function (index) {
@@ -101,58 +105,91 @@ function ProductsDetail() {
                   <div className="col-md-6" key={v.prod_id}>
                     <h3 className="text-info-dark">{v.name}</h3>
                     <h6 className="text-info">NT$ {v.price}</h6>
-                    <div className="form-floating">
-                      <select
-                        className="form-select text-gray-400"
-                        id="floatingSelect"
-                      >
-                        <option className="text-gray-400">請選擇款式</option>
-                        <option value="1" className="text-gray-400">
-                          藍色 Blue
-                        </option>
-                        <option value="2" className="text-gray-400">
-                          灰色 Gray
-                        </option>
-                      </select>
-                      <label htmlFor="floatingSelect" className="label-fs">
-                        款式
-                      </label>
-                    </div>
+                    {/* 選擇款式 */}
+                    {v.amount > 0 ? (
+                      <div className="form-floating">
+                        <select
+                          className="form-select text-gray-400"
+                          id="floatingSelect"
+                          value={shape}
+                          onChange={(e) => {
+                            setShape(e.target.value);
+                          }}
+                        >
+                          <option className="text-gray-400" value="" disabled>
+                            請選擇款式
+                          </option>
+                          <option value="藍色 Blue" className="text-gray-400">
+                            藍色 Blue
+                          </option>
+                          <option value="深灰色 Gray" className="text-gray-400">
+                            深灰色 Gray
+                          </option>
+                          <option value="綠色 Green" className="text-gray-400">
+                            綠色 Green
+                          </option>
+                          <option value="白色 White" className="text-gray-400">
+                            白色 White
+                          </option>
+                        </select>
+                        <label htmlFor="floatingSelect" className="label-fs">
+                          款式
+                        </label>
+                      </div>
+                    ) : (
+                      /* 售完 */
+                      <div className="text-info-dark">商品已售完</div>
+                    )}
                     {/* 數量、加入購物車 */}
-                    <div className="row pt-2">
-                      <div className="col-5">
-                        <div className="form-floating">
-                          <select
-                            className="form-select text-gray-400"
-                            id="floatingSelect"
-                          >
-                            <option>請選擇數量</option>
-                            {Number(1, 9).map((v, i) => {
-                              return (
-                                <option
-                                  key={v}
-                                  value={v}
-                                  className="text-gray-400"
-                                >
-                                  {v}
+                    {v.amount > 0 && (
+                      <div className="row pt-2">
+                        <div className="col-5">
+                          <div className="form-floating">
+                            <select
+                              className="form-select text-gray-400"
+                              id="floatingSelect"
+                              value={amount}
+                              onChange={(e) => {
+                                setAmount(e.target.value);
+                              }}
+                            >
+                              <option value="" disabled>
+                                請選擇數量
+                              </option>
+                              {Number(1, v.amount >= 10 ? 9 : v.amount).map(
+                                (v2, i) => {
+                                  return (
+                                    <option
+                                      key={v2}
+                                      value={v2}
+                                      className="text-gray-400"
+                                    >
+                                      {v2}
+                                    </option>
+                                  );
+                                }
+                              )}
+                              {v.amount >= 10 && (
+                                <option value="10" className="text-gray-400">
+                                  10 +
                                 </option>
-                              );
-                            })}
-                            <option value="10" className="text-gray-400">
-                              10
-                            </option>
-                          </select>
-                          <label htmlFor="floatingSelect" className="label-fs">
-                            數量
-                          </label>
+                              )}
+                            </select>
+                            <label
+                              htmlFor="floatingSelect"
+                              className="label-fs"
+                            >
+                              數量
+                            </label>
+                          </div>
+                        </div>
+                        <div className="col-7">
+                          <button className="btn btn-cart bg-gray border border-2 border-primary-200 text-primary-300 btn-cart w-100 h-100">
+                            加入購物車
+                          </button>
                         </div>
                       </div>
-                      <div className="col-7">
-                        <button className="btn btn-cart bg-gray border border-2 border-primary-200 text-primary-300 btn-cart w-100 h-100">
-                          加入購物車
-                        </button>
-                      </div>
-                    </div>
+                    )}
                     {/* 庫存狀態  */}
                     <div>
                       <div className="py-2">
@@ -160,7 +197,9 @@ function ProductsDetail() {
                           庫存狀態 :
                           <span className="text-danger">
                             {' '}
-                            僅剩 {v.amount} 件 !
+                            {v.amount === 0
+                              ? '已售完'
+                              : `僅剩 ${v.amount} 件 !`}
                           </span>
                         </p>
                       </div>
