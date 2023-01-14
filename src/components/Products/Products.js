@@ -1,5 +1,5 @@
 import { Link } from 'react-router-dom';
-import BreadCrumb from '../layout/BreadCrumb';
+import BreadCrumb from '../Layout/BreadCrumb';
 import './Products.scss';
 import axios from 'axios';
 import { useEffect, useState } from 'react';
