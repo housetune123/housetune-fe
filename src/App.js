@@ -13,6 +13,7 @@ import AddUsedProducts from './components/UsedProducts/AddUsedProducts';
 import UsedProductList from './components/UsedProducts/UsedProductList';
 // home-page branch
 import Main from './components/Main';
+import Products from './components/Products/Products';
 import ProductDetail from './components/Products/ProductsDetail';
 import UsedProductDetail from './components/Products/UsedProductsDetail';
 // user-page branch
@@ -34,6 +35,7 @@ function App() {
       <Header />
       <Routes>
         <Route path="/" element={<Main />} />
+        <Route path="/products" element={<Products />}></Route>
         <Route path="/products/:prodId" element={<ProductDetail />} />
         <Route
           path="/used/products/detail"
