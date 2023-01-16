@@ -9,7 +9,7 @@ function Inspiration() {
   const [totalPage, setTotalPage] = useState([]);
   useEffect(() => {
     async function getList() {
-      let response = await axios.get('http://localhost:3002/api/list');
+      let response = await axios.get('http://localhost:3001/api/list');
       console.log(response.data);
       setList(response.data);
       setPages(Math.ceil(response.data.length / 9));
@@ -27,9 +27,8 @@ function Inspiration() {
   return (
     <>
       <div className="insp">
-        <header className="text-center bg-white">我是header</header>
         <div className="position-relative container">
-          <div className="main">
+          <div>
             <p className="crumb text-primary-200 mt-4">
               <Link to="/" className="text-decoration-none text-primary-200">
                 首頁
@@ -84,7 +83,6 @@ function Inspiration() {
             })}
           </div> */}
         </div>
-        <footer className="text-center mt-5 bg-white">我是footer</footer>
       </div>
     </>
   );

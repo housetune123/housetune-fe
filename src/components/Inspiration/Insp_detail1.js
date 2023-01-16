@@ -14,9 +14,8 @@ function Insp_detail1() {
   return (
     <>
       <div className="insp_1">
-        <header className="text-center bg-white">我是header</header>
         <div className="position-relative container">
-          <div className="main">
+          <div>
             <p className="crumb text-primary-200 mt-4">
               <Link
                 to="/inspiration"
@@ -505,7 +504,6 @@ function Insp_detail1() {
             className="messenger position-fixed"
           />
         </div>
-        <footer className="text-center mt-5 bg-white">我是footer</footer>
       </div>
     </>
   );
