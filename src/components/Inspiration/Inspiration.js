@@ -9,27 +9,28 @@ function Inspiration() {
   const [totalPage, setTotalPage] = useState([]);
   useEffect(() => {
     async function getList() {
-      let response = await axios.get('http://localhost:3001/api/list');
+      let response = await axios.get('http://localhost:3002/api/list');
       console.log(response.data);
       setList(response.data);
       setPages(Math.ceil(response.data.length / 9));
     }
     getList();
   }, []);
-  useEffect(() => {
-    let a = [];
-    for (let i = 1; i < pages + 1; i++) {
-      a.push(i);
-    }
-    setTotalPage(a);
-  }, [pages]);
+  // useEffect(() => {
+  //   let a = [];
+  //   for (let i = 1; i < pages + 1; i++) {
+  //     a.push(i);
+  //   }
+  //   setTotalPage(a);
+  // }, [pages]);
 
   return (
     <>
       <div className="insp">
-        <div className="position-relative container p-4">
+        <header className="text-center bg-white">我是header</header>
+        <div className="position-relative container">
           <div className="main">
-            <p className="crumb text-primary-200">
+            <p className="crumb text-primary-200 mt-4">
               <Link to="/" className="text-decoration-none text-primary-200">
                 首頁
               </Link>
@@ -65,24 +66,25 @@ function Inspiration() {
             alt="聊天室符號"
             className="messenger position-fixed"
           />
-          <div className="pageButton d-flex justify-content-center mt-4">
+          {/* <div className="pageButton d-flex justify-content-center mt-4">
             {totalPage.map((v, i) => {
               return (
                 <button
                   className="mx-2 bg-primary-300 d-flex align-items-center justify-content-center page"
                   key={i}
                 >
-                  <Link
-                    to="/"
+                  <a
+                    href="#"
                     className="text-decoration-none bg-transparent text-white"
                   >
                     {v}
-                  </Link>
+                  </a>
                 </button>
               );
             })}
-          </div>
+          </div> */}
         </div>
+        <footer className="text-center mt-5 bg-white">我是footer</footer>
       </div>
     </>
   );
