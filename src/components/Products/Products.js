@@ -4,6 +4,10 @@ import './Products.scss';
 import axios from 'axios';
 import { useEffect, useState } from 'react';
 
+// 購物車
+import { useNavigate } from 'react-router-dom';
+import { useCart } from '../../utils/useCart';
+
 function Products() {
   const [products, setProducts] = useState([]);
 
@@ -29,6 +33,11 @@ function Products() {
     }
     getProducts();
   }, []);
+
+  // 購物車
+  const navigate = useNavigate();
+  const { addItem } = useCart();
+
   return (
     <>
       <main className="bg-orange product">
@@ -374,7 +383,7 @@ function Products() {
                   return (
                     <div
                       className="col-6 col-md-3 d-flex justify-content-center p-md-3 p-2"
-                      key={i}
+                      key={v.prod_id}
                     >
                       <div className="card border border-0 card-shadow position-relative">
                         <img
@@ -388,7 +397,7 @@ function Products() {
                               NT $ {v.price}
                             </h5>
                             <p>
-                              <i class="fa-regular fa-heart text-info"></i>
+                              <i className="fa-regular fa-heart text-info"></i>
                             </p>
                           </div>
                           <h6 className="card-title text-gray-300">{v.name}</h6>
@@ -411,6 +420,10 @@ function Products() {
                             data-bs-target="#exampleModal"
                             onClick={() => {
                               setCart(v);
+                              // console.log(products);
+                              // const item = { ...v, quantity: 1 };
+                              // console.log(item);
+                              // addItem({ ...item, id: item.prod_id });
                             }}
                           >
                             加入購物車
@@ -884,7 +897,17 @@ function Products() {
                       </div>
                     </div>
                     <div className="col-7">
-                      <button className="btn btn-cart bg-gray border border-2 border-primary-200 text-primary-300 btn-cart w-100 h-100">
+                      <button
+                        className="btn btn-cart bg-gray border border-2 border-primary-200 text-primary-300 btn-cart w-100 h-100"
+                        onClick={() => {
+                          const item = {
+                            ...cart,
+                            quantity: parseInt(amount, 10),
+                          };
+                          console.log(item);
+                          addItem({ ...item, id: item.prod_id });
+                        }}
+                      >
                         加入購物車
                       </button>
                     </div>

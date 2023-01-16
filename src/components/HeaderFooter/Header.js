@@ -5,6 +5,9 @@ import { HeaderItems } from './MenuItems';
 import './Layout.scss';
 import logo from '../../images/logo.png';
 
+// 購物車數字
+import { useCart } from '../../utils/useCart';
+
 function Header() {
   const location = useLocation();
 
@@ -16,6 +19,10 @@ function Header() {
   const onMouseLeave = () => {
     setDropdown(false);
   };
+
+  // 購物車
+  const { cart } = useCart();
+
   function Dropdown(index) {
     return (
       <>
@@ -202,8 +209,11 @@ function Header() {
                 </Link>
               </div>
               <div className="px-2">
-                <Link to="/cart">
+                <Link to="/cart" className="position-relative">
                   <i className="fa-solid fa-cart-shopping text-primary-300 fs-4" />
+                  <span className="cart-amount position-absolute text-decoration-none text-white">
+                    {cart.totalItems}
+                  </span>
                 </Link>
               </div>
             </div>

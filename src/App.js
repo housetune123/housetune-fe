@@ -30,44 +30,49 @@ import ForgotPage from './components/Login/ForgotPage';
 import Header from './components/HeaderFooter/Header';
 import Footer from './components/HeaderFooter/Footer';
 
+// 匯入 CartProvider
+import { CartProvider } from './utils/useCart';
+
 function App() {
   return (
-    <BrowserRouter>
-      <Header />
-      <Routes>
-        <Route path="/" element={<Main />} />
-        <Route path="/products" element={<Products />}></Route>
-        <Route path="/products/:prodId" element={<ProductDetail />} />
-        <Route
-          path="/used/products/detail"
-          element={<UsedProductDetail />}
-        ></Route>
+    <CartProvider>
+      <BrowserRouter>
+        <Header />
+        <Routes>
+          <Route path="/" element={<Main />} />
+          <Route path="/products" element={<Products />}></Route>
+          <Route path="/products/:prodId" element={<ProductDetail />} />
+          <Route
+            path="/used/products/detail"
+            element={<UsedProductDetail />}
+          ></Route>
 
-        <Route exact path="inspiration">
-          <Route index={true} element={<Inspiration />} />
-          <Route path="detail1" element={<InspDetail1 />} />
-        </Route>
+          <Route exact path="inspiration">
+            <Route index={true} element={<Inspiration />} />
+            <Route path="detail1" element={<InspDetail1 />} />
+          </Route>
 
-        <Route path="usedproduct" element={<UsedProductList />} />
-        <Route path="usedstore" element={<PersonalStore />}></Route>
-        <Route path="usedproduct/add" element={<AddUsedProducts />} />
+          <Route path="usedproduct" element={<UsedProductList />} />
+          <Route path="usedstore" element={<PersonalStore />}></Route>
+          <Route path="usedproduct/add" element={<AddUsedProducts />} />
 
-        <Route path="login" element={<Login />} />
-        <Route path="register" element={<Register />} />
-        <Route path="forgot" element={<ForgotPage />} />
-        <Route path="user" element={<UserPage />} />
-        <Route path="cart" element={<Cart />} />
+          <Route path="login" element={<Login />} />
+          <Route path="register" element={<Register />} />
+          <Route path="forgot" element={<ForgotPage />} />
+          <Route path="user" element={<UserPage />} />
+          <Route path="cart" element={<Cart />} />
 
-        <Route path="checkout">
-          <Route path="information" element={<Information />} />
-          <Route path="shipping" element={<Shipping />} />
-          <Route path="payment" element={<Payment />} />
-        </Route>
+          <Route path="checkout">
+            <Route path="information" element={<Information />} />
+            <Route path="shipping" element={<Shipping />} />
+            <Route path="payment" element={<Payment />} />
+          </Route>
 
-        <Route path="*" element={<NotFound />} />
-      </Routes>
-      <Footer />
-    </BrowserRouter>
+          <Route path="*" element={<NotFound />} />
+        </Routes>
+        <Footer />
+      </BrowserRouter>
+    </CartProvider>
   );
 }
 

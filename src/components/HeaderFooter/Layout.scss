@@ -75,13 +75,21 @@ header {
     max-height: 500px;
     transition: 0.5s;
   }
+  .cart-amount {
+    font-size: 8px;
+    left: 55%;
+    top: -55%;
+    background-color: #da5260;
+    border-radius: 100%;
+    padding: 3px;
+  }
 }
 
 /* ----- Footer ----- */
 footer {
   min-height: 360px;
 
-  .footer-title{
+  .footer-title {
     cursor: default;
   }
   .accordion-menu {
