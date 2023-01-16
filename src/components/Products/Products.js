@@ -1,11 +1,17 @@
-import { Link } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router-dom';
 import BreadCrumb from '../Layout/BreadCrumb';
 import './Products.scss';
 import axios from 'axios';
 import { useEffect, useState } from 'react';
 
 function Products() {
+  const { currentPage, categoryRoom } = useParams();
   const [products, setProducts] = useState([]);
+
+  let navigate = useNavigate();
+  // 將 currentPage 轉換為10進為表示的整數
+  const [page, setPage] = useState(parseInt(currentPage, 10) || 1);
+  const [totalPage, setTotalPage] = useState(0);
 
   // 儲存 select 狀態
   const [shape, setShape] = useState('');
@@ -21,20 +27,118 @@ function Products() {
     return array;
   }
 
+  const categorySwitch = (categoryRoom) => {
+    switch (categoryRoom) {
+      case '1':
+        return '客廳';
+      case '2':
+        return '廚房';
+      case '3':
+        return '臥室';
+      case '4':
+        return '浴室';
+      default:
+        return '其他';
+    }
+  };
+
   useEffect(() => {
     async function getProducts() {
-      let res = await axios.get('http://localhost:3001/products');
-      // console.log(res);
-      setProducts(res.data);
+      if (categoryRoom) {
+        let res = await axios.get(
+          `http://localhost:3001/products/Category/${categoryRoom}?page=${page}`
+        );
+        // console.log(res.data);
+        setProducts(res.data.data);
+        setTotalPage(res.data.pagination.totalPage);
+      } else {
+        let res = await axios.get(
+          `http://localhost:3001/products?page=${page}`
+        );
+        // console.log(categoryRoom);
+        setProducts(res.data.data);
+        setTotalPage(res.data.pagination.totalPage);
+      }
     }
     getProducts();
-  }, []);
+  }, [categoryRoom, page]);
+
+  function getPageAll(totalPage) {
+    const pages = [];
+    for (let i = 1; i <= totalPage; i++) {
+      pages.push(i);
+    }
+    return pages;
+  }
+
+  function getPage(page, totalPage) {
+    const pages = [];
+    if (page < 3) {
+      for (let i = 1; i <= page + 2; i++) {
+        pages.push(i);
+      }
+      pages.push('...');
+      pages.push(totalPage);
+    } else if (page === 3) {
+      if (totalPage < 7) {
+        for (let i = 1; i <= page + 2; i++) {
+          pages.push(i);
+        }
+        pages.push(totalPage);
+      } else {
+        for (let i = 1; i <= page + 2; i++) {
+          pages.push(i);
+        }
+        pages.push('...');
+        pages.push(totalPage);
+      }
+    } else if (page === 4) {
+      pages.push(1);
+      if (totalPage > 7) {
+        for (let i = page - 2; i <= page + 2; i++) {
+          pages.push(i);
+        }
+        pages.push('...');
+        pages.push(totalPage);
+      } else {
+        for (let i = page - 2; i <= totalPage; i++) {
+          pages.push(i);
+        }
+      }
+    } else if (page > 4) {
+      pages.push(1);
+      pages.push('...');
+      if (totalPage <= page + 3) {
+        for (let i = page - 2; i <= totalPage; i++) {
+          pages.push(i);
+        }
+      } else if (totalPage === page) {
+        for (let i = totalPage - 2; i <= totalPage; i++) {
+          pages.push(i);
+        }
+      } else {
+        for (let i = page - 2; i <= page + 2; i++) {
+          pages.push(i);
+        }
+        pages.push('...');
+        pages.push(totalPage);
+      }
+    }
+    return pages;
+  }
+
   return (
     <>
       <main className="bg-orange product">
         <div className="container">
           <BreadCrumb />
-          <h3 className="mb-5 text-info-dark">新品推薦/New Arrival</h3>
+          {categoryRoom ? (
+            <h3 className="mb-5 text-info-dark">
+              {categorySwitch(categoryRoom)}
+            </h3>
+          ) : (
+            <h3 className="mb-5 text-info-dark">所有商品</h3>
+          )}
           <div className="d-flex justify-content-between border-0">
             {/* 左側條件設定 */}
             <div className="col-2 d-none d-lg-block ">
@@ -377,18 +481,20 @@ function Products() {
                       key={i}
                     >
                       <div className="card border border-0 card-shadow position-relative">
-                        <img
-                          src={`${process.env.REACT_APP_IMAGE_URL}/images/products/${v.category_name}/${img[0]}`}
-                          className="card-img-top bg-gray-200"
-                          alt="..."
-                        />
+                        <a href={`/products/${v.prod_id}`}>
+                          <img
+                            src={`${process.env.REACT_APP_IMAGE_URL}/images/products/${v.category_name}/${img[0]}`}
+                            className="card-img-top bg-gray-200"
+                            alt="..."
+                          />
+                        </a>
                         <div className="card-body text-left">
                           <div className="d-flex justify-content-between">
                             <h5 className="card-title text-info">
                               NT $ {v.price}
                             </h5>
                             <p>
-                              <i class="fa-regular fa-heart text-info"></i>
+                              <i className="fa-regular fa-heart text-info"></i>
                             </p>
                           </div>
                           <h6 className="card-title text-gray-300">{v.name}</h6>
@@ -400,7 +506,14 @@ function Products() {
                               僅剩 {v.amount} 件 !
                             </p>
                           )}
-                          <button className="btn btn-primary-300 fs-sml w-100 d-block d-md-none">
+                          <button
+                            className="btn btn-primary-300 fs-sml w-100 d-block d-md-none"
+                            data-bs-toggle="modal"
+                            data-bs-target="#exampleModal"
+                            onClick={() => {
+                              setCart(v);
+                            }}
+                          >
                             加入購物車
                           </button>
                         </div>
@@ -420,6 +533,101 @@ function Products() {
                     </div>
                   );
                 })}
+              </div>
+              {/* 頁碼 */}
+              <div>
+                <ul className="d-flex justify-content-center list-unstyled text-primary-300 pt-3 page align-items-center">
+                  {/* 上一頁 */}
+                  {page !== 1 && (
+                    <li
+                      className="px-1 fs-sml"
+                      onClick={() => {
+                        setPage(page - 1);
+                        window.scrollTo(0, 200);
+                        if (categoryRoom) {
+                          navigate(
+                            `/products/category/${categoryRoom}?page=${
+                              page - 1
+                            }`
+                          );
+                        } else {
+                          navigate(`/products?page=${page - 1}`);
+                        }
+                      }}
+                    >
+                      {'<'} 上一頁
+                    </li>
+                  )}
+                  {totalPage > 5 &&
+                    getPage(page, totalPage).map((v, i) => {
+                      return (
+                        <li
+                          className={page === v ? 'fw-bold px-2' : 'px-2'}
+                          key={v}
+                          onClick={() => {
+                            if (v === '...') {
+                              return;
+                            } else {
+                              setPage(v);
+                              window.scrollTo(0, 200);
+                              if (categoryRoom) {
+                                navigate(
+                                  `/products/category/${categoryRoom}?page=${v}`
+                                );
+                              } else {
+                                navigate(`/products?page=${v}`);
+                              }
+                            }
+                          }}
+                        >
+                          {v}
+                        </li>
+                      );
+                    })}
+                  {totalPage <= 5 &&
+                    getPageAll(totalPage).map((v, i) => {
+                      return (
+                        <li
+                          className={page === v ? 'fw-bold px-2' : 'px-2'}
+                          key={v}
+                          onClick={() => {
+                            setPage(v);
+                            window.scrollTo(0, 200);
+                            if (categoryRoom) {
+                              navigate(
+                                `/products/category/${categoryRoom}?page=${v}`
+                              );
+                            } else {
+                              navigate(`/products?page=${v}`);
+                            }
+                          }}
+                        >
+                          {v}
+                        </li>
+                      );
+                    })}
+                  {/* 下一頁 */}
+                  {page !== totalPage && (
+                    <li
+                      className="px-1 fs-sml"
+                      onClick={() => {
+                        setPage(page + 1);
+                        window.scrollTo(0, 200);
+                        if (categoryRoom) {
+                          navigate(
+                            `/products/category/${categoryRoom}?page=${
+                              page + 1
+                            }`
+                          );
+                        } else {
+                          navigate(`/products?page=${page + 1}`);
+                        }
+                      }}
+                    >
+                      下一頁{' >'}
+                    </li>
+                  )}
+                </ul>
               </div>
             </div>
           </div>

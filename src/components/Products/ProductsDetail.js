@@ -204,12 +204,18 @@ function ProductsDetail() {
                         </p>
                       </div>
                       <div className="py-2">
-                        <p className="text-gray-400 fs-sml mb-0">
-                          出自 Anderssen & Voll
-                          的設計作品，此系列沙發是在挪威西海岸製作的，造型極度簡約，沙發坐墊上的分割線，以及內層加強座墊蓬鬆度的設計，讓座墊擁有抱枕般厚度，表達了
-                          Anderssen & Voll
-                          對空氣美學的理解，並用極細的鋼材椅腳展現整體設計的優雅感。
-                        </p>
+                        {v.prod_id >= 193 ? (
+                          <p className="text-gray-400 fs-sml mb-0">
+                            {v.description}
+                          </p>
+                        ) : (
+                          <p className="text-gray-400 fs-sml mb-0">
+                            出自 Anderssen & Voll
+                            的設計作品，此系列沙發是在挪威西海岸製作的，造型極度簡約，沙發坐墊上的分割線，以及內層加強座墊蓬鬆度的設計，讓座墊擁有抱枕般厚度，表達了
+                            Anderssen & Voll
+                            對空氣美學的理解，並用極細的鋼材椅腳展現整體設計的優雅感。
+                          </p>
+                        )}
                       </div>
                       <div className="py-2 py-md-4">
                         <p className="text-gray-400 fs-sml mb-0">

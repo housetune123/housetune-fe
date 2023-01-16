@@ -100,18 +100,22 @@ function Main() {
     {
       img: `${process.env.REACT_APP_IMAGE_URL}/images/main/room-category1.webp`,
       text: '客廳 / Living room',
+      path: '/products/category/1',
     },
     {
       img: `${process.env.REACT_APP_IMAGE_URL}/images/main/room-category2.webp`,
       text: '廚房 / Kitchen',
+      path: '/products/category/2',
     },
     {
       img: `${process.env.REACT_APP_IMAGE_URL}/images/main/room-category3.webp`,
       text: '臥室 / Bedroom',
+      path: '/products/category/3',
     },
     {
       img: `${process.env.REACT_APP_IMAGE_URL}/images/main/room-category4.webp`,
       text: '浴室 / Bathroom',
+      path: '/products/category/4',
     },
   ];
   const FurnitureCategory = [
@@ -209,22 +213,25 @@ function Main() {
               <div className="row text-center">
                 {category === '房間分類 / Room Category' &&
                   RoomCategory.map((v, i) => {
-                    const { img, text } = v;
                     return (
                       <div
                         key={i}
                         className="col d-flex justify-content-center"
                       >
-                        <Link to="#/" className="text-decoration-none">
+                        <a href={v.path} className="text-decoration-none">
                           <div className="card border border-0 mb-4">
-                            <img src={img} className="card-img-top" alt="#/" />
+                            <img
+                              src={v.img}
+                              className="card-img-top"
+                              alt="#/"
+                            />
                             <div className="card-body card-body-category d-flex align-items-center justify-content-center">
                               <h6 className="card-title text-info mb-0">
-                                {text}
+                                {v.text}
                               </h6>
                             </div>
                           </div>
-                        </Link>
+                        </a>
                       </div>
                     );
                   })}

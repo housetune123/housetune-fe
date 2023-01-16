@@ -23,12 +23,12 @@ function Header() {
           {HeaderItems[index].submenu.map((item, index) => {
             return (
               <li key={index} className="p-4 ps-5 list-unstyled">
-                <Link
-                  to={item.path}
-                  className="text-decoration-none text-info-dark"
+                <a
+                  href={item.path}
+                  className="text-decoration-none text-info-dark d-block"
                 >
                   {item.title}
-                </Link>
+                </a>
               </li>
             );
           })}

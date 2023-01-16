@@ -13,6 +13,7 @@
     bottom: 0;
     width: 100%;
     opacity: 0;
+    visibility: hidden;
     transform: translateY(45px);
     transition: 0.4s;
     border-radius: 0.225rem;
@@ -28,6 +29,7 @@
     .card-btn {
       z-index: 2;
       opacity: 1;
+      visibility: visible;
 
       button {
         opacity: 1;
@@ -50,5 +52,9 @@
   .label-fs {
     font-size: medium;
     padding-top: 8px !important;
+  }
+
+  .page li {
+    cursor: pointer;
   }
 }
