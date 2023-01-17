@@ -169,7 +169,7 @@ function Main() {
           {ImageSlider.map((v, i) => {
             return (
               <div key={i} className="d-flex justify-content-center slider">
-                <img className="object-cover" src={v} alt="#/" />
+                <img className="object-cover-main" src={v} alt="#/" />
               </div>
             );
           })}

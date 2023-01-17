@@ -54,14 +54,16 @@ function ProductsBrowse() {
                   key={i}
                 >
                   <div className="card border border-0 card-shadow">
-                    <img
-                      src="https://www.dowana.com.tw/www/upload/ec/product/26844/18048-WA2U_580_580.jpg"
-                      className="card-img-top bg-gray-200"
-                      alt="..."
-                    />
+                    <div>
+                      <img
+                        src="https://www.dowana.com.tw/www/upload/ec/product/26844/18048-WA2U_580_580.jpg"
+                        className="card-img-top bg-gray-200 object-cover"
+                        alt="..."
+                      />
+                    </div>
                     <div className="card-body text-left">
                       <h5 className="card-title text-info">NT $ 12,000</h5>
-                      <h6 className="card-title text-gray-300">
+                      <h6 className="card-title text-gray-300 text-truncate">
                         Anderson儲物櫃
                       </h6>
                       <p className="card-text text-danger">預購商品</p>

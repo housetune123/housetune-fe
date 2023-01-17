@@ -3,7 +3,7 @@ import Slider from 'react-slick';
 import 'slick-carousel/slick/slick.css';
 import 'slick-carousel/slick/slick-theme.css';
 import BreadCrumb from '../Layout/BreadCrumb';
-import './ProductsDetail.scss';
+import './Products.scss';
 import ProductsFeatured from '../Layout/ProductsFeatured';
 import ProductsBrowse from '../Layout/ProductsBrowse';
 import axios from 'axios';
@@ -29,12 +29,12 @@ function ProductsDetail() {
   // TODO: 不確定程式碼正不正確
   useEffect(() => {
     async function getProd() {
-      let res = await axios.get(`http://localhost:3001/products/${prodId}`);
+      let res = await axios.get(`http://localhost:3001/api/products/${prodId}`);
       // console.log(res.data);
       setProdcut(res.data);
       async function getCategory() {
         let res2 = await axios.get(
-          `http://localhost:3001/Category/${res.data[0].category_room}/${prodId}`
+          `http://localhost:3001/api/products/${res.data[0].category_room}/${prodId}`
         );
         // console.log(res2.data);
         setCategory(res2.data);
@@ -73,7 +73,7 @@ function ProductsDetail() {
 
   return (
     <>
-      <div className="product-detail">
+      <div className="product">
         <main className="bg-orange">
           {/* 商品資訊 */}
           <section className="container">
@@ -87,7 +87,7 @@ function ProductsDetail() {
                     /* console.log(images); */
                     return img.map((v2, i2) => {
                       return (
-                        <div key={v.prod_id}>
+                        <div key={v.prod_id} className="product-slider-img">
                           <img
                             className="object-cover"
                             alt=""

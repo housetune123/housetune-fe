@@ -51,16 +51,20 @@ function ProductsFeatured({ catagory }) {
                       className="text-decoration-none"
                     >
                       <div className="card shadow-sm">
-                        <img
-                          src={`${process.env.REACT_APP_IMAGE_URL}/images/products/${v.category_name}/${img[0]}`}
-                          className="card-img-top"
-                          alt="..."
-                        />
+                        <div className="product-img">
+                          <img
+                            src={`${process.env.REACT_APP_IMAGE_URL}/images/products/${v.category_name}/${img[0]}`}
+                            className="card-img-top object-cover"
+                            alt="..."
+                          />
+                        </div>
                         <div className="card-body text-left text-decoration-none">
                           <h5 className="card-title text-info">
                             NT $ {v.price}
                           </h5>
-                          <h6 className="card-title text-gray-300">{v.name}</h6>
+                          <h6 className="card-title text-gray-300 text-truncate">
+                            {v.name}
+                          </h6>
                           <p className="card-text text-danger">
                             僅剩 {v.amount} 件 !
                           </p>

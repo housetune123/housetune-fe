@@ -7,17 +7,124 @@ import { useEffect, useState } from 'react';
 function Products() {
   const { currentPage, categoryRoom } = useParams();
   const [products, setProducts] = useState([]);
+  const [productsDisplay, setProductsDisplay] = useState([]);
 
   let navigate = useNavigate();
   // 將 currentPage 轉換為10進為表示的整數
   const [page, setPage] = useState(parseInt(currentPage, 10) || 1);
   const [totalPage, setTotalPage] = useState(0);
 
+  // 條件設定資料抓取
+  // 供貨情況
+  const [stock, setStock] = useState([]);
+  const [categoryAmount, setCategoryAmount] = useState([]);
+  const [category, setCategory] = useState([]);
+
   // 儲存 select 狀態
   const [shape, setShape] = useState('');
   const [amount, setAmount] = useState('');
   // 抓取點擊購物車的資料
   const [cart, setCart] = useState([]);
+
+  // Filter 功能，供貨情況
+  const [stockFilter, setStockFilter] = useState([]);
+  const stockFilterOptions = ['InStock', 'OutStock'];
+  const getStockFilter = (products, stockFilter) => {
+    if (stockFilter.length === 0 || stockFilter.length === 2) return products;
+    if (stockFilter.includes('InStock')) {
+      return products.filter((v, i) => {
+        return v.amount > 0;
+      });
+    }
+    if (stockFilter.includes('OutStock')) {
+      return products.filter((v, i) => {
+        return v.amount === 0;
+      });
+    }
+  };
+  // Filter 功能，價格
+  const [minPriceFilter, setMinPriceFilter] = useState('');
+  const [maxPriceFilter, setMaxPriceFilter] = useState('');
+  const getPriceFilter = (products, minPriceFilter, maxPriceFilter) => {
+    if (minPriceFilter === '' && maxPriceFilter === '') return products;
+    if (minPriceFilter === '' && maxPriceFilter !== '') {
+      return products.filter((v, i) => {
+        return v.price < maxPriceFilter;
+      });
+    }
+    if (minPriceFilter !== '' && maxPriceFilter === '') {
+      return products.filter((v, i) => {
+        return v.price > minPriceFilter;
+      });
+    }
+    if (minPriceFilter !== '' && maxPriceFilter !== '') {
+      return products.filter((v, i) => {
+        return maxPriceFilter > v.price > minPriceFilter;
+      });
+    }
+  };
+
+  // Filter 功能，分類
+  const [categoryFilter, setCategoryFilter] = useState([]);
+  const categoryFilterOptions = [
+    'Sofa',
+    'Chair',
+    'Table',
+    'Storage',
+    'Bed',
+    'Lighting',
+    'Textile',
+    'Decor',
+    'Kitchenware',
+    'Bathroomset',
+  ];
+  const getCategoryFilter = (products, categoryFilter) => {
+    if (categoryFilter.length === 0 || categoryFilter.length === 10)
+      return products;
+
+    for (let i = 0; i < categoryFilterOptions.length; i++) {
+      if (categoryFilter.includes(categoryFilterOptions[i])) {
+        return products.filter(
+          (v) => v.categoryP_name === categoryFilterOptions[i]
+        );
+      }
+    }
+  };
+
+  useEffect(() => {
+    async function getProducts() {
+      if (categoryRoom) {
+        let res = await axios.get(
+          `http://localhost:3001/api/products/category/${categoryRoom}?page=${page}`
+        );
+        // console.log(res.data);
+        setProducts(res.data.data);
+        setTotalPage(res.data.pagination.totalPage);
+        setStock(res.data.stock);
+        setCategory(res.data.category);
+        setCategoryAmount(res.data.categoryAmount);
+      } else {
+        let res = await axios.get(
+          `http://localhost:3001/api/products?page=${page}`
+        );
+        // console.log(categoryRoom);
+        setProducts(res.data.data);
+        setTotalPage(res.data.pagination.totalPage);
+        setStock(res.data.stock);
+        setCategory(res.data.category);
+        setCategoryAmount(res.data.categoryAmount);
+      }
+    }
+    getProducts();
+  }, [categoryRoom, page]);
+
+  useEffect(() => {
+    let newProducts = getStockFilter(products, stockFilter);
+    newProducts = getCategoryFilter(newProducts, categoryFilter);
+    newProducts = getPriceFilter(newProducts, minPriceFilter, maxPriceFilter);
+
+    setProductsDisplay(newProducts);
+  }, [products, stockFilter, categoryFilter, minPriceFilter, maxPriceFilter]);
 
   function Number(min, max) {
     const array = [];
@@ -27,41 +134,48 @@ function Products() {
     return array;
   }
 
-  const categorySwitch = (categoryRoom) => {
+  const categoryRoomSwitch = (categoryRoom) => {
     switch (categoryRoom) {
       case '1':
-        return '客廳';
+        return '客廳 / Living room';
       case '2':
-        return '廚房';
+        return '廚房 / Kitchen';
       case '3':
-        return '臥室';
+        return '臥室 / Bedroom';
       case '4':
-        return '浴室';
+        return '浴室 / Bathroom';
       default:
         return '其他';
     }
   };
 
-  useEffect(() => {
-    async function getProducts() {
-      if (categoryRoom) {
-        let res = await axios.get(
-          `http://localhost:3001/products/Category/${categoryRoom}?page=${page}`
-        );
-        // console.log(res.data);
-        setProducts(res.data.data);
-        setTotalPage(res.data.pagination.totalPage);
-      } else {
-        let res = await axios.get(
-          `http://localhost:3001/products?page=${page}`
-        );
-        // console.log(categoryRoom);
-        setProducts(res.data.data);
-        setTotalPage(res.data.pagination.totalPage);
-      }
+  // 條件設定，分類，中英轉換
+  const categoryProductSwitch = (category) => {
+    switch (category) {
+      case 'Sofa':
+        return '沙發';
+      case 'Chair':
+        return '椅子';
+      case 'Table':
+        return '桌子';
+      case 'Storage':
+        return '儲櫃';
+      case 'Bed':
+        return '床';
+      case 'Lighting':
+        return '燈';
+      case 'Textile':
+        return '紡織';
+      case 'Decor':
+        return '裝飾';
+      case 'Kitchenware':
+        return '廚具';
+      case 'Bathroomset':
+        return '浴室';
+      default:
+        return '其他';
     }
-    getProducts();
-  }, [categoryRoom, page]);
+  };
 
   function getPageAll(totalPage) {
     const pages = [];
@@ -133,11 +247,13 @@ function Products() {
         <div className="container">
           <BreadCrumb />
           {categoryRoom ? (
-            <h3 className="mb-5 text-info-dark">
-              {categorySwitch(categoryRoom)}
+            <h3 className="mb-md-5 mb-2 mt-md-0 mt-2 text-info-dark">
+              {categoryRoomSwitch(categoryRoom)}
             </h3>
           ) : (
-            <h3 className="mb-5 text-info-dark">所有商品</h3>
+            <h3 className="mb-md-5 mb-2 mt-md-0 mt-2 text-info-dark">
+              所有商品
+            </h3>
           )}
           <div className="d-flex justify-content-between border-0">
             {/* 左側條件設定 */}
@@ -172,28 +288,56 @@ function Products() {
                         <input
                           className="form-check-input"
                           type="checkbox"
-                          value=""
-                          id="flexCheckDefault"
+                          value="InStock"
+                          id="InStock"
+                          onClick={(e) => {
+                            const value = e.target.value;
+                            if (stockFilter.includes(value)) {
+                              const newStockFilter = stockFilter.filter(
+                                (v, i) => {
+                                  return v !== value;
+                                }
+                              );
+                              setStockFilter(newStockFilter);
+                            } else {
+                              const newStockFilter = [...stockFilter, value];
+                              setStockFilter(newStockFilter);
+                            }
+                          }}
                         />
                         <label
                           className="form-check-label fs-sml text-info"
-                          htmlFor="flexCheckDefault"
+                          htmlFor="InStock"
                         >
-                          有庫存(180)
+                          有庫存({stock.inStock})
                         </label>
                       </div>
                       <div className="form-check">
                         <input
                           className="form-check-input"
                           type="checkbox"
-                          value=""
-                          id="flexCheckChecked"
+                          value="OutStock"
+                          id="OutStock"
+                          onClick={(e) => {
+                            const value = e.target.value;
+                            if (stockFilter.includes(value)) {
+                              const newStockFilter = stockFilter.filter(
+                                (v, i) => {
+                                  return v !== value;
+                                }
+                              );
+                              setStockFilter(newStockFilter);
+                            } else {
+                              const newStockFilter = [...stockFilter, value];
+                              setStockFilter(newStockFilter);
+                            }
+                          }}
                         />
                         <label
                           className="form-check-label fs-sml text-info"
-                          htmlFor="flexCheckChecked"
+                          htmlFor="OutStock"
                         >
-                          無庫存(3)
+                          無庫存({stock.outStock})
                         </label>
                       </div>
                     </div>
@@ -229,9 +373,12 @@ function Products() {
                           name="points"
                           min="0"
                           max="10"
-                          value=""
                           placeholder="From"
                           className="w-100 fs-sml"
+                          value={minPriceFilter}
+                          onChange={(e) => {
+                            setMinPriceFilter(e.target.value);
+                          }}
                         />
                       </div>
                       <div className="d-flex align-items-center">
@@ -241,9 +388,12 @@ function Products() {
                           name="points"
                           min="0"
                           max="10"
-                          value=""
                           placeholder="To"
                           className="w-100 fs-sml"
+                          value={maxPriceFilter}
+                          onChange={(e) => {
+                            setMaxPriceFilter(e.target.value);
+                          }}
                         />
                       </div>
                     </div>
@@ -272,146 +422,43 @@ function Products() {
                     aria-labelledby="panelsStayOpen-headingThree"
                   >
                     <div className="accordion-body bg-orange ps-0">
-                      <div className="form-check">
-                        <input
-                          className="form-check-input"
-                          type="checkbox"
-                          value=""
-                          id="flexCheckDefault"
-                        />
-                        <label
-                          className="form-check-label text-info fs-sml"
-                          htmlFor="flexCheckDefault"
-                        >
-                          沙發(10)
-                        </label>
-                      </div>
-                      <div className="form-check">
-                        <input
-                          className="form-check-input"
-                          type="checkbox"
-                          value=""
-                          id="flexCheckDefault"
-                        />
-                        <label
-                          className="form-check-label text-info fs-sml"
-                          htmlFor="flexCheckDefault"
-                        >
-                          椅子(3)
-                        </label>
-                      </div>
-                      <div className="form-check">
-                        <input
-                          className="form-check-input"
-                          type="checkbox"
-                          value=""
-                          id="flexCheckDefault"
-                        />
-                        <label
-                          className="form-check-label text-info fs-sml"
-                          htmlFor="flexCheckDefault"
-                        >
-                          桌子(15)
-                        </label>
-                      </div>
-                      <div className="form-check">
-                        <input
-                          className="form-check-input"
-                          type="checkbox"
-                          value=""
-                          id="flexCheckDefault"
-                        />
-                        <label
-                          className="form-check-label text-info fs-sml"
-                          htmlFor="flexCheckDefault"
-                        >
-                          櫥櫃(8)
-                        </label>
-                      </div>
-                      <div className="form-check">
-                        <input
-                          className="form-check-input"
-                          type="checkbox"
-                          value=""
-                          id="flexCheckDefault"
-                        />
-                        <label
-                          className="form-check-label text-info fs-sml"
-                          htmlFor="flexCheckDefault"
-                        >
-                          床 (11)
-                        </label>
-                      </div>
-                      <div className="form-check">
-                        <input
-                          className="form-check-input"
-                          type="checkbox"
-                          value=""
-                          id="flexCheckDefault"
-                        />
-                        <label
-                          className="form-check-label text-info fs-sml"
-                          htmlFor="flexCheckDefault"
-                        >
-                          燈(2)
-                        </label>
-                      </div>
-                      <div className="form-check">
-                        <input
-                          className="form-check-input"
-                          type="checkbox"
-                          value=""
-                          id="flexCheckDefault"
-                        />
-                        <label
-                          className="form-check-label text-info fs-sml"
-                          htmlFor="flexCheckDefault"
-                        >
-                          紡織(6)
-                        </label>
-                      </div>
-                      <div className="form-check">
-                        <input
-                          className="form-check-input"
-                          type="checkbox"
-                          value=""
-                          id="flexCheckDefault"
-                        />
-                        <label
-                          className="form-check-label text-info fs-sml"
-                          htmlFor="flexCheckDefault"
-                        >
-                          裝飾(12)
-                        </label>
-                      </div>
-                      <div className="form-check">
-                        <input
-                          className="form-check-input"
-                          type="checkbox"
-                          value=""
-                          id="flexCheckDefault"
-                        />
-                        <label
-                          className="form-check-label text-info fs-sml"
-                          htmlFor="flexCheckDefault"
-                        >
-                          廚具(20)
-                        </label>
-                      </div>
-                      <div className="form-check">
-                        <input
-                          className="form-check-input"
-                          type="checkbox"
-                          value=""
-                          id="flexCheckDefault"
-                        />
-                        <label
-                          className="form-check-label text-info fs-sml"
-                          htmlFor="flexCheckDefault"
-                        >
-                          浴室(18)
-                        </label>
-                      </div>
+                      {category.map((v, i) => {
+                        return (
+                          categoryAmount[i]['total'] > 0 && (
+                            <div className="form-check" key={v.id}>
+                              <input
+                                className="form-check-input"
+                                type="checkbox"
+                                value={v.name}
+                                id={v.name}
+                                onClick={(e) => {
+                                  const value = e.target.value;
+                                  if (categoryFilter.includes(value)) {
+                                    const newCategoryFilter =
+                                      categoryFilter.filter((v2, i) => {
+                                        return v2 !== value;
+                                      });
+                                    setCategoryFilter(newCategoryFilter);
+                                  } else {
+                                    const newCategoryFilter = [
+                                      ...categoryFilter,
+                                      value,
+                                    ];
+                                    setCategoryFilter(newCategoryFilter);
+                                  }
+                                }}
+                              />
+                              <label
+                                className="form-check-label text-info fs-sml"
+                                htmlFor={v.name}
+                              >
+                                {categoryProductSwitch(v.name)}(
+                                {categoryAmount[i]['total']})
+                              </label>
+                            </div>
+                          )
+                        );
+                      })}
                     </div>
                   </div>
                 </div>
@@ -421,7 +468,7 @@ function Products() {
             {/* 右側排序、商品列表 */}
             <div className="col-12 col-lg-9 ">
               {/* 條件設定、排序依據 */}
-              <div className="d-flex">
+              <div className="d-flex mb-1 mb-md-0">
                 {/* 條件設定 */}
                 <div className="d-flex align-items-center d-md-none">
                   <div className="pe-3">
@@ -454,6 +501,7 @@ function Products() {
                   <div className="pe-3 d-none d-md-block">
                     <h6 className="text-info-dark ps-0 col">排序依據</h6>
                   </div>
+                  {/* TODO: 排序 */}
                   <div className="d-none d-md-block">
                     <select
                       className="form-select-xl mb-2 text-gray-300 fs-sml"
@@ -473,7 +521,7 @@ function Products() {
               </div>
               {/* 商品列表 */}
               <div className="row">
-                {products.map((v, i) => {
+                {productsDisplay.map((v, i) => {
                   const img = v.img.split(',');
                   return (
                     <div
@@ -481,13 +529,15 @@ function Products() {
                       key={i}
                     >
                       <div className="card border border-0 card-shadow position-relative">
-                        <a href={`/products/${v.prod_id}`}>
-                          <img
-                            src={`${process.env.REACT_APP_IMAGE_URL}/images/products/${v.category_name}/${img[0]}`}
-                            className="card-img-top bg-gray-200"
-                            alt="..."
-                          />
-                        </a>
+                        <div className="product-img">
+                          <a href={`/products/${v.prod_id}`}>
+                            <img
+                              src={`${process.env.REACT_APP_IMAGE_URL}/images/products/${v.categoryR_name}/${img[0]}`}
+                              className="card-img-top bg-gray-200 object-cover"
+                              alt="..."
+                            />
+                          </a>
+                        </div>
                         <div className="card-body text-left">
                           <div className="d-flex justify-content-between">
                             <h5 className="card-title text-info">
@@ -512,6 +562,8 @@ function Products() {
                             data-bs-target="#exampleModal"
                             onClick={() => {
                               setCart(v);
+                              setShape('');
+                              setAmount('');
                             }}
                           >
                             加入購物車
@@ -524,6 +576,8 @@ function Products() {
                             data-bs-target="#exampleModal"
                             onClick={() => {
                               setCart(v);
+                              setShape('');
+                              setAmount('');
                             }}
                           >
                             加入購物車
@@ -685,28 +739,56 @@ function Products() {
                           <input
                             className="form-check-input"
                             type="checkbox"
-                            value=""
-                            id="flexCheckDefault"
+                            value="InStock"
+                            id="ModalInStock"
+                            onClick={(e) => {
+                              const value = e.target.value;
+                              if (stockFilter.includes(value)) {
+                                const newStockFilter = stockFilter.filter(
+                                  (v, i) => {
+                                    return v !== value;
+                                  }
+                                );
+                                setStockFilter(newStockFilter);
+                              } else {
+                                const newStockFilter = [...stockFilter, value];
+                                setStockFilter(newStockFilter);
+                              }
+                            }}
                           />
                           <label
                             className="form-check-label fs-sml text-info"
-                            htmlFor="flexCheckDefault"
+                            htmlFor="ModalInStock"
                           >
-                            有庫存(180)
+                            有庫存({stock.inStock})
                           </label>
                         </div>
                         <div className="form-check">
                           <input
                             className="form-check-input"
                             type="checkbox"
-                            value=""
-                            id="flexCheckChecked"
+                            value="OutStock"
+                            id="ModalOutStock"
+                            onClick={(e) => {
+                              const value = e.target.value;
+                              if (stockFilter.includes(value)) {
+                                const newStockFilter = stockFilter.filter(
+                                  (v, i) => {
+                                    return v !== value;
+                                  }
+                                );
+                                setStockFilter(newStockFilter);
+                              } else {
+                                const newStockFilter = [...stockFilter, value];
+                                setStockFilter(newStockFilter);
+                              }
+                            }}
                           />
                           <label
                             className="form-check-label fs-sml text-info"
-                            htmlFor="flexCheckChecked"
+                            htmlFor="ModalOutStock"
                           >
-                            無庫存(3)
+                            無庫存({stock.outStock})
                           </label>
                         </div>
                       </div>
@@ -744,9 +826,12 @@ function Products() {
                             name="points"
                             min="0"
                             max="10"
-                            value=""
                             placeholder="From"
                             className="w-100 fs-sml"
+                            value={minPriceFilter}
+                            onChange={(e) => {
+                              setMinPriceFilter(e.target.value);
+                            }}
                           />
                         </div>
                         <div className="d-flex align-items-center">
@@ -758,9 +843,12 @@ function Products() {
                             name="points"
                             min="0"
                             max="10"
-                            value=""
                             placeholder="To"
                             className="w-100 fs-sml"
+                            value={maxPriceFilter}
+                            onChange={(e) => {
+                              setMaxPriceFilter(e.target.value);
+                            }}
                           />
                         </div>
                       </div>
@@ -789,146 +877,43 @@ function Products() {
                       aria-labelledby="panelsStayOpen-headingThree"
                     >
                       <div className="accordion-body bg-white ps-0">
-                        <div className="form-check">
-                          <input
-                            className="form-check-input"
-                            type="checkbox"
-                            value=""
-                            id="flexCheckDefault"
-                          />
-                          <label
-                            className="form-check-label text-info fs-sml"
-                            htmlFor="flexCheckDefault"
-                          >
-                            沙發(10)
-                          </label>
-                        </div>
-                        <div className="form-check">
-                          <input
-                            className="form-check-input"
-                            type="checkbox"
-                            value=""
-                            id="flexCheckDefault"
-                          />
-                          <label
-                            className="form-check-label text-info fs-sml"
-                            htmlFor="flexCheckDefault"
-                          >
-                            椅子(3)
-                          </label>
-                        </div>
-                        <div className="form-check">
-                          <input
-                            className="form-check-input"
-                            type="checkbox"
-                            value=""
-                            id="flexCheckDefault"
-                          />
-                          <label
-                            className="form-check-label text-info fs-sml"
-                            htmlFor="flexCheckDefault"
-                          >
-                            桌子(15)
-                          </label>
-                        </div>
-                        <div className="form-check">
-                          <input
-                            className="form-check-input"
-                            type="checkbox"
-                            value=""
-                            id="flexCheckDefault"
-                          />
-                          <label
-                            className="form-check-label text-info fs-sml"
-                            htmlFor="flexCheckDefault"
-                          >
-                            櫥櫃(8)
-                          </label>
-                        </div>
-                        <div className="form-check">
-                          <input
-                            className="form-check-input"
-                            type="checkbox"
-                            value=""
-                            id="flexCheckDefault"
-                          />
-                          <label
-                            className="form-check-label text-info fs-sml"
-                            htmlFor="flexCheckDefault"
-                          >
-                            床 (11)
-                          </label>
-                        </div>
-                        <div className="form-check">
-                          <input
-                            className="form-check-input"
-                            type="checkbox"
-                            value=""
-                            id="flexCheckDefault"
-                          />
-                          <label
-                            className="form-check-label text-info fs-sml"
-                            htmlFor="flexCheckDefault"
-                          >
-                            燈(2)
-                          </label>
-                        </div>
-                        <div className="form-check">
-                          <input
-                            className="form-check-input"
-                            type="checkbox"
-                            value=""
-                            id="flexCheckDefault"
-                          />
-                          <label
-                            className="form-check-label text-info fs-sml"
-                            htmlFor="flexCheckDefault"
-                          >
-                            紡織(6)
-                          </label>
-                        </div>
-                        <div className="form-check">
-                          <input
-                            className="form-check-input"
-                            type="checkbox"
-                            value=""
-                            id="flexCheckDefault"
-                          />
-                          <label
-                            className="form-check-label text-info fs-sml"
-                            htmlFor="flexCheckDefault"
-                          >
-                            裝飾(12)
-                          </label>
-                        </div>
-                        <div className="form-check">
-                          <input
-                            className="form-check-input"
-                            type="checkbox"
-                            value=""
-                            id="flexCheckDefault"
-                          />
-                          <label
-                            className="form-check-label text-info fs-sml"
-                            htmlFor="flexCheckDefault"
-                          >
-                            廚具(20)
-                          </label>
-                        </div>
-                        <div className="form-check">
-                          <input
-                            className="form-check-input"
-                            type="checkbox"
-                            value=""
-                            id="flexCheckDefault"
-                          />
-                          <label
-                            className="form-check-label text-info fs-sml"
-                            htmlFor="flexCheckDefault"
-                          >
-                            浴室(18)
-                          </label>
-                        </div>
+                        {category.map((v, i) => {
+                          return (
+                            categoryAmount[i]['total'] > 0 && (
+                              <div className="form-check" key={v.id}>
+                                <input
+                                  className="form-check-input"
+                                  type="checkbox"
+                                  value={v.name}
+                                  id={`Modal${v.name}`}
+                                  onClick={(e) => {
+                                    const value = e.target.value;
+                                    if (categoryFilter.includes(value)) {
+                                      const newCategoryFilter =
+                                        categoryFilter.filter((v, i) => {
+                                          return v !== value;
+                                        });
+                                      setCategoryFilter(newCategoryFilter);
+                                    } else {
+                                      const newCategoryFilter = [
+                                        ...categoryFilter,
+                                        value,
+                                      ];
+                                      setCategoryFilter(newCategoryFilter);
+                                    }
+                                  }}
+                                />
+                                <label
+                                  className="form-check-label text-info fs-sml"
+                                  htmlFor={`Modal${v.name}`}
+                                >
+                                  {categoryProductSwitch(v.name)}(
+                                  {categoryAmount[i]['total']})
+                                </label>
+                              </div>
+                            )
+                          );
+                        })}
                       </div>
                     </div>
                   </div>
