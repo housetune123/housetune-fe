@@ -12,9 +12,7 @@ import InspDetail1 from './components/Inspiration/Insp_detail1';
 import AddUsedProducts from './components/UsedProducts/AddUsedProducts';
 import UsedProductList from './components/UsedProducts/UsedProductList';
 // home-page branch
-import PersonalStore from './components/Products/PersonalStore';
 import Main from './components/Main';
-import Products from './components/Products/Products';
 import ProductDetail from './components/Products/ProductsDetail';
 import UsedProductDetail from './components/Products/UsedProductsDetail';
 // user-page branch
@@ -36,34 +34,31 @@ function App() {
       <Header />
       <Routes>
         <Route path="/" element={<Main />} />
-        <Route path="/products" element={<Products />}></Route>
+        {/* user */}
+        <Route path="login" element={<Login />} />
+        <Route path="forgot" element={<ForgotPage />} />
+        <Route path="register" element={<Register />} />
+        <Route path="user" element={<UserPage />} />
+        {/* procduct */}
         <Route path="/products/:prodId" element={<ProductDetail />} />
         <Route
           path="/used/products/detail"
           element={<UsedProductDetail />}
         ></Route>
-
+        {/* usedproduct */}
+        <Route path="usedproduct" element={<UsedProductList />} />
+        <Route path="usedproduct/add" element={<AddUsedProducts />} />
+        {/* ckeckout */}
+        <Route path="cart" element={<Cart />} />
+        <Route path="checkout/information" element={<Information />} />
+        <Route path="checkout/shipping" element={<Shipping />} />
+        <Route path="checkout/payment" element={<Payment />} />
+        {/* inspiration */}
         <Route exact path="inspiration">
           <Route index={true} element={<Inspiration />} />
           <Route path="detail1" element={<InspDetail1 />} />
         </Route>
-
-        <Route path="usedproduct" element={<UsedProductList />} />
-        <Route path="usedstore" element={<PersonalStore />}></Route>
-        <Route path="usedproduct/add" element={<AddUsedProducts />} />
-
-        <Route path="login" element={<Login />} />
-        <Route path="register" element={<Register />} />
-        <Route path="forgot" element={<ForgotPage />} />
-        <Route path="user" element={<UserPage />} />
-        <Route path="cart" element={<Cart />} />
-
-        <Route path="checkout">
-          <Route path="information" element={<Information />} />
-          <Route path="shipping" element={<Shipping />} />
-          <Route path="payment" element={<Payment />} />
-        </Route>
-
+        {/* notfound */}
         <Route path="*" element={<NotFound />} />
       </Routes>
       <Footer />
