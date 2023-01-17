@@ -835,16 +835,16 @@ function Products() {
                       <option className="text-gray-400" value="" disabled>
                         請選擇款式
                       </option>
-                      <option value="藍色 Blue" className="text-gray-400">
+                      <option value="藍色Blue" className="text-gray-400">
                         藍色 Blue
                       </option>
-                      <option value="深灰色 Gray" className="text-gray-400">
+                      <option value="深灰色Gray" className="text-gray-400">
                         深灰色 Gray
                       </option>
-                      <option value="綠色 Green" className="text-gray-400">
+                      <option value="綠色Green" className="text-gray-400">
                         綠色 Green
                       </option>
-                      <option value="白色 White" className="text-gray-400">
+                      <option value="白色White" className="text-gray-400">
                         白色 White
                       </option>
                     </select>
@@ -905,7 +905,11 @@ function Products() {
                             quantity: parseInt(amount, 10),
                           };
                           console.log(item);
-                          addItem({ ...item, id: item.prod_id });
+                          addItem({
+                            ...item,
+                            id: item.prod_id + `-${shape}`,
+                            shape: shape,
+                          });
                         }}
                       >
                         加入購物車

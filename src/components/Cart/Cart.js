@@ -2,7 +2,7 @@
 import './Cart.scss';
 import { useState, useEffect } from 'react';
 import { useCart } from '../../utils/useCart';
-// import axios from 'axios';
+import axios from 'axios';
 
 function Cart(props) {
   // cart init
@@ -27,17 +27,23 @@ function Cart(props) {
 
   useEffect(() => {
     // 查看購物車
-    console.log(cart);
-  });
+    console.log('購物車內容', items);
+  }, []);
 
   return (
     <div className="bg-orange py-5 cart">
       <div className="container bg-primary card py-5">
         <h4 className="px-2 fw-bold text-info">您的購物車清單</h4>
-        {/* {items.map((val, i) => {
-          return ( */}
+
         {items.map((val, i) => {
           const img = val.img.split(',');
+
+          if (val.quantity > val.amount) {
+            val.quantity = val.amount;
+            return val.quantity, val.itemTotal;
+          }
+          val.itemTotal = val.quantity * val.price;
+
           return (
             <div
               key={val.id}
@@ -59,8 +65,7 @@ function Cart(props) {
                   {/* 款式 */}
                   <p>
                     <strong> 款式 </strong>
-                    橡木原色(Natural Oak)
-                    {/* {product.style} */}
+                    {val.shape}
                   </p>
                   {/* 價格 */}
                   <p>
@@ -109,8 +114,6 @@ function Cart(props) {
           );
         })}
 
-        {/* ); */}
-        {/* })} */}
         <div className="row justify-content-center order-list-lower mt-4 px-2">
           <div className="col-12 order-2 order-sm-1 col-sm-6 d-inline-block ">
             {/* coupon */}
@@ -130,10 +133,6 @@ function Cart(props) {
               <div className="d-flex justify-content-between">
                 <strong className="">總金額</strong>
                 <span>{cart.isEmpty ? '購物車為空' : cart.cartTotal}</span>
-              </div>
-              <div className="d-flex justify-content-between">
-                <strong>折扣碼折抵</strong>
-                <span>-1,000</span>
               </div>
               <div className=" d-flex justify-content-between">
                 <strong className="">運費</strong>
