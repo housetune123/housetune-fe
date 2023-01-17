@@ -3,7 +3,6 @@ import { Link, useLocation } from 'react-router-dom';
 import { HeaderItems } from './MenuItems';
 
 import './Layout.scss';
-import logo from '../../images/logo.png';
 
 function Header() {
   const location = useLocation();
@@ -146,11 +145,13 @@ function Header() {
   }
 
   // 以下頁面不要顯示 HEADER
-  if (
-    location.pathname === '/checkout/information' &&
-    '/checkout/shipping' &&
-    '/checkout/payment'
-  ) {
+  if (location.pathname === '/checkout/information') {
+    return <></>;
+  }
+  if (location.pathname === '/checkout/shipping') {
+    return <></>;
+  }
+  if (location.pathname === '/checkout/payment') {
     return <></>;
   }
 
@@ -171,7 +172,11 @@ function Header() {
             </div>
 
             <Link to="/">
-              <img src={logo} alt="" className="logo-image" />
+              <img
+                src={`${process.env.REACT_APP_IMAGE_URL}/images/logo.png`}
+                alt=""
+                className="logo-image"
+              />
             </Link>
 
             <form

@@ -57,11 +57,13 @@ function Footer() {
   }
 
   // 以下頁面不要顯示 FOOTER
-  if (
-    location.pathname === '/checkout/information' &&
-    '/checkout/shipping' &&
-    '/checkout/payment'
-  ) {
+  if (location.pathname === '/checkout/information') {
+    return <></>;
+  }
+  if (location.pathname === '/checkout/shipping') {
+    return <></>;
+  }
+  if (location.pathname === '/checkout/payment') {
     return <></>;
   }
 
