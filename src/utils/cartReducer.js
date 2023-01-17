@@ -1,3 +1,6 @@
+// 設定 useCart 裡面的 function
+
+// 初始化資料
 export const initialState = {
   items: [],
   isEmpty: true,
@@ -19,18 +22,24 @@ export const initialState = {
  * @param  {} state
  * @param  {} action
  */
+
+// addItem 傳入狀態及動作 => 新增一筆至購物車
+// action 透過 id 傳送 payload 給 item
 const addItem = (state, action) => {
+  // 先查看是相同的 id
   const existingItemIndex = state.items.findIndex(
     (item) => item.id === action.payload.id
   );
 
+  // 傳入的數量
   const payloadQuantity = action.payload.quantity;
 
-  // if exist item, add one
+  // 若已存在 數量+1
   if (existingItemIndex > -1) {
     const item = state.items[existingItemIndex];
     const id = item.id;
 
+    // 若沒有數量 +1 ， 否則加上 payload 裡的數量
     const quantity = payloadQuantity
       ? item.quantity + payloadQuantity
       : item.quantity + 1;
@@ -45,6 +54,7 @@ const addItem = (state, action) => {
   return [...state.items, action.payload];
 };
 
+// 移除
 const removeItem = (state, action) => {
   return state.items.filter((item) => item.id !== action.payload.id);
 };
