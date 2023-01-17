@@ -6,12 +6,15 @@ import NotFound from './components/NotFound';
 import Information from './components/Checkout/Information';
 import Shipping from './components/Checkout/Shipping';
 import Payment from './components/Checkout/Payment';
+import Thankyou from './components/Checkout/Thankyou';
 // inspiration branch
 import Inspiration from './components/Inspiration/Inspiration';
 import InspDetail1 from './components/Inspiration/Insp_detail1';
 import AddUsedProducts from './components/UsedProducts/AddUsedProducts';
 import UsedProductList from './components/UsedProducts/UsedProductList';
+
 // home-page branch
+import PersonalStore from './components/Products/PersonalStore';
 import Main from './components/Main';
 import ProductDetail from './components/Products/ProductsDetail';
 import UsedProductDetail from './components/Products/UsedProductsDetail';
@@ -46,6 +49,7 @@ function App() {
           element={<UsedProductDetail />}
         ></Route>
         {/* usedproduct */}
+        <Route path="usedstore" element={<PersonalStore />} />
         <Route path="usedproduct" element={<UsedProductList />} />
         <Route path="usedproduct/add" element={<AddUsedProducts />} />
         {/* ckeckout */}
@@ -53,6 +57,7 @@ function App() {
         <Route path="checkout/information" element={<Information />} />
         <Route path="checkout/shipping" element={<Shipping />} />
         <Route path="checkout/payment" element={<Payment />} />
+        <Route path="checkout/thankyou" element={<Thankyou />} />
         {/* inspiration */}
         <Route exact path="inspiration">
           <Route index={true} element={<Inspiration />} />

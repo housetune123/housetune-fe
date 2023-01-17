@@ -150,7 +150,7 @@ function Payment(props) {
                         : 'pay-content bg-primary text-center'
                     }
                   >
-                    <p className="fs-8">
+                    <p className="fs-7">
                       按一下「立即付款」後，系統會將您重新導向至 信用卡
                       <br />
                       支付，以安全地完成購買程序。
@@ -190,7 +190,7 @@ function Payment(props) {
                         : 'pay-content bg-primary text-center'
                     }
                   >
-                    <p className="fs-8">
+                    <p className="fs-7">
                       按一下「立即付款」後，系統會將您重新導向至 LINE
                       <br />
                       Pay，以安全地完成購買程序。
@@ -238,7 +238,7 @@ function Payment(props) {
                         : 'pay-content bg-primary text-center'
                     }
                   >
-                    <p className="fs-8">
+                    <p className="fs-7">
                       按一下「立即付款」後，系統會將您重新導向至 綠界科
                       <br />
                       技，以安全地完成購買程序。
@@ -270,7 +270,7 @@ function Payment(props) {
                         : 'pay-content bg-primary text-center'
                     }
                   >
-                    <p className="fs-8">
+                    <p className="fs-7">
                       銀行匯款資訊：
                       <br />
                       <br />
@@ -351,7 +351,7 @@ function Payment(props) {
                     <span className="px-2 fs-7">重新填寫運送方式</span>
                   </Link>
                 </div>
-                <Link to={'/'}>
+                <Link to={'/checkout/thankyou'}>
                   <button className="btn btn-primary-300">立即付款</button>
                 </Link>
               </div>
@@ -360,7 +360,7 @@ function Payment(props) {
         </section>
 
         {/* 右側購物清單 */}
-        <section className="col-12 col-lg-6 bg-orange py-5 d-none d-lg-block">
+        <section className="col-12 col-lg-6 bg-primary py-5 d-none d-lg-block">
           <CartList />
         </section>
       </main>

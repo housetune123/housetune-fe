@@ -116,7 +116,7 @@ function Shipping(props) {
         </section>
 
         {/* 右側購物清單 */}
-        <section className="col-12 col-lg-6 bg-orange py-5 d-none d-lg-block">
+        <section className="col-12 col-lg-6 bg-primary py-5 d-none d-lg-block">
           <CartList />
         </section>
       </main>

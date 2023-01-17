@@ -154,6 +154,9 @@ function Header() {
   if (location.pathname === '/checkout/payment') {
     return <></>;
   }
+  if (location.pathname === '/checkout/thankyou') {
+    return <></>;
+  }
 
   return (
     <>

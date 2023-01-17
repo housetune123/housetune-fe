@@ -66,6 +66,12 @@ function Footer() {
   if (location.pathname === '/checkout/payment') {
     return <></>;
   }
+  if (location.pathname === '/checkout/thankyou') {
+    return <></>;
+  }
+  if (location.pathname === '/usedproduct/add') {
+    return <></>;
+  }
 
   return (
     <>

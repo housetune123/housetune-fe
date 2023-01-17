@@ -2,7 +2,7 @@
 .checkout-list {
   max-width: 90%;
   margin: auto;
-  
+
   .procduct-image {
     width: 100px;
     height: 100px;
@@ -124,6 +124,19 @@
       max-height: 600px;
       transition: 0.5s;
     }
+  }
+}
 
+// 訂單明細
+.checkout-thankyou {
+  margin: auto;
+  max-width: 1000px;
+  .logo-image {
+    max-height: 75px;
+    max-width: 198px;
+  }
+  .thankyou-wrapper {
+    max-width: 90%;
+    margin: auto;
   }
 }
