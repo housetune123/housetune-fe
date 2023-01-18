@@ -5,7 +5,7 @@ import axios from 'axios';
 import { useEffect, useState } from 'react';
 
 function Products() {
-  const { currentPage, categoryRoom } = useParams();
+  const { currentPage, categoryRoom, currentSort } = useParams();
   const [products, setProducts] = useState([]);
   const [productsDisplay, setProductsDisplay] = useState([]);
 
@@ -25,6 +25,9 @@ function Products() {
   const [amount, setAmount] = useState('');
   // 抓取點擊購物車的資料
   const [cart, setCart] = useState([]);
+
+  // 排序依據
+  const [sort, setSort] = useState(currentSort);
 
   // Filter 功能，供貨情況
   const [stockFilter, setStockFilter] = useState([]);
@@ -506,15 +509,20 @@ function Products() {
                     <select
                       className="form-select-xl mb-2 text-gray-300 fs-sml"
                       aria-label="Default select example"
+                      value={sort}
+                      onChange={(e) => {
+                        setSort(e.target.value);
+                      }}
                     >
-                      <option disabled>精選</option>
-                      <option value="1">暢銷度</option>
-                      <option value="2">依字母順序Ａ到Ｚ</option>
-                      <option value="3">依字母順序Ｚ到Ａ</option>
-                      <option value="4">價格（從低到高）</option>
-                      <option value="5">價格（從高到低）</option>
-                      <option value="6">日期（從舊到新）</option>
-                      <option value="7">日期（從新到舊）</option>
+                      <option disabled value="">
+                        精選
+                      </option>
+                      <option value="1">依字母順序Ａ到Ｚ</option>
+                      <option value="2">依字母順序Ｚ到Ａ</option>
+                      <option value="3">價格（從低到高）</option>
+                      <option value="4">價格（從高到低）</option>
+                      <option value="5">日期（從舊到新）</option>
+                      <option value="6">日期（從新到舊）</option>
                     </select>
                   </div>
                 </div>
