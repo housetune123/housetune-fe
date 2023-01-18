@@ -1,12 +1,32 @@
 import React, { useEffect, useState } from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import { HeaderItems } from './MenuItems';
+import axios from 'axios';
 
 import './Layout.scss';
 import logo from '../../images/logo.png';
 
 function Header() {
   const location = useLocation();
+  //登入登出相關
+  const [userinfo, setUserInfo] = useState('');
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
+  axios.defaults.withCredentials = true;
+  useEffect(() => {
+    axios.get('http://localhost:3001/api/auth/member').then((res) => {
+      setIsLoggedIn(res.data.loggedIn);
+      if (res.data.userInfo) {
+        setUserInfo(res.data.userInfo.name);
+      }
+      // console.log(res.data.userInfo);
+    });
+  }, []);
+  async function logout() {
+    let response = await axios.post('http://localhost:3001/api/auth/logout');
+    alert(response.data.msg);
+    setIsLoggedIn(false);
+    setUserInfo('');
+  }
 
   // -----dropdown-----
   const [dropdown, setDropdown] = useState(false);
@@ -54,15 +74,30 @@ function Header() {
     return (
       <>
         <div className="d-flex justify-content-between align-items-center p-4">
-          <div>
+          <div className={isLoggedIn ? 'd-none' : ''}>
             <i className="fa-solid fa-user text-primary-300 fs-5 mx-2" />
             <Link
-              to="/"
+              to="/login"
               className="link-primary-300 text-decoration-none fw-bolder fs-7"
             >
               登入
             </Link>
           </div>
+          <Link
+            to="/user"
+            className={'m-0 link-primary-300 ' + (isLoggedIn ? '' : 'd-none')}
+          >
+            {userinfo}你好
+          </Link>
+          <p
+            onClick={logout}
+            className={
+              'm-0 text-decoration-underline text-primary-300 ' +
+              (isLoggedIn ? '' : 'd-none')
+            }
+          >
+            登出
+          </p>
           <div className="mx-4" onClick={showSidebar}>
             <i className="fa-solid fa-xmark text-primary-200 fs-7" />
           </div>
@@ -192,7 +227,12 @@ function Header() {
             </form>
 
             <div className="d-flex align-items-baseline">
-              <div className="d-none d-lg-flex align-items-center px-4">
+              <div
+                className={
+                  (isLoggedIn ? 'd-lg-none ' : '') +
+                  'd-none d-lg-flex align-items-center px-4'
+                }
+              >
                 <i className="fa-solid fa-user text-primary-300 fs-4 mx-2" />
                 <Link
                   to="/login"
@@ -201,7 +241,26 @@ function Header() {
                   登入
                 </Link>
               </div>
-              <div className="px-2">
+              <Link
+                to="/user"
+                className={
+                  'link-primary-300 text-decoration-none ' +
+                  (isLoggedIn ? 'd-lg-block d-none' : 'd-none')
+                }
+              >
+                {userinfo} 您好
+              </Link>
+              <p
+                style={{ cursor: 'pointer' }}
+                className={
+                  'text-decoration-underline mx-2 text-primary-300 ' +
+                  (isLoggedIn ? 'd-lg-block d-none' : 'd-none')
+                }
+                onClick={logout}
+              >
+                登出
+              </p>
+              <div className={'px-2' + (isLoggedIn ? '' : 'd-none')}>
                 <Link to="/cart">
                   <i className="fa-solid fa-cart-shopping text-primary-300 fs-4" />
                 </Link>

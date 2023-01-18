@@ -101,6 +101,7 @@ function Register() {
   //   address1: '',
   //   address2: '',
   // });
+  axios.defaults.withCredentials = true;
 
   function handleChange(e) {
     setMemeber({ ...member, [e.target.name]: e.target.value });
@@ -117,15 +118,16 @@ function Register() {
       alert('密碼輸入不一致，請修正');
       return;
     }
-    let response = await axios.post(
-      'http://localhost:3001/api/auth/register',
-      member
-    );
-    if (response.data.errors) {
-      alert(response.data.errors[0]['msg']);
-    } else {
+    try {
+      let response = await axios.post(
+        'http://localhost:3001/api/auth/register',
+        member
+      );
       alert(response.data);
       document.location.href = 'http://localhost:3000/login';
+    } catch (e) {
+      // console.log(e.response);
+      alert(e.response.data.errors[0]['msg']);
     }
   }
   const [city, setCity] = useState('');
