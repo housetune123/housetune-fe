@@ -1,31 +1,23 @@
 import React, { useEffect, useState } from 'react';
-import { Link, useLocation } from 'react-router-dom';
+import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { HeaderItems } from './MenuItems';
 import axios from 'axios';
+import { useAuth } from '../Context/Authcontext';
 
 import './Layout.scss';
 import logo from '../../images/logo.png';
 
 function Header() {
+  const navigate = useNavigate();
   const location = useLocation();
   //登入登出相關
-  const [userinfo, setUserInfo] = useState('');
-  const [isLoggedIn, setIsLoggedIn] = useState(false);
-  axios.defaults.withCredentials = true;
-  useEffect(() => {
-    axios.get('http://localhost:3001/api/auth/member').then((res) => {
-      setIsLoggedIn(res.data.loggedIn);
-      if (res.data.userInfo) {
-        setUserInfo(res.data.userInfo.name);
-      }
-      // console.log(res.data.userInfo);
-    });
-  }, []);
+  const { userinfo, setUserInfo, isLoggedIn, setIsLoggedIn } = useAuth();
   async function logout() {
     let response = await axios.post('http://localhost:3001/api/auth/logout');
     alert(response.data.msg);
     setIsLoggedIn(false);
     setUserInfo('');
+    navigate('/');
   }
 
   // -----dropdown-----
@@ -87,7 +79,7 @@ function Header() {
             to="/user"
             className={'m-0 link-primary-300 ' + (isLoggedIn ? '' : 'd-none')}
           >
-            {userinfo}你好
+            {userinfo.name}您好
           </Link>
           <p
             onClick={logout}
@@ -248,7 +240,7 @@ function Header() {
                   (isLoggedIn ? 'd-lg-block d-none' : 'd-none')
                 }
               >
-                {userinfo} 您好
+                {userinfo.name} 您好
               </Link>
               <p
                 style={{ cursor: 'pointer' }}

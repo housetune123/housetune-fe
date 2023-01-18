@@ -1,10 +1,13 @@
 import React from 'react';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import './Login.scss';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import axios from 'axios';
+import { useAuth } from '../Context/Authcontext';
 
 function Login() {
+  const navigate = useNavigate();
+  const { userinfo, setUserInfo, isLoggedIn, setIsLoggedIn } = useAuth();
   const [value, setValue] = useState('');
   const [member, setMemeber] = useState({
     account: '',
@@ -26,13 +29,18 @@ function Login() {
         'http://localhost:3001/api/auth/login',
         member
       );
+      let response1 = await axios.get('http://localhost:3001/api/auth/member');
+      setIsLoggedIn(response1.data.loggedIn);
+      if (response1.data.userInfo) {
+        setUserInfo(response1.data.userInfo);
+      }
       alert(response.data.msg);
-      document.location.href = '/';
+      navigate('/user');
     } catch (e) {
       alert(e.response.data.errors[0]['msg']);
     }
   }
- 
+
   return (
     <>
       <div className="pageBG bg-orange py-lg-5 py-4">
