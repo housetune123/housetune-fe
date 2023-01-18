@@ -36,7 +36,7 @@ function Products() {
 
   // 購物車
   const navigate = useNavigate();
-  const { addItem } = useCart();
+  const { addItem, items } = useCart();
 
   return (
     <>
@@ -904,12 +904,111 @@ function Products() {
                             ...cart,
                             quantity: parseInt(amount, 10),
                           };
+                          // TODO: 判斷購買數量超過庫存 則不能再加進購物車
                           console.log(item);
-                          addItem({
-                            ...item,
-                            id: item.prod_id + `-${shape}`,
-                            shape: shape,
+                          console.log(items);
+
+                          // addItem({
+                          //   ...item,
+                          //   id: item.prod_id + `-${shape}`,
+                          //   shape: shape,
+                          // });
+
+                          let overBuy = false;
+                          let buyingItemIndex;
+                          // 判斷 選取的產品 購買數量不超過庫存
+                          // cart.amount 是庫存
+                          // items[i].quantity 是購物車該項目的數量
+
+                          // 購物車為空直接 + 進去
+                          if (items.length === 0) {
+                            addItem({
+                              ...item,
+                              id: item.prod_id + `-${shape}`,
+                              shape: shape,
+                            });
+                          }
+                          // 確認有沒有這筆商品的 id
+                          let found = items.find((obj) => {
+                            return obj.id === item.prod_id + `-${shape}`;
                           });
+                          // 沒找到 => 加進去
+                          if (found === undefined) {
+                            console.log(
+                              `新增商品 ${item.prod_id + '-' + shape}`
+                            );
+                            addItem({
+                              ...item,
+                              id: item.prod_id + `-${shape}`,
+                              shape: shape,
+                            });
+                            console.log('新增成功');
+                          } else {
+                            for (let i in items) {
+                              console.log(items[i]);
+                              // TODO: 縮短判斷式 => 單純判斷 id
+                              // return;
+                              if (items[i].id === item.prod_id + `-${shape}`) {
+                                console.log(
+                                  `檢查到相同id items[i].id : ${
+                                    items[i].id
+                                  } , item.prod_id : ${
+                                    item.prod_id + `-${shape}`
+                                  }`
+                                );
+                                if (items[i].quantity === cart.amount) {
+                                  console.log('購買數量已達上限');
+                                  overBuy = true;
+                                  buyingItemIndex = i;
+                                } else {
+                                  console.log(
+                                    `還能購買 ${
+                                      cart.amount - items[i].quantity
+                                    } 個`
+                                  );
+                                  overBuy = false;
+                                  buyingItemIndex = i;
+                                  confirmAmounts();
+                                }
+                              }
+                            }
+                          }
+
+                          // 如果超過庫存數 不要 addItem
+                          // return;
+                          // console.log(overBuy);
+                          // console.log('確認index', buyingItemIndex);
+
+                          function confirmAmounts() {
+                            if (overBuy === false) {
+                              // 購物車 + 選取 <= 庫存 => 可以新增
+
+                              // 購物車 + 選取 > 庫存 => 新增失敗
+                              if (
+                                +amount + items[buyingItemIndex].quantity >
+                                +cart.amount
+                              ) {
+                                console.log(
+                                  `無法新增這麼多數量 選取數量:${amount} , 購物車裡的數量 ${items[buyingItemIndex].quantity} 庫存數${cart.amount}`
+                                );
+                              } else {
+                                console.log(
+                                  `新增成功 選取數量:${+amount} , 購物車裡的數量 ${+items[
+                                    buyingItemIndex
+                                  ].quantity} -- 庫存數${
+                                    cart.amount
+                                  } 新增後數量 => ${
+                                    +amount + items[buyingItemIndex].quantity
+                                  }`
+                                );
+                                addItem({
+                                  ...item,
+                                  id: item.prod_id + `-${shape}`,
+                                  shape: shape,
+                                });
+                              }
+                            }
+                          }
                         }}
                       >
                         加入購物車
