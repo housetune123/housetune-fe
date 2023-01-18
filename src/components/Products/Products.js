@@ -5,14 +5,31 @@ import axios from 'axios';
 import { useEffect, useState } from 'react';
 
 function Products() {
-  const { currentPage, categoryRoom, currentSort } = useParams();
+  const {
+    currentPage,
+    categoryRoom,
+    currentSort,
+    currentStock,
+    currentCategory,
+    currentMin,
+    currentMax,
+  } = useParams();
   const [products, setProducts] = useState([]);
-  const [productsDisplay, setProductsDisplay] = useState([]);
+  // const [productsDisplay, setProductsDisplay] = useState([]);
 
   let navigate = useNavigate();
   // 將 currentPage 轉換為10進為表示的整數
   const [page, setPage] = useState(parseInt(currentPage, 10) || 1);
   const [totalPage, setTotalPage] = useState(0);
+  // 排序依據
+  const [sort, setSort] = useState(currentSort || '');
+  // Filter 功能，供貨情況
+  const [stockFilter, setStockFilter] = useState(currentStock || []);
+  // Filter 功能，價格
+  const [minPriceFilter, setMinPriceFilter] = useState(currentMin || '');
+  const [maxPriceFilter, setMaxPriceFilter] = useState(currentMax || '');
+  // Filter 功能，分類
+  const [categoryFilter, setCategoryFilter] = useState(currentCategory || []);
 
   // 條件設定資料抓取
   // 供貨情況
@@ -26,108 +43,111 @@ function Products() {
   // 抓取點擊購物車的資料
   const [cart, setCart] = useState([]);
 
-  // 排序依據
-  const [sort, setSort] = useState(currentSort);
+  // const stockFilterOptions = ['InStock', 'OutStock'];
+  // const getStockFilter = (products, stockFilter) => {
+  //   if (stockFilter.length === 0 || stockFilter.length === 2) return products;
+  //   if (stockFilter.includes('InStock')) {
+  //     return products.filter((v, i) => {
+  //       return v.amount > 0;
+  //     });
+  //   }
+  //   if (stockFilter.includes('OutStock')) {
+  //     return products.filter((v, i) => {
+  //       return v.amount === 0;
+  //     });
+  //   }
+  // };
+  // const getPriceFilter = (products, minPriceFilter, maxPriceFilter) => {
+  //   if (minPriceFilter === '' && maxPriceFilter === '') return products;
+  //   if (minPriceFilter === '' && maxPriceFilter !== '') {
+  //     return products.filter((v, i) => {
+  //       return v.price < maxPriceFilter;
+  //     });
+  //   }
+  //   if (minPriceFilter !== '' && maxPriceFilter === '') {
+  //     return products.filter((v, i) => {
+  //       return v.price > minPriceFilter;
+  //     });
+  //   }
+  //   if (minPriceFilter !== '' && maxPriceFilter !== '') {
+  //     return products.filter((v, i) => {
+  //       return maxPriceFilter > v.price > minPriceFilter;
+  //     });
+  //   }
+  // };
 
-  // Filter 功能，供貨情況
-  const [stockFilter, setStockFilter] = useState([]);
-  const stockFilterOptions = ['InStock', 'OutStock'];
-  const getStockFilter = (products, stockFilter) => {
-    if (stockFilter.length === 0 || stockFilter.length === 2) return products;
-    if (stockFilter.includes('InStock')) {
-      return products.filter((v, i) => {
-        return v.amount > 0;
-      });
-    }
-    if (stockFilter.includes('OutStock')) {
-      return products.filter((v, i) => {
-        return v.amount === 0;
-      });
-    }
-  };
-  // Filter 功能，價格
-  const [minPriceFilter, setMinPriceFilter] = useState('');
-  const [maxPriceFilter, setMaxPriceFilter] = useState('');
-  const getPriceFilter = (products, minPriceFilter, maxPriceFilter) => {
-    if (minPriceFilter === '' && maxPriceFilter === '') return products;
-    if (minPriceFilter === '' && maxPriceFilter !== '') {
-      return products.filter((v, i) => {
-        return v.price < maxPriceFilter;
-      });
-    }
-    if (minPriceFilter !== '' && maxPriceFilter === '') {
-      return products.filter((v, i) => {
-        return v.price > minPriceFilter;
-      });
-    }
-    if (minPriceFilter !== '' && maxPriceFilter !== '') {
-      return products.filter((v, i) => {
-        return maxPriceFilter > v.price > minPriceFilter;
-      });
-    }
-  };
+  // const categoryFilterOptions = [
+  //   'Sofa',
+  //   'Chair',
+  //   'Table',
+  //   'Storage',
+  //   'Bed',
+  //   'Lighting',
+  //   'Textile',
+  //   'Decor',
+  //   'Kitchenware',
+  //   'Bathroomset',
+  // ];
+  // const getCategoryFilter = (products, categoryFilter) => {
+  //   if (categoryFilter.length === 0 || categoryFilter.length === 10)
+  //     return products;
 
-  // Filter 功能，分類
-  const [categoryFilter, setCategoryFilter] = useState([]);
-  const categoryFilterOptions = [
-    'Sofa',
-    'Chair',
-    'Table',
-    'Storage',
-    'Bed',
-    'Lighting',
-    'Textile',
-    'Decor',
-    'Kitchenware',
-    'Bathroomset',
-  ];
-  const getCategoryFilter = (products, categoryFilter) => {
-    if (categoryFilter.length === 0 || categoryFilter.length === 10)
-      return products;
-
-    for (let i = 0; i < categoryFilterOptions.length; i++) {
-      if (categoryFilter.includes(categoryFilterOptions[i])) {
-        return products.filter(
-          (v) => v.categoryP_name === categoryFilterOptions[i]
-        );
-      }
-    }
-  };
+  //   for (let i = 0; i < categoryFilterOptions.length; i++) {
+  //     if (categoryFilter.includes(categoryFilterOptions[i])) {
+  //       return products.filter(
+  //         (v) => v.categoryP_name === categoryFilterOptions[i]
+  //       );
+  //     }
+  //   }
+  // };
 
   useEffect(() => {
     async function getProducts() {
-      if (categoryRoom) {
-        let res = await axios.get(
-          `http://localhost:3001/api/products/category/${categoryRoom}?page=${page}`
-        );
-        // console.log(res.data);
-        setProducts(res.data.data);
-        setTotalPage(res.data.pagination.totalPage);
-        setStock(res.data.stock);
-        setCategory(res.data.category);
-        setCategoryAmount(res.data.categoryAmount);
-      } else {
-        let res = await axios.get(
+      let res;
+      if (
+        !categoryRoom &&
+        !sort &&
+        !stockFilter &&
+        !categoryFilter &&
+        !minPriceFilter &&
+        !maxPriceFilter
+      ) {
+        res = await axios.get(
           `http://localhost:3001/api/products?page=${page}`
         );
-        // console.log(categoryRoom);
-        setProducts(res.data.data);
-        setTotalPage(res.data.pagination.totalPage);
-        setStock(res.data.stock);
-        setCategory(res.data.category);
-        setCategoryAmount(res.data.categoryAmount);
       }
+      if (categoryRoom) {
+        res = await axios.get(
+          `http://localhost:3001/api/products/category/${categoryRoom}?page=${page}`
+        );
+      }
+      res = await axios.get(
+        `http://localhost:3001/api/products?currentSort=${sort}&currentStock=${stockFilter}&currentCategory=${categoryFilter}&currentMin=${minPriceFilter}&currentMax=${maxPriceFilter}&page=${page}`
+      );
+      setProducts(res.data.data);
+      setTotalPage(res.data.pagination.totalPage);
+      setStock(res.data.stock);
+      setCategory(res.data.category);
+      setCategoryAmount(res.data.categoryAmount);
     }
     getProducts();
-  }, [categoryRoom, page]);
+  }, [
+    categoryRoom,
+    page,
+    sort,
+    stockFilter,
+    categoryFilter,
+    minPriceFilter,
+    maxPriceFilter,
+  ]);
 
-  useEffect(() => {
-    let newProducts = getStockFilter(products, stockFilter);
-    newProducts = getCategoryFilter(newProducts, categoryFilter);
-    newProducts = getPriceFilter(newProducts, minPriceFilter, maxPriceFilter);
+  // useEffect(() => {
+  //   let newProducts = getStockFilter(products, stockFilter);
+  //   newProducts = getCategoryFilter(newProducts, categoryFilter);
+  //   newProducts = getPriceFilter(newProducts, minPriceFilter, maxPriceFilter);
 
-    setProductsDisplay(newProducts);
-  }, [products, stockFilter, categoryFilter, minPriceFilter, maxPriceFilter]);
+  //   setProductsDisplay(newProducts);
+  // }, [products, stockFilter, categoryFilter, minPriceFilter, maxPriceFilter]);
 
   function Number(min, max) {
     const array = [];
@@ -432,7 +452,7 @@ function Products() {
                               <input
                                 className="form-check-input"
                                 type="checkbox"
-                                value={v.name}
+                                value={v.id}
                                 id={v.name}
                                 onClick={(e) => {
                                   const value = e.target.value;
@@ -514,9 +534,7 @@ function Products() {
                         setSort(e.target.value);
                       }}
                     >
-                      <option disabled value="">
-                        精選
-                      </option>
+                      <option value="">精選</option>
                       <option value="1">依字母順序Ａ到Ｚ</option>
                       <option value="2">依字母順序Ｚ到Ａ</option>
                       <option value="3">價格（從低到高）</option>
@@ -529,7 +547,7 @@ function Products() {
               </div>
               {/* 商品列表 */}
               <div className="row">
-                {productsDisplay.map((v, i) => {
+                {products.map((v, i) => {
                   const img = v.img.split(',');
                   return (
                     <div
@@ -892,7 +910,7 @@ function Products() {
                                 <input
                                   className="form-check-input"
                                   type="checkbox"
-                                  value={v.name}
+                                  value={v.id}
                                   id={`Modal${v.name}`}
                                   onClick={(e) => {
                                     const value = e.target.value;
