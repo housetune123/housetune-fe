@@ -43,24 +43,28 @@ function Products() {
   const [cart, setCart] = useState([]);
 
   useEffect(() => {
-    async function getProducts() {
-      let res;
-      if (categoryRoom) {
-        res = await axios.get(
-          `http://localhost:3001/api/products/category/${categoryRoom}?currentSort=${sort}&currentStock=${stockFilter}&currentCategory=${categoryFilter}&currentMin=${minPriceFilter}&currentMax=${maxPriceFilter}&page=${page}`
-        );
-      } else {
-        res = await axios.get(
-          `http://localhost:3001/api/products?currentSort=${sort}&currentStock=${stockFilter}&currentCategory=${categoryFilter}&currentMin=${minPriceFilter}&currentMax=${maxPriceFilter}&page=${page}`
-        );
+    try {
+      async function getProducts() {
+        let res;
+        if (categoryRoom) {
+          res = await axios.get(
+            `http://localhost:3001/api/products/category/${categoryRoom}?currentSort=${sort}&currentStock=${stockFilter}&currentCategory=${categoryFilter}&currentMin=${minPriceFilter}&currentMax=${maxPriceFilter}&page=${page}`
+          );
+        } else {
+          res = await axios.get(
+            `http://localhost:3001/api/products?currentSort=${sort}&currentStock=${stockFilter}&currentCategory=${categoryFilter}&currentMin=${minPriceFilter}&currentMax=${maxPriceFilter}&page=${page}`
+          );
+        }
+        setProducts(res.data.data);
+        setTotalPage(res.data.pagination.totalPage);
+        setStock(res.data.stock);
+        setCategory(res.data.category);
+        setCategoryAmount(res.data.categoryAmount);
       }
-      setProducts(res.data.data);
-      setTotalPage(res.data.pagination.totalPage);
-      setStock(res.data.stock);
-      setCategory(res.data.category);
-      setCategoryAmount(res.data.categoryAmount);
+      getProducts();
+    } catch (e) {
+      console.error(e);
     }
-    getProducts();
   }, [
     categoryRoom,
     page,
@@ -70,6 +74,18 @@ function Products() {
     minPriceFilter,
     maxPriceFilter,
   ]);
+
+  // 收藏
+  const [userId, setUserId] = useState(1);
+  const [like, setLike] = useState([]);
+  async function liked() {
+    let likeJson = JSON.stringify(like);
+    let res = await axios.put('http://localhost:3001/api/products', {
+      likeJson,
+      userId,
+    });
+    console.log(res.data);
+  }
 
   function Number(min, max) {
     const array = [];
@@ -462,7 +478,7 @@ function Products() {
                   return (
                     <div
                       className="col-6 col-md-3 d-flex justify-content-center p-md-3 p-2"
-                      key={i}
+                      key={v.prod_id}
                     >
                       <div className="card border border-0 card-shadow position-relative">
                         <div className="product-img">
@@ -482,7 +498,22 @@ function Products() {
                               NT $ {v.price}
                             </h5>
                             <p>
-                              <i className="fa-regular fa-heart text-info"></i>
+                              <i
+                                onClick={() => {
+                                  if (like.includes(v.prod_id)) {
+                                    const newLike = like.filter((v2, i2) => {
+                                      return v2 !== v.prod_id;
+                                    });
+                                    setLike(newLike);
+                                  } else {
+                                    const newLike = [...like, v.prod_id];
+                                    setLike(newLike);
+                                  }
+                                  liked();
+                                }}
+                                style={{ cursor: 'pointer' }}
+                                className="fa-regular fa-heart text-info"
+                              ></i>
                             </p>
                           </div>
                           <h6 className="card-title text-gray-300">{v.name}</h6>

@@ -9,6 +9,8 @@ import ProductsBrowse from '../Layout/ProductsBrowse';
 import axios from 'axios';
 import { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
+import moment from 'moment';
+import zhTw from '../zh-tw';
 
 function ProductsDetail() {
   const { prodId, categoryProduct } = useParams();
@@ -21,10 +23,77 @@ function ProductsDetail() {
   }
   // 抓取產品名稱、分類資料
   const [product, setProdcut] = useState([]);
+  const [rating, setRating] = useState([]);
   const [catagory, setCategory] = useState(0);
   // 儲存 select 狀態
   const [shape, setShape] = useState('');
   const [amount, setAmount] = useState('');
+
+  const solidStar = {
+    1: (
+      <span>
+        <i className="fa-solid fa-star"></i>
+      </span>
+    ),
+    2: (
+      <span>
+        <i className="fa-solid fa-star"></i>
+        <i className="fa-solid fa-star"></i>
+      </span>
+    ),
+    3: (
+      <span>
+        <i className="fa-solid fa-star"></i>
+        <i className="fa-solid fa-star"></i>
+        <i className="fa-solid fa-star"></i>
+      </span>
+    ),
+    4: (
+      <span>
+        <i className="fa-solid fa-star"></i>
+        <i className="fa-solid fa-star"></i>
+        <i className="fa-solid fa-star"></i>
+        <i className="fa-solid fa-star"></i>
+      </span>
+    ),
+    5: (
+      <span>
+        <i className="fa-solid fa-star"></i>
+        <i className="fa-solid fa-star"></i>
+        <i className="fa-solid fa-star"></i>
+        <i className="fa-solid fa-star"></i>
+        <i className="fa-solid fa-star"></i>
+      </span>
+    ),
+  };
+  const regularStar = {
+    1: (
+      <span>
+        <i className="fa-regular fa-star"></i>
+        <i className="fa-regular fa-star"></i>
+        <i className="fa-regular fa-star"></i>
+        <i className="fa-regular fa-star"></i>
+      </span>
+    ),
+    2: (
+      <span>
+        <i className="fa-regular fa-star"></i>
+        <i className="fa-regular fa-star"></i>
+        <i className="fa-regular fa-star"></i>
+      </span>
+    ),
+    3: (
+      <span>
+        <i className="fa-regular fa-star"></i>
+        <i className="fa-regular fa-star"></i>
+      </span>
+    ),
+    4: (
+      <span>
+        <i className="fa-regular fa-star"></i>
+      </span>
+    ),
+  };
 
   useEffect(() => {
     window.scrollTo(0, 150);
@@ -35,12 +104,13 @@ function ProductsDetail() {
     async function getProd() {
       let res = await axios.get(`http://localhost:3001/api/products/${prodId}`);
       // console.log(res.data);
-      setProdcut(res.data);
+      setProdcut(res.data.data);
+      setRating(res.data.rating);
       async function getCategory() {
         let res2 = await axios.get(
-          `http://localhost:3001/api/products/${res.data[0].category_product}/${prodId}`
+          `http://localhost:3001/api/products/${res.data.data[0].category_product}/${prodId}`
         );
-        // console.log(res2.data);
+        // console.log(res.data);
         setCategory(res2.data);
       }
       getCategory();
@@ -77,8 +147,8 @@ function ProductsDetail() {
 
   return (
     <>
-      <div className="product">
-        <main className="bg-orange">
+      <div className="bg-orange">
+        <main className="product">
           {/* 商品資訊 */}
           <section className="container">
             <BreadCrumb></BreadCrumb>
@@ -302,98 +372,76 @@ function ProductsDetail() {
           <section className="container pb-md-5 pb-3">
             <div className="bg-gray p-md-5 p-3">
               <p className="text-info-dark">商品評價</p>
-              <div className="bg-white p-3">
-                {product.map((v, i) => {
-                  return (
-                    <div key={v.prod_id}>
-                      <p className="h3 text-info-dark">
-                        <span className="fw-bold">{v.rating}</span>/5
-                      </p>
-                    </div>
-                  );
-                })}
-                {/* 星星 */}
-                <div>
-                  <p className="text-danger mb-0">
-                    <span>
-                      <i className="fa-solid fa-star"></i>
-                    </span>
-                    <span>
-                      <i className="fa-solid fa-star"></i>
-                    </span>
-                    <span>
-                      <i className="fa-solid fa-star"></i>
-                    </span>
-                    <span>
-                      <i className="fa-solid fa-star"></i>
-                    </span>
-                    <span>
-                      <i className="fa-solid fa-star-half-stroke"></i>
-                    </span>
-                  </p>
+              {rating.length < 1 && (
+                <div className="border-bottom border-gray-200 pt-3">
+                  <p className="mb-2">尚未有任何評價</p>
                 </div>
-              </div>
+              )}
+              {rating.length > 0 && (
+                <div className="bg-white p-3">
+                  {product.map((v, i) => {
+                    return (
+                      <div key={v.prod_id}>
+                        <p className="h3 text-info-dark">
+                          <span className="fw-bold">{v.rating}</span>/5
+                        </p>
+                      </div>
+                    );
+                  })}
+                  {/* 商品星星 */}
+                  <div>
+                    <p className="text-danger mb-0">
+                      <span>
+                        <i className="fa-solid fa-star"></i>
+                      </span>
+                      <span>
+                        <i className="fa-solid fa-star"></i>
+                      </span>
+                      <span>
+                        <i className="fa-solid fa-star"></i>
+                      </span>
+                      <span>
+                        <i className="fa-solid fa-star"></i>
+                      </span>
+                      <span>
+                        <i className="fa-solid fa-star-half-stroke"></i>
+                      </span>
+                    </p>
+                  </div>
+                </div>
+              )}
+              {/* 客人評價 */}
               <div>
-                <div className="border-bottom border-gray-200 pt-3">
-                  <p className="mb-2">Ariel Shao</p>
-                  <p className="text-gray-200 mb-2">
-                    15小時前
-                    <span className="text-gray-400 ps-2">
-                      <span>
-                        <i className="fa-solid fa-star"></i>
-                      </span>
-                      <span>
-                        <i className="fa-solid fa-star"></i>
-                      </span>
-                      <span>
-                        <i className="fa-solid fa-star"></i>
-                      </span>
-                      <span>
-                        <i className="fa-solid fa-star"></i>
-                      </span>
-                      <span>
-                        <i className="fa-solid fa-star-half-stroke"></i>
-                      </span>
-                    </span>
-                  </p>
-                  <p className="text-gray-400 mb-2">很喜歡，簡單，精緻</p>
-                </div>
-                <div className="border-bottom border-gray-200 pt-3">
-                  <p className="mb-2">Ariel Shao</p>
-                  <p className="text-gray-200 mb-2">
-                    15小時前
-                    <span className="text-gray-400  ps-2">
-                      <span>
-                        <i className="fa-solid fa-star"></i>
-                      </span>
-                      <span>
-                        <i className="fa-solid fa-star"></i>
-                      </span>
-                      <span>
-                        <i className="fa-solid fa-star"></i>
-                      </span>
-                      <span>
-                        <i className="fa-solid fa-star"></i>
-                      </span>
-                      <span>
-                        <i className="fa-solid fa-star-half-stroke"></i>
-                      </span>
-                    </span>
-                  </p>
-                  <p className="text-gray-400 mb-2">很喜歡，簡單，精緻</p>
-                </div>
+                {rating.length > 0 &&
+                  rating.map((v, i) => {
+                    return (
+                      <div
+                        key={v.ratP_id}
+                        className="border-bottom border-gray-200 pt-3"
+                      >
+                        <p className="mb-2">{v.user_name}</p>
+                        <p className="text-gray-200 mb-2">
+                          {moment(`${v.posted_at}`, 'YYYYMMDD').fromNow()}
+                          <span className="text-gray-400 ps-2">
+                            {solidStar[v.stars]}
+                            {regularStar[v.stars]}
+                          </span>
+                        </p>
+                        <p className="text-gray-400 mb-2">{v.comment}</p>
+                      </div>
+                    );
+                  })}
               </div>
             </div>
           </section>
-
-          {/* 相關商品推薦 */}
-          <ProductsFeatured catagory={catagory}></ProductsFeatured>
-
-          {/* 最近瀏覽商品 */}
-          <section className="pb-5">
-            <ProductsBrowse></ProductsBrowse>
-          </section>
         </main>
+        {/* 相關商品推薦 */}
+        <ProductsFeatured catagory={catagory}></ProductsFeatured>
+
+        {/* 最近瀏覽商品 */}
+        <section className="pb-5">
+          <ProductsBrowse></ProductsBrowse>
+        </section>
       </div>
     </>
   );

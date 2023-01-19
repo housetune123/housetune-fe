@@ -45,32 +45,30 @@ function ProductsFeatured({ catagory }) {
                 const img = v.img.split(',');
                 return (
                   <div className="col-2 d-flex justify-content-center" key={i}>
-                    <Link
-                      // onClick={window.scrollTo(0, 150)}
-                      to={`/products/${v.prod_id}`}
-                      className="text-decoration-none"
-                    >
-                      <div className="card shadow-sm">
-                        <div className="product-img">
+                    <div className="card shadow-sm">
+                      <div className="product-img">
+                        <Link
+                          // onClick={window.scrollTo(0, 150)}
+                          to={`/products/${v.prod_id}`}
+                          className="text-decoration-none"
+                        >
                           <img
                             src={`${process.env.REACT_APP_IMAGE_URL}/images/products/${v.category_name}/${img[0]}`}
                             className="card-img-top object-cover"
                             alt="..."
                           />
-                        </div>
-                        <div className="card-body text-left text-decoration-none">
-                          <h5 className="card-title text-info">
-                            NT $ {v.price}
-                          </h5>
-                          <h6 className="card-title text-gray-300 text-truncate">
-                            {v.name}
-                          </h6>
-                          <p className="card-text text-danger">
-                            僅剩 {v.amount} 件 !
-                          </p>
-                        </div>
+                        </Link>
                       </div>
-                    </Link>
+                      <div className="card-body text-left text-decoration-none">
+                        <h5 className="card-title text-info">NT $ {v.price}</h5>
+                        <h6 className="card-title text-gray-300 text-truncate">
+                          {v.name}
+                        </h6>
+                        <p className="card-text text-danger">
+                          僅剩 {v.amount} 件 !
+                        </p>
+                      </div>
+                    </div>
                   </div>
                 );
               })}
