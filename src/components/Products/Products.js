@@ -34,9 +34,23 @@ function Products() {
     getProducts();
   }, []);
 
+  useEffect(() => {
+    setCompleteAdd(false);
+  }, [shape, amount]);
+
   // 購物車
   const navigate = useNavigate();
   const { addItem, items } = useCart();
+
+  // 訊息框
+  const [resultMsg, setResultMsg] = useState({});
+  const [completeAdd, setCompleteAdd] = useState(false);
+
+  const MessageMap = {
+    1: '新增成功!',
+    2: '新增失敗 請重新選擇數量!',
+    3: '已達購買數量上限!',
+  };
 
   function addToCart() {
     const item = {
@@ -46,12 +60,6 @@ function Products() {
     // 判斷購買數量超過庫存 則不能再加進購物車
     console.log(item);
     console.log(items);
-
-    // addItem({
-    //   ...item,
-    //   id: item.prod_id + `-${shape}`,
-    //   shape: shape,
-    // });
 
     let overBuy = false;
     let buyingItemIndex;
@@ -66,41 +74,43 @@ function Products() {
         id: item.prod_id + `-${shape}`,
         shape: shape,
       });
-    }
-    // 確認有沒有這筆商品的 id
-    let found = items.find((obj) => {
-      return obj.id === item.prod_id + `-${shape}`;
-    });
-    // 沒找到 => 加進去
-    if (found === undefined) {
-      console.log(`新增商品 ${item.prod_id + '-' + shape}`);
-      addItem({
-        ...item,
-        id: item.prod_id + `-${shape}`,
-        shape: shape,
-      });
-      console.log('新增成功');
-      alert('新增成功');
+      setResultMsg(MessageMap[1]);
+      setCompleteAdd(true);
     } else {
-      for (let i in items) {
-        console.log(items[i]);
-        // 單純判斷 id
-        if (items[i].id === item.prod_id + `-${shape}`) {
-          console.log(
-            `檢查到相同id items[i].id : ${items[i].id} , item.prod_id : ${
-              item.prod_id + `-${shape}`
-            }`
-          );
-          if (items[i].quantity === cart.amount) {
-            console.log('購買數量已達上限');
-            alert('購買數量已達上限');
-            overBuy = true;
-            buyingItemIndex = i;
-          } else {
-            console.log(`還能購買 ${cart.amount - items[i].quantity} 個`);
-            overBuy = false;
-            buyingItemIndex = i;
-            confirmAmounts();
+      // 確認有沒有這筆商品的 id
+      let found = items.find((obj) => {
+        return obj.id === item.prod_id + `-${shape}`;
+      });
+      // 沒找到 => 加進去
+      if (found === undefined) {
+        addItem({
+          ...item,
+          id: item.prod_id + `-${shape}`,
+          shape: shape,
+        });
+        setResultMsg(MessageMap[1]);
+        setCompleteAdd(true);
+      } else {
+        for (let i in items) {
+          console.log(items[i]);
+          // 單純判斷 id
+          if (items[i].id === item.prod_id + `-${shape}`) {
+            // console.log(
+            //   `檢查到相同id items[i].id : ${items[i].id} , item.prod_id : ${
+            //     item.prod_id + `-${shape}`
+            //   }`
+            // );
+            if (items[i].quantity === cart.amount) {
+              overBuy = true;
+              buyingItemIndex = i;
+              setResultMsg(MessageMap[3]);
+              setCompleteAdd(true);
+            } else {
+              // console.log(`還能購買 ${cart.amount - items[i].quantity} 個`);
+              overBuy = false;
+              buyingItemIndex = i;
+              confirmAmounts();
+            }
           }
         }
       }
@@ -115,24 +125,26 @@ function Products() {
         // 購物車 + 選取 <= 庫存 => 可以新增
         // 購物車 + 選取 > 庫存 => 新增失敗
         if (+amount + items[buyingItemIndex].quantity > +cart.amount) {
-          console.log(
-            `無法新增這麼多數量 選取數量:${amount} , 購物車裡的數量 ${items[buyingItemIndex].quantity} 庫存數${cart.amount}`
-          );
-          alert('新增失敗 請重新選擇數量');
+          // console.log(
+          //   `無法新增這麼多數量 選取數量:${amount} , 購物車裡的數量 ${items[buyingItemIndex].quantity} 庫存數${cart.amount}`
+          // );
+          setResultMsg(MessageMap[2]);
+          setCompleteAdd(true);
         } else {
-          console.log(
-            `新增成功 選取數量:${+amount} , 購物車裡的數量 ${+items[
-              buyingItemIndex
-            ].quantity} -- 庫存數${cart.amount} 新增後數量 => ${
-              +amount + items[buyingItemIndex].quantity
-            }`
-          );
+          // console.log(
+          //   `新增成功 選取數量:${+amount} , 購物車裡的數量 ${+items[
+          //     buyingItemIndex
+          //   ].quantity} -- 庫存數${cart.amount} 新增後數量 => ${
+          //     +amount + items[buyingItemIndex].quantity
+          //   }`
+          // );
           addItem({
             ...item,
             id: item.prod_id + `-${shape}`,
             shape: shape,
           });
-          alert('新增成功');
+          setResultMsg(MessageMap[1]);
+          setCompleteAdd(true);
         }
       }
     }
@@ -519,11 +531,10 @@ function Products() {
                             data-bs-toggle="modal"
                             data-bs-target="#exampleModal"
                             onClick={() => {
+                              setAmount('');
+                              setShape('');
+                              setCompleteAdd(false);
                               setCart(v);
-                              // console.log(products);
-                              // const item = { ...v, quantity: 1 };
-                              // console.log(item);
-                              // addItem({ ...item, id: item.prod_id });
                             }}
                           >
                             加入購物車
@@ -932,9 +943,6 @@ function Products() {
                         setShape(e.target.value);
                       }}
                     >
-                      <option className="text-gray-400" value="" disabled>
-                        請選擇款式
-                      </option>
                       <option value="藍色Blue" className="text-gray-400">
                         藍色 Blue
                       </option>
@@ -969,9 +977,6 @@ function Products() {
                             setAmount(e.target.value);
                           }}
                         >
-                          <option value="" disabled>
-                            請選擇數量
-                          </option>
                           {Number(1, cart.amount >= 10 ? 9 : cart.amount).map(
                             (v2, i) => {
                               return (
@@ -997,14 +1002,31 @@ function Products() {
                       </div>
                     </div>
                     <div className="col-7">
-                      <button
-                        className="btn btn-cart bg-gray border border-2 border-primary-200 text-primary-300 btn-cart w-100 h-100"
-                        onClick={() => {
-                          addToCart();
-                        }}
-                      >
-                        加入購物車
-                      </button>
+                      {!completeAdd ? (
+                        <button
+                          className="btn btn-cart bg-gray border border-2 border-primary-200 text-primary-300 btn-cart w-100 h-100"
+                          onClick={() => {
+                            addToCart();
+                          }}
+                          // data-bs-toggle="modal"
+                          data-bs-target="#MsgModal"
+                        >
+                          加入購物車
+                        </button>
+                      ) : (
+                        <button
+                          className={`btn btn-primary-300 border border-2 border-success text-white btn-cart w-100 h-100`}
+                          data-bs-target="#MsgModal"
+                          onClick={(e) => {
+                            e.preventDefault();
+                            setTimeout(() => {
+                              setCompleteAdd(false);
+                            }, 100);
+                          }}
+                        >
+                          {resultMsg}
+                        </button>
+                      )}
                     </div>
                   </div>
                 )}
