@@ -211,7 +211,11 @@ function Header() {
               <div className="px-2">
                 <Link to="/cart" className="position-relative">
                   <i className="fa-solid fa-cart-shopping text-primary-300 fs-4" />
-                  <span className="cart-amount position-absolute text-decoration-none text-white">
+                  <span
+                    className={`${
+                      cart.totalItems > 0 ? '' : 'd-none'
+                    } cart-amount position-absolute text-decoration-none text-white`}
+                  >
                     {cart.totalItems}
                   </span>
                 </Link>
