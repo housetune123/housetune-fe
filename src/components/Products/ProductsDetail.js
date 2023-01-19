@@ -27,8 +27,8 @@ function ProductsDetail() {
   const [product, setProdcut] = useState([]);
   const [catagory, setCategory] = useState(0);
   // 儲存 select 狀態
-  const [shape, setShape] = useState('');
-  const [amount, setAmount] = useState('');
+  const [shape, setShape] = useState('藍色Blue');
+  const [amount, setAmount] = useState('1');
 
   // TODO: 網頁名稱 id 改用商品名稱
   // TODO: 不確定程式碼正不正確
