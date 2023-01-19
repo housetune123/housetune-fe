@@ -6,8 +6,8 @@ import { useEffect, useState } from 'react';
 
 function Products() {
   const {
-    currentPage,
     categoryRoom,
+    currentPage,
     currentSort,
     currentStock,
     currentCategory,
@@ -15,7 +15,6 @@ function Products() {
     currentMax,
   } = useParams();
   const [products, setProducts] = useState([]);
-  // const [productsDisplay, setProductsDisplay] = useState([]);
 
   let navigate = useNavigate();
   // 將 currentPage 轉換為10進為表示的整數
@@ -43,87 +42,18 @@ function Products() {
   // 抓取點擊購物車的資料
   const [cart, setCart] = useState([]);
 
-  // const stockFilterOptions = ['InStock', 'OutStock'];
-  // const getStockFilter = (products, stockFilter) => {
-  //   if (stockFilter.length === 0 || stockFilter.length === 2) return products;
-  //   if (stockFilter.includes('InStock')) {
-  //     return products.filter((v, i) => {
-  //       return v.amount > 0;
-  //     });
-  //   }
-  //   if (stockFilter.includes('OutStock')) {
-  //     return products.filter((v, i) => {
-  //       return v.amount === 0;
-  //     });
-  //   }
-  // };
-  // const getPriceFilter = (products, minPriceFilter, maxPriceFilter) => {
-  //   if (minPriceFilter === '' && maxPriceFilter === '') return products;
-  //   if (minPriceFilter === '' && maxPriceFilter !== '') {
-  //     return products.filter((v, i) => {
-  //       return v.price < maxPriceFilter;
-  //     });
-  //   }
-  //   if (minPriceFilter !== '' && maxPriceFilter === '') {
-  //     return products.filter((v, i) => {
-  //       return v.price > minPriceFilter;
-  //     });
-  //   }
-  //   if (minPriceFilter !== '' && maxPriceFilter !== '') {
-  //     return products.filter((v, i) => {
-  //       return maxPriceFilter > v.price > minPriceFilter;
-  //     });
-  //   }
-  // };
-
-  // const categoryFilterOptions = [
-  //   'Sofa',
-  //   'Chair',
-  //   'Table',
-  //   'Storage',
-  //   'Bed',
-  //   'Lighting',
-  //   'Textile',
-  //   'Decor',
-  //   'Kitchenware',
-  //   'Bathroomset',
-  // ];
-  // const getCategoryFilter = (products, categoryFilter) => {
-  //   if (categoryFilter.length === 0 || categoryFilter.length === 10)
-  //     return products;
-
-  //   for (let i = 0; i < categoryFilterOptions.length; i++) {
-  //     if (categoryFilter.includes(categoryFilterOptions[i])) {
-  //       return products.filter(
-  //         (v) => v.categoryP_name === categoryFilterOptions[i]
-  //       );
-  //     }
-  //   }
-  // };
-
   useEffect(() => {
     async function getProducts() {
       let res;
-      if (
-        !categoryRoom &&
-        !sort &&
-        !stockFilter &&
-        !categoryFilter &&
-        !minPriceFilter &&
-        !maxPriceFilter
-      ) {
-        res = await axios.get(
-          `http://localhost:3001/api/products?page=${page}`
-        );
-      }
       if (categoryRoom) {
         res = await axios.get(
-          `http://localhost:3001/api/products/category/${categoryRoom}?page=${page}`
+          `http://localhost:3001/api/products/category/${categoryRoom}?currentSort=${sort}&currentStock=${stockFilter}&currentCategory=${categoryFilter}&currentMin=${minPriceFilter}&currentMax=${maxPriceFilter}&page=${page}`
+        );
+      } else {
+        res = await axios.get(
+          `http://localhost:3001/api/products?currentSort=${sort}&currentStock=${stockFilter}&currentCategory=${categoryFilter}&currentMin=${minPriceFilter}&currentMax=${maxPriceFilter}&page=${page}`
         );
       }
-      res = await axios.get(
-        `http://localhost:3001/api/products?currentSort=${sort}&currentStock=${stockFilter}&currentCategory=${categoryFilter}&currentMin=${minPriceFilter}&currentMax=${maxPriceFilter}&page=${page}`
-      );
       setProducts(res.data.data);
       setTotalPage(res.data.pagination.totalPage);
       setStock(res.data.stock);
@@ -141,14 +71,6 @@ function Products() {
     maxPriceFilter,
   ]);
 
-  // useEffect(() => {
-  //   let newProducts = getStockFilter(products, stockFilter);
-  //   newProducts = getCategoryFilter(newProducts, categoryFilter);
-  //   newProducts = getPriceFilter(newProducts, minPriceFilter, maxPriceFilter);
-
-  //   setProductsDisplay(newProducts);
-  // }, [products, stockFilter, categoryFilter, minPriceFilter, maxPriceFilter]);
-
   function Number(min, max) {
     const array = [];
     for (let i = min; i <= max; i++) {
@@ -157,47 +79,38 @@ function Products() {
     return array;
   }
 
-  const categoryRoomSwitch = (categoryRoom) => {
-    switch (categoryRoom) {
-      case '1':
-        return '客廳 / Living room';
-      case '2':
-        return '廚房 / Kitchen';
-      case '3':
-        return '臥室 / Bedroom';
-      case '4':
-        return '浴室 / Bathroom';
-      default:
-        return '其他';
-    }
+  const sortOptions = ['', 1, 2, 3, 4, 5, 6];
+  const srotMap = {
+    '': '精選',
+    1: '依字母順序 A 到 Z',
+    2: '依字母順序 Z 到 A',
+    3: '價格 (從低到高)',
+    4: '價格 (從高到低)',
+    5: '日期 (從舊到新)',
+    6: '日期 (從新到舊)',
+  };
+
+  const categoryRoomMap = {
+    1: '客廳 / Living room',
+    2: '廚房 / Kitchen',
+    3: '臥室 / Bedroom',
+    4: '浴室 / Bathroom',
+    '': '其他',
   };
 
   // 條件設定，分類，中英轉換
-  const categoryProductSwitch = (category) => {
-    switch (category) {
-      case 'Sofa':
-        return '沙發';
-      case 'Chair':
-        return '椅子';
-      case 'Table':
-        return '桌子';
-      case 'Storage':
-        return '儲櫃';
-      case 'Bed':
-        return '床';
-      case 'Lighting':
-        return '燈';
-      case 'Textile':
-        return '紡織';
-      case 'Decor':
-        return '裝飾';
-      case 'Kitchenware':
-        return '廚具';
-      case 'Bathroomset':
-        return '浴室';
-      default:
-        return '其他';
-    }
+  const categoryProductMap = {
+    Sofa: '沙發',
+    Chair: '椅子',
+    Table: '桌子',
+    Storage: '儲櫃',
+    Bed: '床',
+    Lighting: '燈',
+    Textile: '紡織',
+    Decor: '裝飾',
+    Kitchenware: '廚具',
+    Bathroomset: '浴室',
+    '': '其他',
   };
 
   function getPageAll(totalPage) {
@@ -271,7 +184,7 @@ function Products() {
           <BreadCrumb />
           {categoryRoom ? (
             <h3 className="mb-md-5 mb-2 mt-md-0 mt-2 text-info-dark">
-              {categoryRoomSwitch(categoryRoom)}
+              {categoryRoomMap[categoryRoom]}
             </h3>
           ) : (
             <h3 className="mb-md-5 mb-2 mt-md-0 mt-2 text-info-dark">
@@ -313,7 +226,7 @@ function Products() {
                           type="checkbox"
                           value="InStock"
                           id="InStock"
-                          onClick={(e) => {
+                          onChange={(e) => {
                             const value = e.target.value;
                             if (stockFilter.includes(value)) {
                               const newStockFilter = stockFilter.filter(
@@ -341,7 +254,7 @@ function Products() {
                           type="checkbox"
                           value="OutStock"
                           id="OutStock"
-                          onClick={(e) => {
+                          onChange={(e) => {
                             const value = e.target.value;
                             if (stockFilter.includes(value)) {
                               const newStockFilter = stockFilter.filter(
@@ -447,39 +360,37 @@ function Products() {
                     <div className="accordion-body bg-orange ps-0">
                       {category.map((v, i) => {
                         return (
-                          categoryAmount[i]['total'] > 0 && (
-                            <div className="form-check" key={v.id}>
-                              <input
-                                className="form-check-input"
-                                type="checkbox"
-                                value={v.id}
-                                id={v.name}
-                                onClick={(e) => {
-                                  const value = e.target.value;
-                                  if (categoryFilter.includes(value)) {
-                                    const newCategoryFilter =
-                                      categoryFilter.filter((v2, i) => {
-                                        return v2 !== value;
-                                      });
-                                    setCategoryFilter(newCategoryFilter);
-                                  } else {
-                                    const newCategoryFilter = [
-                                      ...categoryFilter,
-                                      value,
-                                    ];
-                                    setCategoryFilter(newCategoryFilter);
-                                  }
-                                }}
-                              />
-                              <label
-                                className="form-check-label text-info fs-sml"
-                                htmlFor={v.name}
-                              >
-                                {categoryProductSwitch(v.name)}(
-                                {categoryAmount[i]['total']})
-                              </label>
-                            </div>
-                          )
+                          <div className="form-check" key={v.id}>
+                            <input
+                              className="form-check-input"
+                              type="checkbox"
+                              value={v.id}
+                              id={v.name}
+                              onChange={(e) => {
+                                const value = e.target.value;
+                                if (categoryFilter.includes(value)) {
+                                  const newCategoryFilter =
+                                    categoryFilter.filter((v2, i) => {
+                                      return v2 !== value;
+                                    });
+                                  setCategoryFilter(newCategoryFilter);
+                                } else {
+                                  const newCategoryFilter = [
+                                    ...categoryFilter,
+                                    value,
+                                  ];
+                                  setCategoryFilter(newCategoryFilter);
+                                }
+                              }}
+                            />
+                            <label
+                              className="form-check-label text-info fs-sml"
+                              htmlFor={v.name}
+                            >
+                              {categoryProductMap[v.name]}(
+                              {categoryAmount[i]['total']})
+                            </label>
+                          </div>
                         );
                       })}
                     </div>
@@ -524,7 +435,6 @@ function Products() {
                   <div className="pe-3 d-none d-md-block">
                     <h6 className="text-info-dark ps-0 col">排序依據</h6>
                   </div>
-                  {/* TODO: 排序 */}
                   <div className="d-none d-md-block">
                     <select
                       className="form-select-xl mb-2 text-gray-300 fs-sml"
@@ -556,13 +466,15 @@ function Products() {
                     >
                       <div className="card border border-0 card-shadow position-relative">
                         <div className="product-img">
-                          <a href={`/products/${v.prod_id}`}>
-                            <img
-                              src={`${process.env.REACT_APP_IMAGE_URL}/images/products/${v.categoryR_name}/${img[0]}`}
-                              className="card-img-top bg-gray-200 object-cover"
-                              alt="..."
-                            />
-                          </a>
+                          <img
+                            style={{ cursor: 'pointer' }}
+                            src={`${process.env.REACT_APP_IMAGE_URL}/images/products/${v.categoryR_name}/${img[0]}`}
+                            className="card-img-top bg-gray-200 object-cover"
+                            alt="..."
+                            onClick={() => {
+                              navigate(`/products/${v.prod_id}`);
+                            }}
+                          />
                         </div>
                         <div className="card-body text-left">
                           <div className="d-flex justify-content-between">
@@ -905,39 +817,37 @@ function Products() {
                       <div className="accordion-body bg-white ps-0">
                         {category.map((v, i) => {
                           return (
-                            categoryAmount[i]['total'] > 0 && (
-                              <div className="form-check" key={v.id}>
-                                <input
-                                  className="form-check-input"
-                                  type="checkbox"
-                                  value={v.id}
-                                  id={`Modal${v.name}`}
-                                  onClick={(e) => {
-                                    const value = e.target.value;
-                                    if (categoryFilter.includes(value)) {
-                                      const newCategoryFilter =
-                                        categoryFilter.filter((v, i) => {
-                                          return v !== value;
-                                        });
-                                      setCategoryFilter(newCategoryFilter);
-                                    } else {
-                                      const newCategoryFilter = [
-                                        ...categoryFilter,
-                                        value,
-                                      ];
-                                      setCategoryFilter(newCategoryFilter);
-                                    }
-                                  }}
-                                />
-                                <label
-                                  className="form-check-label text-info fs-sml"
-                                  htmlFor={`Modal${v.name}`}
-                                >
-                                  {categoryProductSwitch(v.name)}(
-                                  {categoryAmount[i]['total']})
-                                </label>
-                              </div>
-                            )
+                            <div className="form-check" key={v.id}>
+                              <input
+                                className="form-check-input"
+                                type="checkbox"
+                                value={v.id}
+                                id={`modal${v.name}`}
+                                onChange={(e) => {
+                                  const value = e.target.value;
+                                  if (categoryFilter.includes(value)) {
+                                    const newCategoryFilter =
+                                      categoryFilter.filter((v2, i) => {
+                                        return v2 !== value;
+                                      });
+                                    setCategoryFilter(newCategoryFilter);
+                                  } else {
+                                    const newCategoryFilter = [
+                                      ...categoryFilter,
+                                      value,
+                                    ];
+                                    setCategoryFilter(newCategoryFilter);
+                                  }
+                                }}
+                              />
+                              <label
+                                className="form-check-label text-info fs-sml"
+                                htmlFor={`modal${v.name}`}
+                              >
+                                {categoryProductMap[v.name]}(
+                                {categoryAmount[i]['total']})
+                              </label>
+                            </div>
                           );
                         })}
                       </div>
@@ -973,30 +883,23 @@ function Products() {
                 ></button>
               </div>
               <div className="modal-body">
-                <button className="btn bg-white border-1 border-primary-300 text-primary-300 w-100 fs-sml my-1">
-                  精選
-                </button>
-                <button className="btn bg-white border-1 border-primary-300 text-primary-300 w-100 fs-sml my-1">
-                  暢銷度
-                </button>
-                <button className="btn bg-white border-1 border-primary-300 text-primary-300 w-100 fs-sml my-1">
-                  依字母順序 A 到 Z
-                </button>
-                <button className="btn bg-white border-1 border-primary-300 text-primary-300 w-100 fs-sml my-1">
-                  依字母順序 Z 到 A
-                </button>
-                <button className="btn bg-white border-1 border-primary-300 text-primary-300 w-100 fs-sml my-1">
-                  價格 (從低到高)
-                </button>
-                <button className="btn bg-white border-1 border-primary-300 text-primary-300 w-100 fs-sml my-1">
-                  價格 (從高到低)
-                </button>
-                <button className="btn bg-white border-1 border-primary-300 text-primary-300 w-100 fs-sml my-1">
-                  日期 (從舊到新)
-                </button>
-                <button className="btn bg-white border-1 border-primary-300 text-primary-300 w-100 fs-sml my-1">
-                  日期 (從新到舊)
-                </button>
+                {sortOptions.map((v, i) => {
+                  return (
+                    <button
+                      key={v}
+                      className={
+                        sort === v
+                          ? 'btn bg-primary-300 border-1 border-primary-300 text-white w-100 fs-sml my-1'
+                          : 'btn bg-white border-1 border-primary-300 text-primary-300 w-100 fs-sml my-1'
+                      }
+                      onClick={() => {
+                        setSort(v);
+                      }}
+                    >
+                      {srotMap[v]}
+                    </button>
+                  );
+                })}
               </div>
             </div>
           </div>

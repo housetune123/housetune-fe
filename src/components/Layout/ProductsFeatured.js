@@ -46,7 +46,7 @@ function ProductsFeatured({ catagory }) {
                 return (
                   <div className="col-2 d-flex justify-content-center" key={i}>
                     <Link
-                      onClick={window.scrollTo(0, 0)}
+                      // onClick={window.scrollTo(0, 150)}
                       to={`/products/${v.prod_id}`}
                       className="text-decoration-none"
                     >

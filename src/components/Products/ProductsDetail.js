@@ -8,9 +8,10 @@ import ProductsFeatured from '../Layout/ProductsFeatured';
 import ProductsBrowse from '../Layout/ProductsBrowse';
 import axios from 'axios';
 import { useEffect, useState } from 'react';
+import { Link } from 'react-router-dom';
 
 function ProductsDetail() {
-  const { prodId, categoryRoom } = useParams();
+  const { prodId, categoryProduct } = useParams();
   function Number(min, max) {
     const array = [];
     for (let i = min; i <= max; i++) {
@@ -25,8 +26,11 @@ function ProductsDetail() {
   const [shape, setShape] = useState('');
   const [amount, setAmount] = useState('');
 
+  useEffect(() => {
+    window.scrollTo(0, 150);
+  }, [prodId]);
+
   // TODO: 網頁名稱 id 改用商品名稱
-  // TODO: 不確定程式碼正不正確
   useEffect(() => {
     async function getProd() {
       let res = await axios.get(`http://localhost:3001/api/products/${prodId}`);
@@ -34,7 +38,7 @@ function ProductsDetail() {
       setProdcut(res.data);
       async function getCategory() {
         let res2 = await axios.get(
-          `http://localhost:3001/api/products/${res.data[0].category_room}/${prodId}`
+          `http://localhost:3001/api/products/${res.data[0].category_product}/${prodId}`
         );
         // console.log(res2.data);
         setCategory(res2.data);
@@ -260,14 +264,33 @@ function ProductsDetail() {
                         <li>綠色 / 15041-550</li>
                         <li>深紅色 / 15041-660</li>
                       </ul>
-                      <p className="text-gray-400 fs-sml">
-                        分享：
-                        <span className="text-primary-300">
-                          <i className="fa-brands fa-facebook"></i>
-                          <i className="fa-brands fa-instagram"></i>
-                          <i className="fa-brands fa-line"></i>
-                        </span>
-                      </p>
+                      <p className="text-gray-400 fs-sml mb-1">分享：</p>
+                      <ul className="d-flex list-unstyled">
+                        <li className="mb-2">
+                          <Link
+                            to="/"
+                            className="link-gray-300 text-decoration-none me-3"
+                          >
+                            <i className="fa-brands fa-square-facebook fs-5" />
+                          </Link>
+                        </li>
+                        <li className="mb-2">
+                          <Link
+                            to="/"
+                            className="link-gray-300 text-decoration-none me-3"
+                          >
+                            <i className="fa-brands fa-instagram fs-5" />
+                          </Link>
+                        </li>
+                        <li className="mb-2">
+                          <Link
+                            to="/"
+                            className="link-gray-300 text-decoration-none me-3"
+                          >
+                            <i className="fa-brands fa-line fs-5" />
+                          </Link>
+                        </li>
+                      </ul>
                     </div>
                   </div>
                 );
