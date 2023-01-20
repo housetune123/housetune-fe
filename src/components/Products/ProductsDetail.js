@@ -4,8 +4,8 @@ import 'slick-carousel/slick/slick.css';
 import 'slick-carousel/slick/slick-theme.css';
 import BreadCrumb from '../Layout/BreadCrumb';
 import './Products.scss';
-import ProductsFeatured from '../Layout/ProductsFeatured';
-import ProductsBrowse from '../Layout/ProductsBrowse';
+import ProductsFeatured from './ProductsFeatured';
+import ProductsBrowse from './ProductsBrowse';
 import axios from 'axios';
 import { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
@@ -67,6 +67,15 @@ function ProductsDetail() {
     ),
   };
   const regularStar = {
+    0: (
+      <span>
+        <i className="fa-regular fa-star"></i>
+        <i className="fa-regular fa-star"></i>
+        <i className="fa-regular fa-star"></i>
+        <i className="fa-regular fa-star"></i>
+        <i className="fa-regular fa-star"></i>
+      </span>
+    ),
     1: (
       <span>
         <i className="fa-regular fa-star"></i>
@@ -95,17 +104,22 @@ function ProductsDetail() {
     ),
   };
 
+  // 瀏覽紀錄
+  const [browse, setBrowse] = useState([]);
+
+  // 抓取產品資料
   useEffect(() => {
     window.scrollTo(0, 150);
-  }, [prodId]);
-
-  // TODO: 網頁名稱 id 改用商品名稱
-  useEffect(() => {
     async function getProd() {
       let res = await axios.get(`http://localhost:3001/api/products/${prodId}`);
       // console.log(res.data);
       setProdcut(res.data.data);
       setRating(res.data.rating);
+      // 瀏覽紀錄
+      const newBrowse = browse.filter((v, i) => {
+        return v.prod_id !== res.data.data[0].prod_id;
+      });
+      setBrowse([res.data.data[0], ...newBrowse]);
       async function getCategory() {
         let res2 = await axios.get(
           `http://localhost:3001/api/products/${res.data.data[0].category_product}/${prodId}`
@@ -117,6 +131,17 @@ function ProductsDetail() {
     }
     getProd();
   }, [prodId]);
+
+  // useEffect(() => {setBrowse()}, []);
+  useEffect(() => {
+    async function browseProducts() {
+      let res = await axios.post('http://localhost:3001/api/products', browse, {
+        withCredentials: true,
+      });
+      console.log(res.data);
+    }
+    browseProducts();
+  }, [browse]);
 
   const settings = {
     customPaging: function (index) {
@@ -147,6 +172,7 @@ function ProductsDetail() {
 
   return (
     <>
+      {console.log(browse)}
       <div className="bg-orange">
         <main className="product">
           {/* 商品資訊 */}
@@ -385,29 +411,16 @@ function ProductsDetail() {
                         <p className="h3 text-info-dark">
                           <span className="fw-bold">{v.rating}</span>/5
                         </p>
+                        {/* 商品星星 */}
+                        <div>
+                          <p className="text-danger mb-0">
+                            {solidStar[v.rating]}
+                            {regularStar[v.rating]}
+                          </p>
+                        </div>
                       </div>
                     );
                   })}
-                  {/* 商品星星 */}
-                  <div>
-                    <p className="text-danger mb-0">
-                      <span>
-                        <i className="fa-solid fa-star"></i>
-                      </span>
-                      <span>
-                        <i className="fa-solid fa-star"></i>
-                      </span>
-                      <span>
-                        <i className="fa-solid fa-star"></i>
-                      </span>
-                      <span>
-                        <i className="fa-solid fa-star"></i>
-                      </span>
-                      <span>
-                        <i className="fa-solid fa-star-half-stroke"></i>
-                      </span>
-                    </p>
-                  </div>
                 </div>
               )}
               {/* 客人評價 */}
@@ -436,12 +449,18 @@ function ProductsDetail() {
           </section>
         </main>
         {/* 相關商品推薦 */}
-        <ProductsFeatured catagory={catagory}></ProductsFeatured>
+        <ProductsFeatured
+          catagory={catagory}
+          browse={browse}
+          setBrowse={setBrowse}
+        ></ProductsFeatured>
 
         {/* 最近瀏覽商品 */}
-        <section className="pb-5">
-          <ProductsBrowse></ProductsBrowse>
-        </section>
+        {browse.length > 1 && (
+          <section className="pb-5">
+            <ProductsBrowse browse={browse}></ProductsBrowse>
+          </section>
+        )}
       </div>
     </>
   );

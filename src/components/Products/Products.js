@@ -1,10 +1,13 @@
-import { useNavigate, useParams } from 'react-router-dom';
+import { Link, useNavigate, useParams } from 'react-router-dom';
 import BreadCrumb from '../Layout/BreadCrumb';
 import './Products.scss';
 import axios from 'axios';
 import { useEffect, useState } from 'react';
+import { useAuth } from '../Context/Authcontext';
 
 function Products() {
+  // 登入登出
+  const { userinfo, isLoggedIn } = useAuth();
   const {
     categoryRoom,
     currentPage,
@@ -42,6 +45,7 @@ function Products() {
   // 抓取點擊購物車的資料
   const [cart, setCart] = useState([]);
 
+  // 抓取產品資料
   useEffect(() => {
     try {
       async function getProducts() {
@@ -76,16 +80,21 @@ function Products() {
   ]);
 
   // 收藏
-  const [userId, setUserId] = useState(1);
-  const [like, setLike] = useState([]);
-  async function liked() {
-    let likeJson = JSON.stringify(like);
-    let res = await axios.put('http://localhost:3001/api/products', {
-      likeJson,
-      userId,
-    });
-    console.log(res.data);
-  }
+  const [userId, setUserId] = useState(userinfo.user_id || 0);
+  const [like, setLike] = useState(userinfo.liked || []);
+  useEffect(() => {
+    if (isLoggedIn) {
+      async function liked() {
+        let likeJson = JSON.stringify(like);
+        let res = await axios.put('http://localhost:3001/api/products', {
+          likeJson,
+          userId,
+        });
+        console.log(res.data);
+      }
+      liked();
+    }
+  }, [like]);
 
   function Number(min, max) {
     const array = [];
@@ -498,22 +507,38 @@ function Products() {
                               NT $ {v.price}
                             </h5>
                             <p>
-                              <i
-                                onClick={() => {
-                                  if (like.includes(v.prod_id)) {
+                              {/* 沒有登入的愛心 */}
+                              {!isLoggedIn && (
+                                <Link to={'/login'}>
+                                  <i
+                                    style={{ cursor: 'pointer' }}
+                                    className="fa-regular fa-heart text-info"
+                                  ></i>
+                                </Link>
+                              )}
+                              {/* 登入後的愛心 */}
+                              {isLoggedIn && like.includes(v.prod_id) && (
+                                <i
+                                  className="fa-solid fa-heart text-danger"
+                                  onClick={() => {
                                     const newLike = like.filter((v2, i2) => {
                                       return v2 !== v.prod_id;
                                     });
                                     setLike(newLike);
-                                  } else {
+                                  }}
+                                  style={{ cursor: 'pointer' }}
+                                ></i>
+                              )}
+                              {isLoggedIn && !like.includes(v.prod_id) && (
+                                <i
+                                  onClick={() => {
                                     const newLike = [...like, v.prod_id];
                                     setLike(newLike);
-                                  }
-                                  liked();
-                                }}
-                                style={{ cursor: 'pointer' }}
-                                className="fa-regular fa-heart text-info"
-                              ></i>
+                                  }}
+                                  style={{ cursor: 'pointer' }}
+                                  className="fa-regular fa-heart text-info"
+                                ></i>
+                              )}
                             </p>
                           </div>
                           <h6 className="card-title text-gray-300">{v.name}</h6>

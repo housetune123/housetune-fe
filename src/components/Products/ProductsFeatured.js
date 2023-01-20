@@ -48,7 +48,6 @@ function ProductsFeatured({ catagory }) {
                     <div className="card shadow-sm">
                       <div className="product-img">
                         <Link
-                          // onClick={window.scrollTo(0, 150)}
                           to={`/products/${v.prod_id}`}
                           className="text-decoration-none"
                         >
