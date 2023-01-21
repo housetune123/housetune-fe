@@ -40,8 +40,9 @@ function Products() {
   const [category, setCategory] = useState([]);
 
   // 儲存 select 狀態
-  const [shape, setShape] = useState('');
-  const [amount, setAmount] = useState('');
+  const [shape, setShape] = useState('藍色 Blue');
+  const [amount, setAmount] = useState('1');
+  const [inputDisplay, setInputDisplay] = useState('none');
   // 抓取點擊購物車的資料
   const [cart, setCart] = useState([]);
 
@@ -84,15 +85,19 @@ function Products() {
   const [like, setLike] = useState(userinfo.liked || []);
   useEffect(() => {
     if (isLoggedIn) {
-      async function liked() {
-        let likeJson = JSON.stringify(like);
-        let res = await axios.put('http://localhost:3001/api/products', {
-          likeJson,
-          userId,
-        });
-        console.log(res.data);
+      try {
+        async function liked() {
+          let likeJson = JSON.stringify(like);
+          let res = await axios.put('http://localhost:3001/api/products', {
+            likeJson,
+            userId,
+          });
+          console.log(res.data);
+        }
+        liked();
+      } catch (e) {
+        console.error(e);
       }
-      liked();
     }
   }, [like]);
 
@@ -556,8 +561,9 @@ function Products() {
                             data-bs-target="#exampleModal"
                             onClick={() => {
                               setCart(v);
-                              setShape('');
-                              setAmount('');
+                              setShape('藍色 Blue');
+                              setAmount('1');
+                              setInputDisplay('none');
                             }}
                           >
                             加入購物車
@@ -570,8 +576,9 @@ function Products() {
                             data-bs-target="#exampleModal"
                             onClick={() => {
                               setCart(v);
-                              setShape('');
-                              setAmount('');
+                              setShape('藍色 Blue');
+                              setAmount('1');
+                              setInputDisplay('none');
                             }}
                           >
                             加入購物車
@@ -997,9 +1004,6 @@ function Products() {
                         setShape(e.target.value);
                       }}
                     >
-                      <option className="text-gray-400" value="" disabled>
-                        請選擇款式
-                      </option>
                       <option value="藍色 Blue" className="text-gray-400">
                         藍色 Blue
                       </option>
@@ -1025,41 +1029,54 @@ function Products() {
                 {cart.amount > 0 && (
                   <div className="row pt-2">
                     <div className="col-5">
-                      <div className="form-floating">
-                        <select
-                          className="form-select text-gray-400"
-                          id="floatingSelect"
+                      {inputDisplay === 'none' && (
+                        <div className="form-floating">
+                          <select
+                            className="form-select text-gray-400"
+                            id="floatingSelect"
+                            value={amount}
+                            onChange={(e) => {
+                              setAmount(e.target.value);
+                              if (e.target.value === '10') {
+                                setInputDisplay('block');
+                              }
+                            }}
+                          >
+                            {Number(1, cart.amount >= 10 ? 9 : cart.amount).map(
+                              (v2, i) => {
+                                return (
+                                  <option
+                                    key={v2}
+                                    value={v2}
+                                    className="text-gray-400"
+                                  >
+                                    {v2}
+                                  </option>
+                                );
+                              }
+                            )}
+                            {cart.amount >= 10 && (
+                              <option value="10" className="text-gray-400">
+                                10 +
+                              </option>
+                            )}
+                          </select>
+                          <label htmlFor="floatingSelect" className="label-fs">
+                            數量
+                          </label>
+                        </div>
+                      )}
+                      {inputDisplay === 'block' && (
+                        <input
+                          type="number"
+                          max={cart.amount}
+                          className="form-control bg-white shadow-none"
                           value={amount}
                           onChange={(e) => {
                             setAmount(e.target.value);
                           }}
-                        >
-                          <option value="" disabled>
-                            請選擇數量
-                          </option>
-                          {Number(1, cart.amount >= 10 ? 9 : cart.amount).map(
-                            (v2, i) => {
-                              return (
-                                <option
-                                  key={v2}
-                                  value={v2}
-                                  className="text-gray-400"
-                                >
-                                  {v2}
-                                </option>
-                              );
-                            }
-                          )}
-                          {cart.amount >= 10 && (
-                            <option value="10" className="text-gray-400">
-                              10 +
-                            </option>
-                          )}
-                        </select>
-                        <label htmlFor="floatingSelect" className="label-fs">
-                          數量
-                        </label>
-                      </div>
+                        ></input>
+                      )}
                     </div>
                     <div className="col-7">
                       <button className="btn btn-cart bg-gray border border-2 border-primary-200 text-primary-300 btn-cart w-100 h-100">

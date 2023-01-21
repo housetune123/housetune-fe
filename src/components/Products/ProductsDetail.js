@@ -11,9 +11,108 @@ import { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import moment from 'moment';
 import zhTw from '../zh-tw';
+import { useAuth } from '../Context/Authcontext';
 
 function ProductsDetail() {
-  const { prodId, categoryProduct } = useParams();
+  // 登入登出
+  const { userinfo, isLoggedIn } = useAuth();
+  const { prodId } = useParams();
+  // 抓取產品名稱、分類資料
+  const [product, setProdcut] = useState([]);
+  const [rating, setRating] = useState([]);
+  const [catagory, setCategory] = useState(0);
+  // 儲存 select 狀態
+  const [shape, setShape] = useState('藍色 Blue');
+  const [amount, setAmount] = useState('1');
+  const [inputDisplay, setInputDisplay] = useState('none');
+
+  // 收藏
+  const [userId, setUserId] = useState(userinfo.user_id || 0);
+  const [like, setLike] = useState(userinfo.liked || []);
+  useEffect(() => {
+    if (isLoggedIn) {
+      try {
+        async function liked() {
+          let likeJson = JSON.stringify(like);
+          let res = await axios.put('http://localhost:3001/api/products', {
+            likeJson,
+            userId,
+          });
+          console.log(res.data);
+        }
+        liked();
+      } catch (e) {
+        console.error(e);
+      }
+    }
+  }, [like]);
+
+  // 瀏覽紀錄
+  const [browse, setBrowse] = useState([]);
+  // 進入頁面取得瀏覽紀錄session
+  useEffect(() => {
+    try {
+      async function getBrowse() {
+        let res = await axios.get('http://localhost:3001/api/products/browse');
+        // console.log(res.data.data);
+        setBrowse(res.data.data);
+      }
+      getBrowse();
+      // console.log(browse, '[]');
+    } catch (e) {
+      console.error(e);
+    }
+  }, []);
+
+  // 瀏覽紀錄存入session
+  useEffect(() => {
+    try {
+      async function browseProducts() {
+        let res = await axios.post(
+          'http://localhost:3001/api/products',
+          { browse },
+          {
+            withCredentials: true,
+          }
+        );
+        let res2 = await axios.get('http://localhost:3001/api/products/browse');
+      }
+      browseProducts();
+    } catch (e) {
+      console.error(e);
+    }
+    // console.log(browse, '[browse]');
+  }, [browse]);
+
+  // 抓取產品資料
+  useEffect(() => {
+    window.scrollTo(0, 150);
+    try {
+      async function getProd() {
+        let res = await axios.get(
+          `http://localhost:3001/api/products/${prodId}`
+        );
+        // console.log(res.data);
+        setProdcut(res.data.data);
+        setRating(res.data.rating);
+        // 瀏覽紀錄
+        let res3 = await axios.get('http://localhost:3001/api/products/browse');
+        const newBrowse = res3.data.data.filter((v, i) => {
+          return v.prod_id !== res.data.data[0].prod_id;
+        });
+        setBrowse([res.data.data[0], ...newBrowse]);
+        let res2 = await axios.get(
+          `http://localhost:3001/api/products/${res.data.data[0].category_product}/${prodId}`
+        );
+        setCategory(res2.data);
+      }
+      getProd();
+    } catch (e) {
+      console.error(e);
+    }
+    // console.log(browse, '[prodId]');
+  }, [prodId]);
+
   function Number(min, max) {
     const array = [];
     for (let i = min; i <= max; i++) {
@@ -21,13 +120,6 @@ function ProductsDetail() {
     }
     return array;
   }
-  // 抓取產品名稱、分類資料
-  const [product, setProdcut] = useState([]);
-  const [rating, setRating] = useState([]);
-  const [catagory, setCategory] = useState(0);
-  // 儲存 select 狀態
-  const [shape, setShape] = useState('');
-  const [amount, setAmount] = useState('');
 
   const solidStar = {
     1: (
@@ -103,46 +195,7 @@ function ProductsDetail() {
       </span>
     ),
   };
-
-  // 瀏覽紀錄
-  const [browse, setBrowse] = useState([]);
-
-  // 抓取產品資料
-  useEffect(() => {
-    window.scrollTo(0, 150);
-    async function getProd() {
-      let res = await axios.get(`http://localhost:3001/api/products/${prodId}`);
-      // console.log(res.data);
-      setProdcut(res.data.data);
-      setRating(res.data.rating);
-      // 瀏覽紀錄
-      const newBrowse = browse.filter((v, i) => {
-        return v.prod_id !== res.data.data[0].prod_id;
-      });
-      setBrowse([res.data.data[0], ...newBrowse]);
-      async function getCategory() {
-        let res2 = await axios.get(
-          `http://localhost:3001/api/products/${res.data.data[0].category_product}/${prodId}`
-        );
-        // console.log(res.data);
-        setCategory(res2.data);
-      }
-      getCategory();
-    }
-    getProd();
-  }, [prodId]);
-
-  // useEffect(() => {setBrowse()}, []);
-  useEffect(() => {
-    async function browseProducts() {
-      let res = await axios.post('http://localhost:3001/api/products', browse, {
-        withCredentials: true,
-      });
-      console.log(res.data);
-    }
-    browseProducts();
-  }, [browse]);
-
+  // slide 設定
   const settings = {
     customPaging: function (index) {
       return (
@@ -172,7 +225,6 @@ function ProductsDetail() {
 
   return (
     <>
-      {console.log(browse)}
       <div className="bg-orange">
         <main className="product">
           {/* 商品資訊 */}
@@ -216,9 +268,6 @@ function ProductsDetail() {
                             setShape(e.target.value);
                           }}
                         >
-                          <option className="text-gray-400" value="" disabled>
-                            請選擇款式
-                          </option>
                           <option value="藍色 Blue" className="text-gray-400">
                             藍色 Blue
                           </option>
@@ -244,44 +293,60 @@ function ProductsDetail() {
                     {v.amount > 0 && (
                       <div className="row pt-2">
                         <div className="col-5">
-                          <div className="form-floating">
-                            <select
-                              className="form-select text-gray-400"
-                              id="floatingSelect"
+                          {inputDisplay === 'none' && (
+                            <div className="form-floating">
+                              <select
+                                className="form-select text-gray-400"
+                                id="floatingSelect"
+                                value={amount}
+                                onChange={(e) => {
+                                  setAmount(e.target.value);
+                                  if (e.target.value === '10') {
+                                    setInputDisplay('block');
+                                  }
+                                }}
+                              >
+                                <option value="" disabled>
+                                  請選擇數量
+                                </option>
+                                {Number(1, v.amount >= 10 ? 9 : v.amount).map(
+                                  (v2, i) => {
+                                    return (
+                                      <option
+                                        key={v2}
+                                        value={v2}
+                                        className="text-gray-400"
+                                      >
+                                        {v2}
+                                      </option>
+                                    );
+                                  }
+                                )}
+                                {v.amount >= 10 && (
+                                  <option value="10" className="text-gray-400">
+                                    10 +
+                                  </option>
+                                )}
+                              </select>
+                              <label
+                                htmlFor="floatingSelect"
+                                className="label-fs"
+                              >
+                                數量
+                              </label>
+                            </div>
+                          )}
+                          {inputDisplay === 'block' && (
+                            <input
+                              type="number"
+                              max={v.amount}
+                              className="form-control bg-white shadow-none"
                               value={amount}
                               onChange={(e) => {
                                 setAmount(e.target.value);
                               }}
-                            >
-                              <option value="" disabled>
-                                請選擇數量
-                              </option>
-                              {Number(1, v.amount >= 10 ? 9 : v.amount).map(
-                                (v2, i) => {
-                                  return (
-                                    <option
-                                      key={v2}
-                                      value={v2}
-                                      className="text-gray-400"
-                                    >
-                                      {v2}
-                                    </option>
-                                  );
-                                }
-                              )}
-                              {v.amount >= 10 && (
-                                <option value="10" className="text-gray-400">
-                                  10 +
-                                </option>
-                              )}
-                            </select>
-                            <label
-                              htmlFor="floatingSelect"
-                              className="label-fs"
-                            >
-                              數量
-                            </label>
-                          </div>
+                            ></input>
+                          )}
                         </div>
                         <div className="col-7">
                           <button className="btn btn-cart bg-gray border border-2 border-primary-200 text-primary-300 btn-cart w-100 h-100">
@@ -292,7 +357,7 @@ function ProductsDetail() {
                     )}
                     {/* 庫存狀態  */}
                     <div>
-                      <div className="py-2">
+                      <div className="py-2 d-flex justify-content-between align-items-center">
                         <p className="fs-6 text-gray-400 fs-sml mb-0">
                           庫存狀態 :
                           <span className="text-danger">
@@ -301,6 +366,40 @@ function ProductsDetail() {
                               ? '已售完'
                               : `僅剩 ${v.amount} 件 !`}
                           </span>
+                        </p>
+                        <p className="fs-5 mb-0">
+                          {/* 沒有登入的愛心 */}
+                          {!isLoggedIn && (
+                            <Link to={'/login'}>
+                              <i
+                                style={{ cursor: 'pointer' }}
+                                className="fa-regular fa-heart text-info"
+                              ></i>
+                            </Link>
+                          )}
+                          {/* 登入後的愛心 */}
+                          {isLoggedIn && like.includes(v.prod_id) && (
+                            <i
+                              className="fa-solid fa-heart text-danger"
+                              onClick={() => {
+                                const newLike = like.filter((v2, i2) => {
+                                  return v2 !== v.prod_id;
+                                });
+                                setLike(newLike);
+                              }}
+                              style={{ cursor: 'pointer' }}
+                            ></i>
+                          )}
+                          {isLoggedIn && !like.includes(v.prod_id) && (
+                            <i
+                              onClick={() => {
+                                const newLike = [...like, v.prod_id];
+                                setLike(newLike);
+                              }}
+                              style={{ cursor: 'pointer' }}
+                              className="fa-regular fa-heart text-info"
+                            ></i>
+                          )}
                         </p>
                       </div>
                       <div className="py-2">
@@ -449,16 +548,15 @@ function ProductsDetail() {
           </section>
         </main>
         {/* 相關商品推薦 */}
-        <ProductsFeatured
-          catagory={catagory}
-          browse={browse}
-          setBrowse={setBrowse}
-        ></ProductsFeatured>
+        <ProductsFeatured catagory={catagory}></ProductsFeatured>
 
         {/* 最近瀏覽商品 */}
         {browse.length > 1 && (
           <section className="pb-5">
-            <ProductsBrowse browse={browse}></ProductsBrowse>
+            <ProductsBrowse
+              browse={browse}
+              setBrowse={setBrowse}
+            ></ProductsBrowse>
           </section>
         )}
       </div>

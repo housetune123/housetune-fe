@@ -4,7 +4,7 @@ import 'slick-carousel/slick/slick-theme.css';
 import '../Main/main.scss';
 import { Link } from 'react-router-dom';
 
-function ProductsBrowse({ browse }) {
+function ProductsBrowse({ browse, setBrowse }) {
   let settings = {
     dots: false,
     infinite: true,
@@ -29,7 +29,13 @@ function ProductsBrowse({ browse }) {
       <section className="main container pt-2 pb-md-5 pb-3 px-md-4 bg-gray browse">
         <div className="d-md-flex justify-content-between">
           <p className="text-info-dark p-md-3 mb-2">您最近瀏覽的商品</p>
-          <p className="fs-sml text-info p-md-3 browse-text mb-2">
+          <p
+            className="fs-sml text-info p-md-3 browse-text mb-2"
+            style={{ cursor: 'pointer' }}
+            onClick={() => {
+              setBrowse([]);
+            }}
+          >
             清除最近瀏覽
           </p>
         </div>
