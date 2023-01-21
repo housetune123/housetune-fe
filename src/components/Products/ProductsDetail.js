@@ -29,8 +29,21 @@ function ProductsDetail() {
   // 收藏
   const [userId, setUserId] = useState(userinfo.user_id || 0);
   const [like, setLike] = useState(userinfo.liked || []);
+  // 取得收藏資料
+  useEffect(() => {
+    async function getLiked() {
+      let res = await axios.get('http://localhost:3001/api/products/liked');
+      if (res.data[0].liked) {
+        setLike(JSON.parse(res.data[0].liked));
+      }
+    }
+    getLiked();
+  }, []);
+
+  // 加入收藏
   useEffect(() => {
     if (isLoggedIn) {
+      setUserId(userinfo.id);
       try {
         async function liked() {
           let likeJson = JSON.stringify(like);
