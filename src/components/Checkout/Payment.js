@@ -60,7 +60,7 @@ function Payment(props) {
                 </div>
 
                 <Link
-                  to="/checkout/information"
+                  to="/cart/checkout/information"
                   className="text-decoration-none link-primary-300 fs-7 text-nowrap"
                 >
                   變更
@@ -77,7 +77,7 @@ function Payment(props) {
                 </div>
 
                 <Link
-                  to="/checkout/information"
+                  to="/cart/checkout/information"
                   className="text-decoration-none link-primary-300 fs-7 text-nowrap"
                 >
                   變更
@@ -344,14 +344,14 @@ function Payment(props) {
               <div className="col-12 d-flex justify-content-between align-items-center pb-4">
                 <div>
                   <Link
-                    to={'/checkout/shipping'}
+                    to={'/cart/checkout/shipping'}
                     className="text-decoration-none link-primary-300"
                   >
                     <i className="fa-solid fa-angle-left fs-7" />
                     <span className="px-2 fs-7">重新填寫運送方式</span>
                   </Link>
                 </div>
-                <Link to={'/checkout/thankyou'}>
+                <Link to={'/cart/checkout/thankyou'}>
                   <button className="btn btn-primary-300">立即付款</button>
                 </Link>
               </div>

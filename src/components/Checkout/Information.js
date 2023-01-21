@@ -86,7 +86,7 @@ function Information(props) {
                       <span className="px-2 fs-7">回到訂購清單</span>
                     </Link>
                   </div>
-                  <Link to={'/checkout/shipping'}>
+                  <Link to={'/cart/checkout/shipping'}>
                     <button className="btn btn-primary-300">繼續結帳</button>
                   </Link>
                 </div>

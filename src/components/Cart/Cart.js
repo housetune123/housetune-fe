@@ -2,6 +2,7 @@
 import './Cart.scss';
 import { useState, useEffect } from 'react';
 import { useCart } from '../../utils/useCart';
+import { Link } from 'react-router-dom';
 
 function Cart(props) {
   // cart init
@@ -165,9 +166,12 @@ function Cart(props) {
                   <strong className="">總金額</strong>
                   <p className="">NT$ {cart.cartTotal + 300} </p>
                 </div>
-                <button className="w-100 m-auto text-center btn btn-light bg-primary-300 text-white mb-2 ">
+                <Link
+                  to="../checkout/information"
+                  className="w-100 m-auto text-center btn btn-light bg-primary-300 text-white mb-2 "
+                >
                   結帳
-                </button>
+                </Link>
               </div>
             </div>
           </>

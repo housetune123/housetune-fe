@@ -71,10 +71,10 @@ function App() {
 
           {/* ckeckout */}
           <Route path="cart" element={<Cart />} />
-          <Route path="checkout/information" element={<Information />} />
-          <Route path="checkout/shipping" element={<Shipping />} />
-          <Route path="checkout/payment" element={<Payment />} />
-          <Route path="checkout/thankyou" element={<Thankyou />} />
+          <Route path="/cart/checkout/information" element={<Information />} />
+          <Route path="/cart/checkout/shipping" element={<Shipping />} />
+          <Route path="/cart/checkout/payment" element={<Payment />} />
+          <Route path="/cart/checkout/thankyou" element={<Thankyou />} />
 
           <Route path="checkout">
             <Route path="information" element={<Information />} />
