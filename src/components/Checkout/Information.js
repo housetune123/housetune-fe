@@ -1,150 +1,93 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
 
 import './Checkout.scss';
-import logo from '../../images/logo.png';
 
 import CartList from './CartList';
+import Address from './element/Address';
+import Breadcrumb from './element/Breadcrumb';
+import Mobile from './element/Mobile';
 
 function Information(props) {
+  const [checked, setChecked] = useState(true);
+
   return (
     <>
-      <main className="row checkout">
+      <main className="row m-0 checkout-information">
         {/* Logo */}
         <div className="p-4 d-block d-lg-none">
           <Link to="/">
-            <img src={logo} alt="" className="logo-image" />
+            <img
+              src={`${process.env.REACT_APP_IMAGE_URL}/images/logo.png`}
+              alt="logo"
+              className="logo-image"
+            />
           </Link>
         </div>
-        {/* 手機板購物清單 */}
-        <div className="bg-gray-100 d-flex justify-content-between align-items-center py-3 d-block d-lg-none mobile-list">
-          <div className="d-flex align-items-center">
-            <i className="fa-solid fa-cart-shopping text-info fs-7 p-2" />
-            <span className="fs-7 text-info">顯示訂單摘要</span>
-            <i className="fa-solid fa-angle-down fs-8 p-2" />
-          </div>
-          <span className="fs-6 fw-bold">$10000</span>
-        </div>
-        <section className="col-12 col-lg-6 bg-white">
-          <div className="container">
+
+        {/* 手機版購物清單 */}
+        <Mobile />
+
+        <section className="col-12 col-lg-6 bg-white py-4">
+          <div className="information-wrapper">
             <div className="py-4 d-none d-lg-block">
               <Link to="/">
-                <img src={logo} alt="" className="logo-image" />
+                <img
+                  src={`${process.env.REACT_APP_IMAGE_URL}/images/logo.png`}
+                  alt="logo"
+                  className="logo-image"
+                />
               </Link>
             </div>
-            {/* 步驟進度 */}
-            <div>
-              <nav aria-label="breadcrumb">
-                <ol className="breadcrumb">
-                  <li className="breadcrumb-item">
-                    <Link to={'/cart'}>訂購清單</Link>
-                  </li>
-                  <li className="breadcrumb-item">
-                    <Link to={'/information'}>客戶資料</Link>
-                  </li>
-                  <li className="breadcrumb-item">
-                    <Link to={'/shipping'}>運費</Link>
-                  </li>
-                  <li className="breadcrumb-item">
-                    <Link to={'/payment'}>付款</Link>
-                  </li>
-                </ol>
-              </nav>
-            </div>
-            <div>
+
+            {/* 麵包屑 */}
+            <Breadcrumb />
+
+            {/* 聯絡資訊 */}
+            <div className="py-4">
               <h5>聯絡資訊</h5>
-              <h6>Ming Tony (gsn94561266@gmail.com)</h6>
-              <Link to={'/'}>如果不是, 請登出</Link>
+              <div className="py-3">
+                <h6 className="fs-7">Ming Tony (gsn94561266@gmail.com)</h6>
+                <Link
+                  to={'/'}
+                  className="fs-7 link-primary-300 text-decoration-none"
+                >
+                  如果不是, 請登出
+                </Link>
+              </div>
               <div className="form-check">
                 <input
                   className="form-check-input"
                   type="checkbox"
                   value=""
-                  id="flexCheckChecked"
-                  //   checked
+                  defaultChecked={checked}
+                  onChange={() => setChecked(!checked)}
                 />
-                <label className="form-check-label" for="flexCheckChecked">
+                <label className="form-check-label fs-7">
                   以電子郵件傳送最新消息和優惠活動給我
                 </label>
               </div>
             </div>
-            {/* 運送地址 */}
-            <div>
+
+            <div className="my-4">
               <h5>運送地址</h5>
-              <form className="row g-3">
-                <div className="form-floating">
-                  <select
-                    className="form-select"
-                    id="floatingSelect"
-                    aria-label="Floating label select example"
-                  >
-                    <option value="1" selected>
-                      台灣 (Ming Tony)
-                    </option>
-                    <option value="2">使用新的地址</option>
-                  </select>
-                  <label for="floatingSelect">已儲存的地址</label>
-                </div>
-                <div className="form-floating">
-                  <select
-                    className="form-select"
-                    id="floatingSelect"
-                    aria-label="Floating label select example"
-                  >
-                    <option value="1" selected>
-                      台灣
-                    </option>
-                    <option value="2">中國</option>
-                  </select>
-                  <label for="floatingSelect">國家/地區</label>
-                </div>
-                <div className="col-md-6 form-floating">
-                  <input type="text" className="form-control" />
-                  <label for="floatingInputValue">名字</label>
-                </div>
-                <div className="col-md-6 form-floating">
-                  <input type="text" className="form-control" />
-                  <label for="floatingInputValue">姓氏</label>
-                </div>
-                <div className="col-12">
-                  <input
-                    type="text"
-                    className="form-control"
-                    placeholder="公司(選填)"
-                  />
-                </div>
-                <div className="col-12">
-                  <input
-                    type="text"
-                    className="form-control"
-                    placeholder="地址"
-                  />
-                </div>
-                <div className="col-md-6">
-                  <input
-                    type="text"
-                    className="form-control"
-                    placeholder="市"
-                  />
-                </div>
-                <div className="col-md-6">
-                  <input
-                    type="text"
-                    className="form-control"
-                    placeholder="郵遞區號"
-                  />
-                </div>
-                <div className="col-md-12">
-                  <input
-                    type="text"
-                    className="form-control"
-                    placeholder="電話"
-                  />
-                </div>
-                <div className="col-12 d-flex fustify-content-between">
-                  <span>回到訂購清單</span>
-                  <Link to={'/shipping'}>
-                    <button className="btn btn-primary">繼續結帳</button>
+              {/* 填寫運送地址 */}
+              <form className="row g-3 my-2">
+                <Address />
+
+                {/* 底部按鈕 */}
+                <div className="col-12 d-flex justify-content-between align-items-center mt-5">
+                  <div>
+                    <Link
+                      to={'/cart'}
+                      className="text-decoration-none link-primary-300"
+                    >
+                      <i className="fa-solid fa-angle-left fs-7" />
+                      <span className="px-2 fs-7">回到訂購清單</span>
+                    </Link>
+                  </div>
+                  <Link to={'/checkout/shipping'}>
+                    <button className="btn btn-primary-300">繼續結帳</button>
                   </Link>
                 </div>
               </form>
@@ -152,7 +95,10 @@ function Information(props) {
           </div>
         </section>
 
-        <CartList />
+        {/* 右側購物清單 */}
+        <section className="col-12 col-lg-6 bg-primary py-5 d-none d-lg-block">
+          <CartList />
+        </section>
       </main>
     </>
   );

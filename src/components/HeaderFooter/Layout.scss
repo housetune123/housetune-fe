@@ -25,11 +25,12 @@ header {
     transition: 0.5s;
     max-height: 0;
     overflow: hidden;
+    z-index: 5;
   }
 
   .dropdown-main.active {
     max-height: 600px;
-    z-index: 2;
+    z-index: 5;
   }
 
   .dropdown-main li:hover {

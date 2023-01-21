@@ -4,6 +4,10 @@ export const HeaderItems = [
     path: '/',
     submenu: [
       {
+        title: '所有商品',
+        path: '/products',
+      },
+      {
         title: '客廳',
         path: '/',
       },
