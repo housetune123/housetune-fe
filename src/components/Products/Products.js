@@ -531,8 +531,9 @@ function Products() {
                             data-bs-toggle="modal"
                             data-bs-target="#exampleModal"
                             onClick={() => {
-                              setAmount('');
-                              setShape('');
+                              // 給預設值
+                              setAmount('1');
+                              setShape('藍色Blue');
                               setCompleteAdd(false);
                               setCart(v);
                             }}
@@ -1018,6 +1019,7 @@ function Products() {
                           className={`btn btn-primary-300 border border-2 border-success text-white btn-cart w-100 h-100`}
                           data-bs-target="#MsgModal"
                           onClick={(e) => {
+                            // 再次點即可重新添加
                             e.preventDefault();
                             setTimeout(() => {
                               setCompleteAdd(false);
