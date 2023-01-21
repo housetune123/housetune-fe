@@ -3,8 +3,13 @@ import './Cart.scss';
 import { useState, useEffect } from 'react';
 import { useCart } from '../../utils/useCart';
 import { Link } from 'react-router-dom';
+// 登入狀態引用
+import { useAuth } from '../Context/Authcontext';
 
 function Cart(props) {
+  // 引用登入狀態
+  const { userinfo, setUserInfo, isLoggedIn, setIsLoggedIn } = useAuth();
+
   // cart init
   // initialState = {
   //   items: [],
@@ -12,7 +17,6 @@ function Cart(props) {
   //   totalItems: 0,
   //   cartTotal: 0,
   // }
-
   const {
     cart,
     items,
@@ -167,8 +171,11 @@ function Cart(props) {
                   <p className="">NT$ {cart.cartTotal + 300} </p>
                 </div>
                 <Link
-                  to="../checkout/information"
+                  to={isLoggedIn ? 'checkout/information' : '../login'}
                   className="w-100 m-auto text-center btn btn-light bg-primary-300 text-white mb-2 "
+                  onClick={() => {
+                    if (!isLoggedIn) alert('請先登入!');
+                  }}
                 >
                   結帳
                 </Link>
