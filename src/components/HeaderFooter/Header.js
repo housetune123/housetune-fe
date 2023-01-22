@@ -5,7 +5,9 @@ import axios from 'axios';
 import { useAuth } from '../Context/Authcontext';
 
 import './Layout.scss';
-import logo from '../../images/logo.png';
+
+// 購物車數字
+import { useCart } from '../../utils/useCart';
 
 function Header() {
   const navigate = useNavigate();
@@ -28,6 +30,10 @@ function Header() {
   const onMouseLeave = () => {
     setDropdown(false);
   };
+
+  // 購物車
+  const { cart } = useCart();
+
   function Dropdown(index) {
     return (
       <>
@@ -66,10 +72,10 @@ function Header() {
     return (
       <>
         <div className="d-flex justify-content-between align-items-center p-4">
-          <div>
+          <div className={isLoggedIn ? 'd-none' : ''}>
             <i className="fa-solid fa-user text-primary-300 fs-5 mx-2" />
             <Link
-              to="/"
+              to="/login"
               className="link-primary-300 text-decoration-none fw-bolder fs-7"
             >
               登入
@@ -173,11 +179,16 @@ function Header() {
   }
 
   // 以下頁面不要顯示 HEADER
-  if (
-    location.pathname === '/checkout/information' &&
-    '/checkout/shipping' &&
-    '/checkout/payment'
-  ) {
+  if (location.pathname === '/checkout/information') {
+    return <></>;
+  }
+  if (location.pathname === '/checkout/shipping') {
+    return <></>;
+  }
+  if (location.pathname === '/checkout/payment') {
+    return <></>;
+  }
+  if (location.pathname === '/checkout/thankyou') {
     return <></>;
   }
 
@@ -198,7 +209,11 @@ function Header() {
             </div>
 
             <Link to="/">
-              <img src={logo} alt="" className="logo-image" />
+              <img
+                src={`${process.env.REACT_APP_IMAGE_URL}/images/logo.png`}
+                alt=""
+                className="logo-image"
+              />
             </Link>
 
             <form
@@ -252,9 +267,17 @@ function Header() {
               >
                 登出
               </p>
-              <div className={'px-2' + (isLoggedIn ? '' : 'd-none')}>
-                <Link to="/cart">
+              {/* 這邊還沒登入一樣顯示購物車 */}
+              <div className="px-2">
+                <Link to="/cart" className="position-relative">
                   <i className="fa-solid fa-cart-shopping text-primary-300 fs-4" />
+                  <span
+                    className={`${
+                      cart.totalItems > 0 ? '' : 'd-none'
+                    } cart-amount position-absolute text-decoration-none text-white`}
+                  >
+                    {cart.totalItems}
+                  </span>
                 </Link>
               </div>
             </div>

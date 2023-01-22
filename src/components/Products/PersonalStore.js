@@ -434,7 +434,7 @@ function PersonalStore() {
                               NT $ {v.price}
                             </h5>
                             <p>
-                              <i class="fa-regular fa-heart text-info"></i>
+                              <i className="fa-regular fa-heart text-info"></i>
                             </p>
                           </div>
                           <h6 className="card-title text-gray-300">{v.name}</h6>

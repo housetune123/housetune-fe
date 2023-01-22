@@ -15,8 +15,7 @@ function AddUsedProducts() {
   const [yaer, setYear] = useState(0);
   return (
     <>
-      <div className="add-used-products">
-        <header className="text-center bg-white">我是header</header>
+      <div className="add-used-products py-4">
         <div className="container">
           <img
             src={`${process.env.REACT_APP_IMAGE_URL}/images/messenger.svg`}
@@ -61,7 +60,7 @@ function AddUsedProducts() {
                 </div>
               </div>
             </div>
-            <form className='w-70'>
+            <form className="w-70">
               <div className="right w-100 ms-5">
                 <div className="bg-white p-3 shadow">
                   <h5 className="text-gray-400">基本資訊</h5>
@@ -258,7 +257,6 @@ function AddUsedProducts() {
             </form>
           </div>
         </div>
-        <footer className="text-center mt-5 bg-white">我是footer</footer>
       </div>
     </>
   );
