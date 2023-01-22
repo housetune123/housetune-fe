@@ -20,7 +20,7 @@ function Checkout() {
   // 設定是否使用優惠券
   const [useCoupon, setUseCoupon] = useState(false);
   // 優惠券名稱
-  const [coupon, setCoupon] = useState('HAPPYYEIN');
+  const [coupon, setCoupon] = useState('HAPPYYE23');
   // 優惠券細節
   const [couponDetail, setCouponDetail] = useState({});
 
@@ -35,11 +35,23 @@ function Checkout() {
       // console.log(res.data);
       let result = res.data[0];
       console.log(result);
-      setCouponDetail({ ...result });
-      setUseCoupon(true);
+      if (result === undefined) {
+        console.log('沒有這個優惠碼');
+        alert('沒有這個優惠碼');
+        // console.log(couponDetail);
+      } else {
+        setCouponDetail({ ...result });
+        setUseCoupon(true);
+        alert('使用成功');
+      }
     }
     getCoupon();
   }
+  // 款項 購物車 - 優惠券 + 運費
+  let payment =
+    cart.cartTotal -
+    (Object.keys(couponDetail).length === 0 ? '0' : couponDetail.discount) +
+    300;
 
   return (
     <>
@@ -113,7 +125,12 @@ function Checkout() {
           </div>
           <div className="d-flex justify-content-between my-2">
             <span className="fs-7">優惠券</span>
-            <span className="fs-7">- ${couponDetail.discount}</span>
+            <span className="fs-7">
+              - $
+              {Object.keys(couponDetail).length === 0
+                ? '0'
+                : couponDetail.discount}
+            </span>
           </div>
           <div className="d-flex justify-content-between my-2">
             <span className="fs-7">運費</span>
@@ -128,7 +145,7 @@ function Checkout() {
           </div>
           <div>
             <abbr className="fs-8 text-gray-200 mx-2">TWD</abbr>
-            <strong>${cart.cartTotal - couponDetail.discount + 300}</strong>
+            <strong>${payment}</strong>
           </div>
         </div>
       </div>
