@@ -1,7 +1,7 @@
 import React from 'react';
 import './Register.scss';
 import InputItem from './InputItem';
-import { json, Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { useState } from 'react';
 import axios from 'axios';
 
@@ -76,6 +76,7 @@ function subcity(city) {
 }
 
 function Register() {
+  const navigate = useNavigate();
   // let regex = new RegExp('[a-z0-9]+@[a-z]+.[a-z]{2,3}');
   const [member, setMemeber] = useState({
     account: '',
@@ -124,7 +125,7 @@ function Register() {
         member
       );
       alert(response.data);
-      document.location.href = 'http://localhost:3000/login';
+      navigate('/login');
     } catch (e) {
       // console.log(e.response);
       alert(e.response.data.errors[0]['msg']);
