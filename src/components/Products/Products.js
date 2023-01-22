@@ -108,7 +108,7 @@ function Products() {
             likeJson,
             userId,
           });
-          console.log(res.data);
+          // console.log(res.data);
         }
         liked();
       } catch (e) {

@@ -12,6 +12,8 @@ import { Link } from 'react-router-dom';
 import moment from 'moment';
 import zhTw from '../zh-tw';
 import { useAuth } from '../Context/Authcontext';
+import { useNavigate } from 'react-router-dom';
+import { useCart } from '../../utils/useCart';
 
 function ProductsDetail() {
   // 登入登出
@@ -235,6 +237,129 @@ function ProductsDetail() {
     slidesToShow: 1,
     slidesToScroll: 1,
   };
+  // 購物車
+  const { addItem, items } = useCart();
+
+  useEffect(() => {
+    setCompleteAdd(false);
+  }, [shape, amount]);
+
+  // 訊息框
+  const [resultMsg, setResultMsg] = useState({});
+  const [completeAdd, setCompleteAdd] = useState(false);
+
+  const MessageMap = {
+    1: '新增成功!',
+    2: '新增失敗 請重新選擇數量!',
+    3: '已達購買數量上限!',
+  };
+
+  function addToCart() {
+    let thisProduct = product[0];
+    const item = {
+      ...thisProduct,
+      quantity: parseInt(amount, 10),
+    };
+    // 判斷購買數量超過庫存 則不能再加進購物車
+    console.log(item);
+    console.log(items);
+
+    // addItem({
+    //   ...item,
+    //   id: item.prod_id + `-${shape}`,
+    //   shape: shape,
+    // });
+
+    let overBuy = false;
+    let buyingItemIndex;
+    // 判斷 選取的產品 購買數量不超過庫存
+    // cart.amount 是庫存
+    // items[i].quantity 是購物車該項目的數量
+
+    // 購物車為空直接 + 進去
+    if (items.length === 0) {
+      addItem({
+        ...item,
+        id: item.prod_id + `-${shape}`,
+        shape: shape,
+      });
+      setResultMsg(MessageMap[1]);
+      setCompleteAdd(true);
+    } else {
+      // 確認有沒有這筆商品的 id
+      let found = items.find((obj) => {
+        return obj.id === item.prod_id + `-${shape}`;
+      });
+      // 沒找到 => 加進去
+      if (found === undefined) {
+        addItem({
+          ...item,
+          id: item.prod_id + `-${shape}`,
+          shape: shape,
+        });
+        setResultMsg(MessageMap[1]);
+        setCompleteAdd(true);
+      } else {
+        for (let i in items) {
+          console.log(items[i]);
+          // 單純判斷 id
+          if (items[i].id === item.prod_id + `-${shape}`) {
+            // console.log(
+            //   `檢查到相同id items[i].id : ${items[i].id} , item.prod_id : ${
+            //     item.prod_id + `-${shape}`
+            //   }`
+            // );
+            if (items[i].quantity === thisProduct.amount) {
+              overBuy = true;
+              buyingItemIndex = i;
+              setResultMsg(MessageMap[3]);
+              setCompleteAdd(true);
+            } else {
+              // console.log(
+              //   `還能購買 ${thisProduct.amount - items[i].quantity} 個`
+              // );
+              overBuy = false;
+              buyingItemIndex = i;
+              confirmAmounts();
+            }
+          }
+        }
+      }
+    }
+
+    // 如果超過庫存數 不要 addItem
+    // console.log(overBuy);
+    // console.log('確認index', buyingItemIndex);
+
+    function confirmAmounts() {
+      if (overBuy === false) {
+        // 購物車 + 選取 <= 庫存 => 可以新增
+        // 購物車 + 選取 > 庫存 => 新增失敗
+        if (+amount + items[buyingItemIndex].quantity > +thisProduct.amount) {
+          // console.log(
+          //   `無法新增這麼多數量 選取數量:${amount} , 購物車裡的數量 ${items[buyingItemIndex].quantity} 庫存數${thisProduct.amount}`
+          // );
+          setResultMsg(MessageMap[2]);
+          setCompleteAdd(true);
+        } else {
+          // console.log(
+          //   `新增成功 選取數量:${+amount} , 購物車裡的數量 ${+items[
+          //     buyingItemIndex
+          //   ].quantity} -- 庫存數${thisProduct.amount} 新增後數量 => ${
+          //     +amount + items[buyingItemIndex].quantity
+          //   }`
+          // );
+          addItem({
+            ...item,
+            id: item.prod_id + `-${shape}`,
+            shape: shape,
+          });
+          setResultMsg(MessageMap[1]);
+          setCompleteAdd(true);
+        }
+      }
+    }
+  }
 
   return (
     <>
@@ -281,16 +406,16 @@ function ProductsDetail() {
                             setShape(e.target.value);
                           }}
                         >
-                          <option value="藍色 Blue" className="text-gray-400">
+                          <option value="藍色Blue" className="text-gray-400">
                             藍色 Blue
                           </option>
-                          <option value="深灰色 Gray" className="text-gray-400">
+                          <option value="深灰色Gray" className="text-gray-400">
                             深灰色 Gray
                           </option>
-                          <option value="綠色 Green" className="text-gray-400">
+                          <option value="綠色Green" className="text-gray-400">
                             綠色 Green
                           </option>
-                          <option value="白色 White" className="text-gray-400">
+                          <option value="白色White" className="text-gray-400">
                             白色 White
                           </option>
                         </select>
@@ -362,9 +487,28 @@ function ProductsDetail() {
                           )}
                         </div>
                         <div className="col-7">
-                          <button className="btn btn-cart bg-gray border border-2 border-primary-200 text-primary-300 btn-cart w-100 h-100">
-                            加入購物車
-                          </button>
+                          {!completeAdd ? (
+                            <button
+                              className="btn btn-cart bg-gray border border-2 border-primary-200 text-primary-300 btn-cart w-100 h-100"
+                              onClick={() => {
+                                addToCart();
+                              }}
+                            >
+                              加入購物車
+                            </button>
+                          ) : (
+                            <button
+                              className="btn btn-primary-300 border border-2 border-success text-white btn-cart w-100 h-100"
+                              onClick={(e) => {
+                                e.preventDefault();
+                                setTimeout(() => {
+                                  setCompleteAdd(false);
+                                }, 100);
+                              }}
+                            >
+                              {resultMsg}
+                            </button>
+                          )}
                         </div>
                       </div>
                     )}
