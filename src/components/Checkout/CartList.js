@@ -58,7 +58,7 @@ function Checkout() {
                   <div className="position-relative">
                     <img
                       className="procduct-image"
-                      src={`${process.env.REACT_APP_IMAGE_URL}/images/products/${val.category_name}/${img[0]}`}
+                      src={`${process.env.REACT_APP_IMAGE_URL}/images/products/${val.categoryR_name}/${img[0]}`}
                       alt="/"
                     />
                     <div className="bg-gray-200 amount d-flex align-items-center justify-content-center">

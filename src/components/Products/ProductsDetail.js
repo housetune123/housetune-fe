@@ -53,7 +53,7 @@ function ProductsDetail() {
             likeJson,
             userId,
           });
-          console.log(res.data);
+          // console.log(res.data);
         }
         liked();
       } catch (e) {
@@ -64,13 +64,24 @@ function ProductsDetail() {
 
   // 瀏覽紀錄
   const [browse, setBrowse] = useState([]);
-  // 進入頁面取得瀏覽紀錄session
+  // 進入頁面取得瀏覽紀錄session，抓取資料
   useEffect(() => {
     try {
       async function getBrowse() {
-        let res = await axios.get('http://localhost:3001/api/products/browse');
+        let res = await axios.get(`
+          http://localhost:3001/api/products/${prodId}
+        `);
+        setProdcut(res.data.data);
+        setRating(res.data.rating);
+        // 相關商品推薦
+        let res2 = await axios.get(
+          `http://localhost:3001/api/products/${res.data.data[0].category_product}/${prodId}
+        `
+        );
+        setCategory(res2.data);
+        let res3 = await axios.get('http://localhost:3001/api/products/browse');
         // console.log(res.data.data);
-        setBrowse(res.data.data);
+        setBrowse(res3.data.data);
       }
       getBrowse();
       // console.log(browse, '[]');
@@ -477,13 +488,26 @@ function ProductsDetail() {
                           {inputDisplay === 'block' && (
                             <input
                               type="number"
-                              max={v.amount}
                               className="form-control bg-white shadow-none"
+                              min={0}
+                              max={product[0].amount}
                               value={amount}
+                              onKeyUp={(e) => {
+                                e.target.value = e.target.value.replace(
+                                  /[^\d]/g,
+                                  ''
+                                );
+                              }}
                               onChange={(e) => {
+                                if (e.target.value > product[0].amount) {
+                                  e.target.value = product[0].amount;
+                                }
+                                if (e.target.value <= 0) {
+                                  e.target.value = 1;
+                                }
                                 setAmount(e.target.value);
                               }}
-                            ></input>
+                            />
                           )}
                         </div>
                         <div className="col-7">

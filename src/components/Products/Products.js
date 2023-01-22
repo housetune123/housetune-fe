@@ -1202,13 +1202,26 @@ function Products() {
                       {inputDisplay === 'block' && (
                         <input
                           type="number"
-                          max={cart.amount}
                           className="form-control bg-white shadow-none"
+                          min={0}
+                          max={cart.amount}
                           value={amount}
+                          onKeyUp={(e) => {
+                            e.target.value = e.target.value.replace(
+                              /[^\d]/g,
+                              ''
+                            );
+                          }}
                           onChange={(e) => {
+                            if (e.target.value > cart.amount) {
+                              e.target.value = cart.amount;
+                            }
+                            if (e.target.value <= 0) {
+                              e.target.value = 1;
+                            }
                             setAmount(e.target.value);
                           }}
-                        ></input>
+                        />
                       )}
                     </div>
                     <div className="col-7">

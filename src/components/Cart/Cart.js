@@ -65,7 +65,7 @@ function Cart(props) {
                   <img
                     className="d-block col-sm-2 col-4 img-fluid"
                     //TODO:
-                    src={`${process.env.REACT_APP_IMAGE_URL}/images/products/${val.category_name}/${img[0]}`}
+                    src={`${process.env.REACT_APP_IMAGE_URL}/images/products/${val.categoryR_name}/${img[0]}`}
                     alt=""
                   />
                   <div className=" col-sm-10 col-8  row align-items-center d-flex justify-content-between ">
