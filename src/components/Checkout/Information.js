@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
-
+import { useAuth } from '../Context/Authcontext';
 import './Checkout.scss';
 
 import CartList from './CartList';
@@ -10,6 +10,8 @@ import Mobile from './element/Mobile';
 
 function Information(props) {
   const [checked, setChecked] = useState(true);
+  const { userinfo } = useAuth();
+  const [orderAddress, setOrderAddress] = useState([]);
 
   return (
     <>
@@ -47,13 +49,15 @@ function Information(props) {
             <div className="py-4">
               <h5>聯絡資訊</h5>
               <div className="py-3">
-                <h6 className="fs-7">Ming Tony (gsn94561266@gmail.com)</h6>
-                <Link
+                <h6 className="fs-7">
+                  {userinfo.name} ({userinfo.email})
+                </h6>
+                {/* <Link
                   to={'/'}
                   className="fs-7 link-primary-300 text-decoration-none"
                 >
                   如果不是, 請登出
-                </Link>
+                </Link> */}
               </div>
               <div className="form-check">
                 <input
@@ -73,7 +77,7 @@ function Information(props) {
               <h5>運送地址</h5>
               {/* 填寫運送地址 */}
               <form className="row g-3 my-2">
-                <Address />
+                <Address setOrderAddress={setOrderAddress} />
 
                 {/* 底部按鈕 */}
                 <div className="col-12 d-flex justify-content-between align-items-center mt-5">
