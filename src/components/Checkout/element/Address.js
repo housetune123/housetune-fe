@@ -3,7 +3,7 @@ import { useEffect } from 'react';
 
 import '../Checkout.scss';
 
-function Address(props) {
+function Address() {
   // firstName 名 lastName 姓
   const [address, setAddress] = useState({
     country: '台灣',
@@ -20,12 +20,10 @@ function Address(props) {
   // 載入時
   useEffect(() => {
     setAddress(JSON.parse(localStorage.getItem('myAddress')));
-    console.log(props);
   }, []);
   useEffect(() => {
     // 存入 Localstorage
     localStorage.setItem('myAddress', JSON.stringify(address));
-    props.setOrderAddress(address);
   }, [address]);
 
   return (

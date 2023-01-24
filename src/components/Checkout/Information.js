@@ -11,7 +11,7 @@ import Mobile from './element/Mobile';
 function Information(props) {
   const [checked, setChecked] = useState(true);
   const { userinfo } = useAuth();
-  const [orderAddress, setOrderAddress] = useState([]);
+  // const [orderAddress, setOrderAddress] = useState([]);
 
   return (
     <>
@@ -77,7 +77,7 @@ function Information(props) {
               <h5>運送地址</h5>
               {/* 填寫運送地址 */}
               <form className="row g-3 my-2">
-                <Address setOrderAddress={setOrderAddress} />
+                <Address />
 
                 {/* 底部按鈕 */}
                 <div className="col-12 d-flex justify-content-between align-items-center mt-5">

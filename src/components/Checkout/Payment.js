@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
+import { useAuth } from '../Context/Authcontext';
 
 import './Checkout.scss';
 
@@ -8,9 +9,10 @@ import Breadcrumb from './element/Breadcrumb';
 import Address from './element/Address';
 import Mobile from './element/Mobile';
 
-function Payment(props) {
+function Payment() {
   const [paySelected, setPaySelected] = useState('CreditCard');
   const [addressSelected, setAddressSelected] = useState('sameAddress');
+  const { userinfo } = useAuth();
 
   const payChange = (event) => {
     setPaySelected(event.target.value);
@@ -18,6 +20,13 @@ function Payment(props) {
   const addressChange = (event) => {
     setAddressSelected(event.target.value);
   };
+
+  const addressData = JSON.parse(localStorage.getItem('myAddress'));
+  console.log(addressData);
+  const address = `${addressData.district + addressData.address},${
+    addressData.postcode + addressData.city
+  },${addressData.country}`;
+  console.log(address);
 
   return (
     <>
@@ -56,7 +65,7 @@ function Payment(props) {
               <div className="d-flex justify-content-between mx-4 py-3 border-bottom border-gray-100">
                 <div className="row">
                   <span className="col-auto fs-7 information-title">聯絡</span>
-                  <bdo className="col-auto fs-7">gsn94561266@gmail.com</bdo>
+                  <bdo className="col-auto fs-7">{userinfo.email}</bdo>
                 </div>
 
                 <Link
@@ -71,9 +80,7 @@ function Payment(props) {
                   <span className="col-auto fs-7 information-title">
                     收貨地
                   </span>
-                  <bdo className="col-auto fs-7">
-                    板橋區僑中一街25號, 220 新北市, 台灣
-                  </bdo>
+                  <bdo className="col-auto fs-7">{address}</bdo>
                 </div>
 
                 <Link
