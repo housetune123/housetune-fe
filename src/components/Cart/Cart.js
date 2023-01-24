@@ -5,7 +5,7 @@ import { useState, useEffect } from 'react';
 
 function Cart() {
   const [cartProducts, setCartProducts] = useState([]);
-  //////////////
+  // ////////////
   // useEffect(() => {
   //   async function getCartProducts() {
   //     let response = await axios.get('http://localhost:3001/api/cart');

@@ -17,9 +17,9 @@ import ProductDetail from './components/Products/ProductsDetail';
 import UsedProductDetail from './components/Products/UsedProductsDetail';
 // user-page branch
 import UserPage from './components/UserPage/UserPage';
-
+//cart and salesorder
 import Cart from './components/Cart/Cart';
-
+import SalesOrderContent from './components/SalesOrder/SalesOrderContent'
 import Login from './components/Login/Login';
 import Register from './components/Register/Register';
 import ForgotPage from './components/Login/ForgotPage';
@@ -53,6 +53,7 @@ function App() {
         <Route path="forgot" element={<ForgotPage />} />
         <Route path="user" element={<UserPage />} />
         <Route path="cart" element={<Cart />} />
+        <Route path="salesorder" element={<SalesOrderContent />} />
 
         <Route path="checkout">
           <Route path="information" element={<Information />} />
