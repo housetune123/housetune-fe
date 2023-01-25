@@ -1,6 +1,9 @@
 import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { useAuth } from '../Context/Authcontext';
+import { useNavigate } from 'react-router-dom';
+import axios from 'axios';
+import { useCart } from '../../utils/useCart';
 
 import './Checkout.scss';
 
@@ -13,6 +16,7 @@ function Payment() {
   const [paySelected, setPaySelected] = useState('CreditCard');
   const [addressSelected, setAddressSelected] = useState('sameAddress');
   const { userinfo } = useAuth();
+  const navigate = useNavigate();
 
   const payChange = (event) => {
     setPaySelected(event.target.value);
@@ -21,12 +25,39 @@ function Payment() {
     setAddressSelected(event.target.value);
   };
 
+  const { cart, items, isInCart } = useCart();
+
+  // 取得地址資料
   const addressData = JSON.parse(localStorage.getItem('myAddress'));
-  console.log(addressData);
+  // console.log(addressData);
   const address = `${addressData.district + addressData.address},${
     addressData.postcode + addressData.city
   },${addressData.country}`;
-  console.log(address);
+  // console.log(address);
+
+  // console.log(userinfo);
+
+  // 只取產品的 id , 數量 , 顏色
+  const orderItems = items.map((val) => {
+    return { prod_id: val.prod_id, quantity: val.quantity, shape: val.shape };
+  });
+  // console.log('購買產品', orderItems);
+
+  const orderMsg = {
+    userId: userinfo.id,
+    address: address,
+    price: cart.finalPayment,
+    state: '1',
+    note: '',
+    products: orderItems,
+  };
+
+  async function Pay(e) {
+    e.preventDefault();
+    let res = axios.post('http://localhost:3001/api/payment', { orderMsg });
+    console.log(res.data);
+    navigate('/cart/checkout/thankyou');
+  }
 
   return (
     <>
@@ -358,9 +389,9 @@ function Payment() {
                     <span className="px-2 fs-7">重新填寫運送方式</span>
                   </Link>
                 </div>
-                <Link to={'/cart/checkout/thankyou'}>
-                  <button className="btn btn-primary-300">立即付款</button>
-                </Link>
+                <button className="btn btn-primary-300" onClick={Pay}>
+                  立即付款
+                </button>
               </div>
             </form>
           </div>

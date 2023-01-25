@@ -4,7 +4,7 @@ import axios from 'axios';
 import { useCart } from '../../utils/useCart';
 import './Checkout.scss';
 
-function Checkout() {
+function Checkout({ setPayment }) {
   const {
     cart,
     items,
@@ -52,6 +52,8 @@ function Checkout() {
     cart.cartTotal -
     (Object.keys(couponDetail).length === 0 ? '0' : couponDetail.discount) +
     300;
+  cart['finalPayment'] = payment;
+  // console.log(cart);
 
   return (
     <>
