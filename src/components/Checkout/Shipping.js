@@ -1,14 +1,22 @@
 import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
-
 import './Checkout.scss';
 
 import CartList from './CartList';
 import Breadcrumb from './element/Breadcrumb';
 import Mobile from './element/Mobile';
+import { useAuth } from '../Context/Authcontext';
 
 function Shipping(props) {
   const [checked, setChecked] = useState(true);
+  const { userinfo } = useAuth();
+
+  const addressData = JSON.parse(localStorage.getItem('myAddress'));
+  console.log(addressData);
+  const address = `${addressData.district + addressData.address},${
+    addressData.postcode + addressData.city
+  },${addressData.country}`;
+  console.log(address);
 
   return (
     <>
@@ -47,7 +55,7 @@ function Shipping(props) {
               <div className="d-flex justify-content-between mx-4 py-3 border-bottom border-gray-100">
                 <div className="row">
                   <span className="col-auto fs-7 information-title">聯絡</span>
-                  <bdo className="col-auto fs-7">gsn94561266@gmail.com</bdo>
+                  <bdo className="col-auto fs-7">{userinfo.email}</bdo>
                 </div>
 
                 <Link
@@ -62,9 +70,7 @@ function Shipping(props) {
                   <span className="col-auto fs-7 information-title">
                     收貨地
                   </span>
-                  <bdo className="col-auto fs-7">
-                    板橋區僑中一街25號, 220 新北市, 台灣
-                  </bdo>
+                  <bdo className="col-auto fs-7">{address}</bdo>
                 </div>
 
                 <Link
