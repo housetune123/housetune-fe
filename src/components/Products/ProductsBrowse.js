@@ -52,7 +52,7 @@ function ProductsBrowse({ browse, setBrowse }) {
                     <div>
                       <Link to={`/products/${v.prod_id}`}>
                         <img
-                          src={`${process.env.REACT_APP_IMAGE_URL}/images/products/${v.category_name}/${img[0]}`}
+                          src={`${process.env.REACT_APP_IMAGE_URL}/images/products/${v.categoryR_name}/${img[0]}`}
                           className="card-img-top bg-gray-200 object-cover product-img"
                           alt="..."
                         />
