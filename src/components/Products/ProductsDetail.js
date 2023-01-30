@@ -233,7 +233,7 @@ function ProductsDetail() {
                 key={v.prod_id}
                 className="object-cover"
                 alt=""
-                src={`${process.env.REACT_APP_IMAGE_URL}/images/products/${v.category_name}/${img[index]}`}
+                src={`${process.env.REACT_APP_IMAGE_URL}/images/products/${v.categoryR_name}/${img[index]}`}
               />
             );
           })}
@@ -392,7 +392,7 @@ function ProductsDetail() {
                           <img
                             className="object-cover"
                             alt=""
-                            src={`${process.env.REACT_APP_IMAGE_URL}/images/products/${v.category_name}/${v2}`}
+                            src={`${process.env.REACT_APP_IMAGE_URL}/images/products/${v.categoryR_name}/${v2}`}
                           ></img>
                         </div>
                       );
