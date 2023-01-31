@@ -129,16 +129,7 @@ function Cart(props) {
             <div className="row justify-content-center order-list-lower mt-4 px-2">
               <div className="col-12 order-2 order-sm-1 col-sm-6 d-inline-block ">
                 {/* coupon */}
-                <div className="d-flex justify-content-between w-100">
-                  <input
-                    type="text"
-                    placeholder="折扣碼"
-                    className="w-75 form-control"
-                  />
-                  <button className="w-25 primary-300 btn bg-primary-300 text-white">
-                    套用
-                  </button>
-                </div>
+                <div className="d-flex justify-content-between w-100"></div>
                 <hr />
                 {/* 金額明細 */}
                 <div className="div-price mt-4 d-flex flex-column justify-content-end">
