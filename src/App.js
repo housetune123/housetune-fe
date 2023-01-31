@@ -2,6 +2,7 @@ import { BrowserRouter, Routes, Route } from 'react-router-dom';
 import { useState, useEffect } from 'react';
 import axios from 'axios';
 import { AuthContext } from './components/Context/Authcontext';
+import { CouponContext } from './components/Context/CouponContext';
 
 // 頁面元件
 // layout branch
@@ -68,66 +69,73 @@ function App() {
     });
   }, []);
 
+  const [couponInfo, setCouponInfo] = useState({});
+  const [isUsed, setIsUsed] = useState(false);
+
   return (
     <CartProvider>
       <AuthContext.Provider
         value={{ userinfo, setUserInfo, isLoggedIn, setIsLoggedIn }}
       >
-        <BrowserRouter>
-          <Header />
-          <Routes>
-            <Route path="/" element={<Main />} />
-            <Route path="/products" element={<Products />}></Route>
-            <Route path="/products/:prodId" element={<ProductDetail />} />
-            <Route
-              path="/products/category/:categoryRoom"
-              element={<Products />}
-            ></Route>
-            <Route
-              path="/used/products/detail"
-              element={<UsedProductDetail />}
-            ></Route>
+        <CouponContext.Provider
+          value={{ couponInfo, setCouponInfo, isUsed, setIsUsed }}
+        >
+          <BrowserRouter>
+            <Header />
+            <Routes>
+              <Route path="/" element={<Main />} />
+              <Route path="/products" element={<Products />}></Route>
+              <Route path="/products/:prodId" element={<ProductDetail />} />
+              <Route
+                path="/products/category/:categoryRoom"
+                element={<Products />}
+              ></Route>
+              <Route
+                path="/used/products/detail"
+                element={<UsedProductDetail />}
+              ></Route>
 
-            <Route exact path="inspiration">
-              <Route index={true} element={<Inspiration />} />
-              <Route path="detail1" element={<InspDetail1 />} />
-            </Route>
+              <Route exact path="inspiration">
+                <Route index={true} element={<Inspiration />} />
+                <Route path="detail1" element={<InspDetail1 />} />
+              </Route>
 
-            {/* used */}
-            <Route path="usedstore" element={<PersonalStore />} />
-            <Route path="usedproduct" element={<UsedProductList />} />
-            <Route
-              path="/used/products/detail"
-              element={<UsedProductDetail />}
-            ></Route>
-            <Route path="usedproduct/add" element={<AddUsedProducts />} />
+              {/* used */}
+              <Route path="usedstore" element={<PersonalStore />} />
+              <Route path="usedproduct" element={<UsedProductList />} />
+              <Route
+                path="/used/products/detail"
+                element={<UsedProductDetail />}
+              ></Route>
+              <Route path="usedproduct/add" element={<AddUsedProducts />} />
 
-            {/* user */}
-            <Route path="login" element={<Login />} />
-            <Route path="forgot" element={<ForgotPage />} />
-            <Route path="register" element={<Register />} />
-            <Route path="user" element={<UserPage />} />
+              {/* user */}
+              <Route path="login" element={<Login />} />
+              <Route path="forgot" element={<ForgotPage />} />
+              <Route path="register" element={<Register />} />
+              <Route path="user" element={<UserPage />} />
 
-            {/* ckeckout */}
-            <Route path="cart" element={<Cart />} />
-            <Route
-              path="/cart/checkout/information"
-              element={<Information />}
-            />
-            <Route path="/cart/checkout/shipping" element={<Shipping />} />
-            <Route path="/cart/checkout/payment" element={<Payment />} />
-            <Route path="/cart/checkout/thankyou" element={<Thankyou />} />
+              {/* ckeckout */}
+              <Route path="cart" element={<Cart />} />
+              <Route
+                path="/cart/checkout/information"
+                element={<Information />}
+              />
+              <Route path="/cart/checkout/shipping" element={<Shipping />} />
+              <Route path="/cart/checkout/payment" element={<Payment />} />
+              <Route path="/cart/checkout/thankyou" element={<Thankyou />} />
 
-            <Route path="checkout">
-              <Route path="information" element={<Information />} />
-              <Route path="shipping" element={<Shipping />} />
-              <Route path="payment" element={<Payment />} />
-            </Route>
+              <Route path="checkout">
+                <Route path="information" element={<Information />} />
+                <Route path="shipping" element={<Shipping />} />
+                <Route path="payment" element={<Payment />} />
+              </Route>
 
-            <Route path="*" element={<NotFound />} />
-          </Routes>
-          <Footer />
-        </BrowserRouter>
+              <Route path="*" element={<NotFound />} />
+            </Routes>
+            <Footer />
+          </BrowserRouter>
+        </CouponContext.Provider>
       </AuthContext.Provider>
     </CartProvider>
   );
