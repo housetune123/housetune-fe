@@ -3,6 +3,7 @@ import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import { useCart } from '../../utils/useCart';
 import './Checkout.scss';
+import { useBeforeCoupon } from '../Context/CouponContext';
 
 function Checkout({ setPayment }) {
   const {
@@ -16,13 +17,31 @@ function Checkout({ setPayment }) {
     plusOne,
     minusOne,
   } = useCart();
-
+  // 引入使用 coupon 的狀態
+  const { couponInfo, setCouponInfo, isUsed, setIsUsed } = useBeforeCoupon();
   // 設定是否使用優惠券
   const [useCoupon, setUseCoupon] = useState(false);
   // 優惠券名稱
   const [coupon, setCoupon] = useState('HAPPYYE23');
   // 優惠券細節
   const [couponDetail, setCouponDetail] = useState({});
+
+  // 判斷有 context 資料時
+  const infoLength = Object.keys(couponInfo);
+
+  useEffect(() => {
+    if (!isUsed) {
+      setUseCoupon(false);
+    } else {
+      setUseCoupon(true);
+    }
+    if (infoLength <= 0) {
+      setCouponDetail({});
+    } else {
+      setCouponDetail({ ...couponInfo });
+      setCoupon(couponInfo.coupon_name);
+    }
+  }, []);
 
   function handleUseCoupon() {
     setUseCoupon(false);
@@ -34,7 +53,7 @@ function Checkout({ setPayment }) {
       });
       // console.log(res.data);
       let result = res.data[0];
-      console.log(result);
+      // console.log(result);
       if (result === undefined) {
         console.log('沒有這個優惠碼');
         alert('沒有這個優惠碼');
@@ -42,6 +61,9 @@ function Checkout({ setPayment }) {
       } else {
         setCouponDetail({ ...result });
         setUseCoupon(true);
+        // context 部分
+        setCouponInfo({ ...result });
+        setIsUsed(true);
         alert('使用成功');
       }
     }
