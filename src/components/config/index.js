@@ -5,7 +5,7 @@
 /* eslint-disable */
 export const pathnameLocale = {
   about: '關於我們',
-  products: '產品',
+  products: '產品列表',
   detail: '細節',
   category: '產品分類',
   'product-category': '產品分類',

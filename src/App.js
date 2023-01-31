@@ -15,7 +15,7 @@ import Thankyou from './components/Checkout/Thankyou';
 import Inspiration from './components/Inspiration/Inspiration';
 import InspDetail1 from './components/Inspiration/Insp_detail1';
 import AddUsedProducts from './components/UsedProducts/AddUsedProducts';
-import UsedProductList from './components/UsedProducts/UsedProductList';
+import UsedProducts from './components/Products/UsedProducts';
 
 // home-page branch
 import PersonalStore from './components/Products/PersonalStore';
@@ -102,7 +102,7 @@ function App() {
 
               {/* used */}
               <Route path="usedstore" element={<PersonalStore />} />
-              <Route path="usedproduct" element={<UsedProductList />} />
+              <Route path="used/products" element={<UsedProducts />} />
               <Route
                 path="/used/products/detail"
                 element={<UsedProductDetail />}
