@@ -22,7 +22,7 @@ function Breadcrumb() {
             <i className="fa-solid fa-angle-right fs-8 px-2"></i>
             <li>
               <Link
-                to={'/checkout/information'}
+                to={'/cart/checkout/information'}
                 className={
                   location.pathname === '/checkout/information'
                     ? 'fs-7 link-gray-400 text-decoration-none pe-none'
@@ -35,7 +35,7 @@ function Breadcrumb() {
             <i className="fa-solid fa-angle-right fs-8 px-2"></i>
             <li>
               <Link
-                to={'/checkout/shipping'}
+                to={'/cart/checkout/shipping'}
                 className={
                   location.pathname === '/checkout/shipping'
                     ? 'fs-7 link-gray-400 text-decoration-none pe-none'
@@ -48,7 +48,7 @@ function Breadcrumb() {
             <i className="fa-solid fa-angle-right fs-8 px-2"></i>
             <li>
               <Link
-                to={'/checkout/payment'}
+                to={'/cart/checkout/payment'}
                 className={
                   location.pathname === '/checkout/payment'
                     ? 'fs-7 link-gray-400 text-decoration-none pe-none'

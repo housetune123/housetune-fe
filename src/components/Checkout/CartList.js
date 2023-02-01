@@ -1,121 +1,164 @@
-import React, { useState } from 'react';
-
+import { async } from 'q';
+import React, { useState, useEffect } from 'react';
+import axios from 'axios';
+import { useCart } from '../../utils/useCart';
 import './Checkout.scss';
+import { useBeforeCoupon } from '../Context/CouponContext';
 
-function Checkout() {
+function Checkout({ setPayment }) {
+  const {
+    cart,
+    items,
+    addItem,
+    removeItem,
+    updateItem,
+    clearCart,
+    isInCart,
+    plusOne,
+    minusOne,
+  } = useCart();
+  // 引入使用 coupon 的狀態
+  const { couponInfo, setCouponInfo, isUsed, setIsUsed } = useBeforeCoupon();
+  // 設定是否使用優惠券
+  const [useCoupon, setUseCoupon] = useState(false);
+  // 優惠券名稱
+  const [coupon, setCoupon] = useState('HAPPYYE23');
+  // 優惠券細節
+  const [couponDetail, setCouponDetail] = useState({});
+
+  // 判斷有 context 資料時
+  const infoLength = Object.keys(couponInfo);
+
+  useEffect(() => {
+    if (!isUsed) {
+      setUseCoupon(false);
+    } else {
+      setUseCoupon(true);
+    }
+    if (infoLength <= 0) {
+      setCouponDetail({});
+    } else {
+      setCouponDetail({ ...couponInfo });
+      setCoupon(couponInfo.coupon_name);
+    }
+  }, []);
+
+  function handleUseCoupon() {
+    setUseCoupon(false);
+    setCouponDetail({});
+    async function getCoupon() {
+      // couponName = coupon;
+      let res = await axios.get(`http://localhost:3001/api/usecoupon/coupons`, {
+        params: { couponName: coupon },
+      });
+      // console.log(res.data);
+      let result = res.data[0];
+      // console.log(result);
+      if (result === undefined) {
+        console.log('沒有這個優惠碼');
+        alert('沒有這個優惠碼');
+        // console.log(couponDetail);
+      } else {
+        setCouponDetail({ ...result });
+        setUseCoupon(true);
+        // context 部分
+        setCouponInfo({ ...result });
+        setIsUsed(true);
+        alert('使用成功');
+      }
+    }
+    getCoupon();
+  }
+  // 款項 購物車 - 優惠券 + 運費
+  let payment =
+    cart.cartTotal -
+    (Object.keys(couponDetail).length === 0 ? '0' : couponDetail.discount) +
+    300;
+  cart['finalPayment'] = payment;
+  // console.log(cart);
+
   return (
     <>
       {/* 購物清單 */}
       <div className="checkout-list">
         <div className="py-4 border-bottom border-gray-100">
-          {/* 第一項商品 */}
-          <div className="d-flex align-items-center justify-content-between py-4">
-            <div>
-              <div className="position-relative">
-                <img
-                  className="procduct-image"
-                  src={`${process.env.REACT_APP_IMAGE_URL}/images/products/ordimg1.png`}
-                  alt="/"
-                />
-                {/* 數量 */}
-                <div className="bg-gray-200 amount d-flex align-items-center justify-content-center">
-                  <span className="text-white fs-8">1</span>
+          {/* 購物車商品 */}
+          {items.map((val, i) => {
+            const img = val.img.split(',');
+            return (
+              <div
+                key={val.id}
+                className="d-flex align-items-center justify-content-between py-4"
+              >
+                <div>
+                  <div className="position-relative">
+                    <img
+                      className="procduct-image"
+                      src={`${process.env.REACT_APP_IMAGE_URL}/images/products/${val.categoryR_name}/${img[0]}`}
+                      alt="/"
+                    />
+                    <div className="bg-gray-200 amount d-flex align-items-center justify-content-center">
+                      <span className="text-white fs-8">{val.quantity}</span>
+                    </div>
+                  </div>
+                </div>
+                <div>
+                  <p className="fs-7 fw-bold px-3">{val.name}</p>
+                  <p className="fs-8 text-gray-300 px-3">{val.shape}</p>
+                </div>
+                <div>
+                  <span className="fs-7 fw-bold">{val.itemTotal}</span>
                 </div>
               </div>
-            </div>
-            <div>
-              <p className="fs-7 fw-bold px-3">
-                Menu Curiosity Cabinet H168cm珍古系列 橡木收納櫥櫃
-              </p>
-              <p className="fs-8 text-gray-300 px-3">橡木原色 Natural Oak</p>
-            </div>
-            <div>
-              <span className="fs-7 fw-bold">$10,000.00</span>
-            </div>
-          </div>
-
-          {/* 第二項商品 */}
-          <div className="d-flex align-items-center justify-content-between py-4">
-            <div>
-              <div className="position-relative">
-                <img
-                  className="procduct-image"
-                  src={`${process.env.REACT_APP_IMAGE_URL}/images/products/ordimg1.png`}
-                  alt="/"
-                />
-                <div className="bg-gray-200 amount d-flex align-items-center justify-content-center">
-                  <span className="text-white fs-8">1</span>
-                </div>
-              </div>
-            </div>
-            <div>
-              <p className="fs-7 fw-bold px-3">
-                Menu Curiosity Cabinet H168cm珍古系列 橡木收納櫥櫃
-              </p>
-              <p className="fs-8 text-gray-300 px-3">橡木原色 Natural Oak</p>
-            </div>
-            <div>
-              <span className="fs-7 fw-bold">$10,000.00</span>
-            </div>
-          </div>
-
-          {/* 第三項商品 */}
-          <div className="d-flex align-items-center justify-content-between py-4">
-            <div>
-              <div className="position-relative">
-                <img
-                  className="procduct-image"
-                  src={`${process.env.REACT_APP_IMAGE_URL}/images/products/ordimg1.png`}
-                  alt="/"
-                />
-                <div className="bg-gray-200 amount d-flex align-items-center justify-content-center">
-                  <span className="text-white fs-8">1</span>
-                </div>
-              </div>
-            </div>
-            <div>
-              <p className="fs-7 fw-bold px-3">
-                Menu Curiosity Cabinet H168cm珍古系列 橡木收納櫥櫃
-              </p>
-              <p className="fs-8 text-gray-300 px-3">橡木原色 Natural Oak</p>
-            </div>
-            <div>
-              <span className="fs-7 fw-bold">$10,000.00</span>
-            </div>
-          </div>
+            );
+          })}
         </div>
 
         {/* 優惠券 */}
         <div className="py-5 border-bottom border-gray-100">
-          <form className="row g-3">
+          <div className="row g-3">
             <div className="col-auto">
               <input
                 type="text"
+                value={coupon}
                 className="form-control"
                 placeholder="優惠券"
+                onChange={(e) => {
+                  setCoupon(e.target.value);
+                }}
               />
             </div>
             <div className="col-auto">
-              <button type="submit" className="btn btn-primary-300">
+              <button
+                className="btn btn-primary-300"
+                onClick={() => {
+                  handleUseCoupon();
+                }}
+              >
                 我要使用
               </button>
             </div>
-          </form>
+          </div>
         </div>
 
         {/* 計算 */}
         <div className="py-4 border-bottom border-gray-100">
           <div className="d-flex justify-content-between my-2">
             <span className="fs-7">總金額</span>
-            <span className="fs-7">$30,000.00</span>
+            <span className="fs-7">${cart.cartTotal}</span>
           </div>
           <div className="d-flex justify-content-between my-2">
             <span className="fs-7">優惠券</span>
-            <span className="fs-7">- $1,000.00</span>
+            <span className="fs-7">
+              - $
+              {Object.keys(couponDetail).length === 0
+                ? '0'
+                : couponDetail.discount}
+            </span>
           </div>
           <div className="d-flex justify-content-between my-2">
             <span className="fs-7">運費</span>
-            <span className="fs-7">免費</span>
+            <span className="fs-7">$300</span>
           </div>
         </div>
 
@@ -126,7 +169,7 @@ function Checkout() {
           </div>
           <div>
             <abbr className="fs-8 text-gray-200 mx-2">TWD</abbr>
-            <strong>$29,000.00</strong>
+            <strong>${payment}</strong>
           </div>
         </div>
       </div>

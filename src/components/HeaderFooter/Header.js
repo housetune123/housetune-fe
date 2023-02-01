@@ -1,11 +1,26 @@
 import React, { useEffect, useState } from 'react';
-import { Link, useLocation } from 'react-router-dom';
+import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { HeaderItems } from './MenuItems';
+import axios from 'axios';
+import { useAuth } from '../Context/Authcontext';
 
 import './Layout.scss';
 
+// 購物車數字
+import { useCart } from '../../utils/useCart';
+
 function Header() {
+  const navigate = useNavigate();
   const location = useLocation();
+  //登入登出相關
+  const { userinfo, setUserInfo, isLoggedIn, setIsLoggedIn } = useAuth();
+  async function logout() {
+    let response = await axios.post('http://localhost:3001/api/auth/logout');
+    alert(response.data.msg);
+    setIsLoggedIn(false);
+    setUserInfo('');
+    navigate('/');
+  }
 
   // -----dropdown-----
   const [dropdown, setDropdown] = useState(false);
@@ -15,6 +30,10 @@ function Header() {
   const onMouseLeave = () => {
     setDropdown(false);
   };
+
+  // 購物車
+  const { cart } = useCart();
+
   function Dropdown(index) {
     return (
       <>
@@ -24,7 +43,7 @@ function Header() {
               <li key={index} className="p-4 ps-5 list-unstyled">
                 <Link
                   to={item.path}
-                  className="text-decoration-none text-info-dark"
+                  className="text-decoration-none text-info-dark d-block"
                 >
                   {item.title}
                 </Link>
@@ -53,15 +72,30 @@ function Header() {
     return (
       <>
         <div className="d-flex justify-content-between align-items-center p-4">
-          <div>
+          <div className={isLoggedIn ? 'd-none' : ''}>
             <i className="fa-solid fa-user text-primary-300 fs-5 mx-2" />
             <Link
-              to="/"
+              to="/login"
               className="link-primary-300 text-decoration-none fw-bolder fs-7"
             >
               登入
             </Link>
           </div>
+          <Link
+            to="/user"
+            className={'m-0 link-primary-300 ' + (isLoggedIn ? '' : 'd-none')}
+          >
+            {userinfo.name}您好
+          </Link>
+          <p
+            onClick={logout}
+            className={
+              'm-0 text-decoration-underline text-primary-300 ' +
+              (isLoggedIn ? '' : 'd-none')
+            }
+          >
+            登出
+          </p>
           <div className="mx-4" onClick={showSidebar}>
             <i className="fa-solid fa-xmark text-primary-200 fs-7" />
           </div>
@@ -145,19 +179,24 @@ function Header() {
   }
 
   // 以下頁面不要顯示 HEADER
-  if (location.pathname === '/checkout/information') {
+  if (
+    location.pathname === '/checkout/information' ||
+    location.pathname === '/checkout/shipping' ||
+    location.pathname === '/checkout/payment' ||
+    location.pathname === '/checkout/thankyou' ||
+    location.pathname === '/seller' ||
+    location.pathname === '/seller/product' ||
+    location.pathname === '/seller/order' ||
+    location.pathname === '/seller/order/unpaid' ||
+    location.pathname === '/seller/order/toship' ||
+    location.pathname === '/seller/order/completed' ||
+    location.pathname === '/seller/order/cancelled' ||
+    location.pathname === '/seller/product/add' ||
+    location.pathname.includes('/seller/product/edit/') ||
+    location.pathname === '*'
+  ) {
     return <></>;
   }
-  if (location.pathname === '/checkout/shipping') {
-    return <></>;
-  }
-  if (location.pathname === '/checkout/payment') {
-    return <></>;
-  }
-  if (location.pathname === '/checkout/thankyou') {
-    return <></>;
-  }
-
   return (
     <>
       <header className="bg-white">
@@ -200,7 +239,12 @@ function Header() {
             </form>
 
             <div className="d-flex align-items-baseline">
-              <div className="d-none d-lg-flex align-items-center px-4">
+              <div
+                className={
+                  (isLoggedIn ? 'd-lg-none ' : '') +
+                  'd-none d-lg-flex align-items-center px-4'
+                }
+              >
                 <i className="fa-solid fa-user text-primary-300 fs-4 mx-2" />
                 <Link
                   to="/login"
@@ -209,9 +253,36 @@ function Header() {
                   登入
                 </Link>
               </div>
+              <Link
+                to="/user"
+                className={
+                  'link-primary-300 text-decoration-none ' +
+                  (isLoggedIn ? 'd-lg-block d-none' : 'd-none')
+                }
+              >
+                {userinfo.name} 您好
+              </Link>
+              <p
+                style={{ cursor: 'pointer' }}
+                className={
+                  'text-decoration-underline mx-2 text-primary-300 ' +
+                  (isLoggedIn ? 'd-lg-block d-none' : 'd-none')
+                }
+                onClick={logout}
+              >
+                登出
+              </p>
+              {/* 這邊還沒登入一樣顯示購物車 */}
               <div className="px-2">
-                <Link to="/cart">
+                <Link to="/cart" className="position-relative">
                   <i className="fa-solid fa-cart-shopping text-primary-300 fs-4" />
+                  <span
+                    className={`${
+                      cart.totalItems > 0 ? '' : 'd-none'
+                    } cart-amount position-absolute text-decoration-none text-white`}
+                  >
+                    {cart.totalItems}
+                  </span>
                 </Link>
               </div>
             </div>

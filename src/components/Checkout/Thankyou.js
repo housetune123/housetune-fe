@@ -21,8 +21,6 @@ function Thankyou(props) {
   return (
     <>
       <main className="checkout-thankyou">
-
-
         <section className="col-auto bg-white py-4">
           <div className="thankyou-wrapper">
             <div className="py-4">
@@ -35,7 +33,7 @@ function Thankyou(props) {
               </Link>
             </div>
             <div className="d-flex align-items-center">
-              <i class="fa-regular fa-circle-check fs-1 text-primary-300" />
+              <i className="fa-regular fa-circle-check fs-1 text-primary-300" />
               <div className="px-3">
                 <span className="fs-7">訂單編號：#12332</span>
                 <h5>感謝您，Tony！</h5>

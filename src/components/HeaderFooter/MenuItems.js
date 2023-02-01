@@ -9,19 +9,19 @@ export const HeaderItems = [
       },
       {
         title: '客廳',
-        path: '/',
+        path: '/products/category/1',
       },
       {
         title: '廚房',
-        path: '/',
+        path: '/products/category/2',
       },
       {
         title: '臥室',
-        path: '/',
+        path: '/products/category/3',
       },
       {
         title: '浴室',
-        path: '/',
+        path: '/products/category/4',
       },
     ],
   },

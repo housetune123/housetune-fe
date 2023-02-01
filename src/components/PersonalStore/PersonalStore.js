@@ -1,11 +1,18 @@
 import { useEffect, useState } from 'react';
+import { useParams } from 'react-router-dom';
 import './PersonalStore.scss';
 import axios from 'axios';
 import BreadCrumb from '../Layout/BreadCrumb';
 
 function PersonalStore() {
+  const { userAcct } = useParams();
   const [products, setProducts] = useState([]);
+  const [user, setUser] = useState([]);
 
+  // useEffect(() => {
+  //   console.log('render');
+  //   console.log(user[0].rating);
+  // }, [user]);
   // 儲存 select 狀態
   const [shape, setShape] = useState('');
   const [amount, setAmount] = useState('');
@@ -13,9 +20,15 @@ function PersonalStore() {
   const [cart, setCart] = useState([]);
 
   useEffect(() => {
+    async function getUser() {
+      let res = await axios.get(`http://localhost:3001/api/seller/${userAcct}`);
+      setUser(res.data);
+    }
+    getUser();
+  }, []);
+  useEffect(() => {
     async function getProducts() {
-      let res = await axios.get('http://localhost:3001/products');
-      // console.log(res);
+      let res = await axios.get(`http://localhost:3001/api/seller/userproduct`);
       setProducts(res.data);
     }
     getProducts();
@@ -28,7 +41,7 @@ function PersonalStore() {
           <div className="d-flex justify-content-between border-0">
             {/* 左側條件設定 */}
             <div className="col-2 d-none d-lg-block ">
-              <h3 className="mb-5 text-info-dark">Alice 的賣場</h3>
+              <h3 className="mb-5 text-info-dark">{userAcct} 的賣場</h3>
               <h5 className="text-info">條件設定</h5>
               <hr className="simple" />
               <div className="accordion accordion-flush">
@@ -350,12 +363,12 @@ function PersonalStore() {
             {/* 右側排序、商品列表 */}
             <div className="col-12 col-lg-9">
               <h3 className="text-info-dark d-block d-md-none my-2">
-                Alice 的賣場
+                {userAcct} 的賣場
               </h3>
               <div className="bg-white p-4">
-                <p className="text-info-dark">4項商品</p>
+                <p className="text-info-dark">{products.length}項商品</p>
                 <p className="text-info-dark">
-                  評價 4.7
+                  評價
                   <span>
                     <i className="fa-solid fa-star-half-stroke"></i>
                   </span>
@@ -424,7 +437,7 @@ function PersonalStore() {
                     >
                       <div className="card border border-0 card-shadow position-relative">
                         <img
-                          src={`${process.env.REACT_APP_IMAGE_URL}/images/products/${v.category_name}/${img[0]}`}
+                          src={`${process.env.REACT_APP_IMAGE_URL}/images/used/${img[0]}`}
                           className="card-img-top bg-gray-200"
                           alt="..."
                         />

@@ -7,6 +7,7 @@ export const pathnameLocale = {
   about: '關於我們',
   products: '產品',
   detail: '細節',
+  category: '產品分類',
   'product-category': '產品分類',
   productcategory: '產品分類',
   used: '二手專區',
