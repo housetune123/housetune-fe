@@ -1,6 +1,7 @@
-import React, { useState } from 'react';
-import { Link } from 'react-router-dom';
-
+import React, { useEffect, useState } from 'react';
+import { Link, useNavigate } from 'react-router-dom';
+import { useAuth } from '../Context/Authcontext';
+import axios from 'axios';
 import './Checkout.scss';
 import 'leaflet/dist/leaflet.css';
 
@@ -16,7 +17,29 @@ L.Icon.Default.mergeOptions({
 });
 
 function Thankyou(props) {
+  const navigate = useNavigate();
   const position = [25.045102061647054, 121.52904696173054];
+  const { userinfo, isLoggedIn } = useAuth();
+  const [completeMsg, setCompleteMsg] = useState('');
+  const [orderNumber, setOrderNumber] = useState('');
+
+  // 判斷登入狀態
+  if (!isLoggedIn) {
+    // alert('請從正常管道進入!');
+    // navigate('/');
+  }
+
+  useEffect(() => {
+    (async () => {
+      let res = await axios.get('http://localhost:3001/api/payment/checkorder');
+      // console.log(res.data);
+      setOrderNumber(res.data);
+    })();
+    setCompleteMsg(JSON.parse(localStorage.getItem('myAddress')));
+  }, []);
+
+  // 地址
+  const address = `${completeMsg.district + completeMsg.address}`;
 
   return (
     <>
@@ -35,15 +58,18 @@ function Thankyou(props) {
             <div className="d-flex align-items-center">
               <i className="fa-regular fa-circle-check fs-1 text-primary-300" />
               <div className="px-3">
-                <span className="fs-7">訂單編號：#12332</span>
-                <h5>感謝您，Tony！</h5>
+                <span className="fs-7">訂單編號：{orderNumber}</span>
+                <h5>感謝您，{userinfo.name}！</h5>
               </div>
             </div>
 
             <div className="border border-gray-100 rounded-3 my-4">
-              <div className="map">
+              <div className="map map-index position-relative">
                 <MapContainer
-                  style={{ height: '300px', width: '100wh' }}
+                  style={{
+                    height: '300px',
+                    width: '100wh',
+                  }}
                   center={position}
                   zoom={15}
                   scrollWheelZoom={false}
@@ -58,6 +84,9 @@ function Thankyou(props) {
               <div className="p-4">
                 <h5 className="fs-6 mb-4">您的訂單已確認</h5>
                 <div className="fs-7">
+                  <h6 className="text-info fw-bold">
+                    若您已完成付款則不需理會以下資訊，感謝您再度光臨Housetune。
+                  </h6>
                   <p>銀行匯款資訊：</p>
                   <p>銀行：玉山銀行 岡山分行</p>
                   <p>帳號：0956-942-000990</p>
@@ -84,21 +113,21 @@ function Thankyou(props) {
                     <div className="py-4">
                       <h3 className="fs-7 fw-bold">聯絡資訊</h3>
                       <div className="fs-7">
-                        <span>gsn94561266@gmail.com</span>
+                        <span>{userinfo.email}</span>
                       </div>
                     </div>
                     <div>
                       <h3 className="fs-7 fw-bold">運送地址</h3>
                       <address className="fs-7">
-                        Tony Ming
+                        {completeMsg.firstName + completeMsg.lastName}
                         <br />
-                        板橋區僑中一街25號
+                        {address}
                         <br />
-                        220 新北市
+                        {completeMsg.postcode + '' + completeMsg.city}
                         <br />
-                        台灣
+                        {completeMsg.country}
                         <br />
-                        0970255588
+                        {completeMsg.phone}
                       </address>
                     </div>
                     <div className="py-2">
@@ -119,15 +148,14 @@ function Thankyou(props) {
                     <div>
                       <h3 className="fs-7 fw-bold">帳單地址</h3>
                       <address className="fs-7">
-                        Tony Ming
+                        {completeMsg.firstName + completeMsg.lastName}
                         <br />
-                        板橋區僑中一街25號
                         <br />
-                        220 新北市
+                        {completeMsg.postcode + '' + completeMsg.city}
                         <br />
-                        台灣
+                        {completeMsg.country}
                         <br />
-                        0970255588
+                        {completeMsg.phone}
                       </address>
                     </div>
                   </div>

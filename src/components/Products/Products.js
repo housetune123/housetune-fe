@@ -49,6 +49,44 @@ function Products() {
   // 抓取點擊購物車的資料
   const [cart, setCart] = useState([]);
 
+  // 收藏
+  const [userId, setUserId] = useState(0);
+  const [like, setLike] = useState([]);
+  // 取得收藏資料
+  useEffect(() => {
+    try {
+      async function getLiked() {
+        let res = await axios.get('http://localhost:3001/api/products/liked');
+        if (res.data[0].liked) {
+          setLike(JSON.parse(res.data[0].liked));
+        }
+      }
+      getLiked();
+    } catch (e) {
+      console.error(e);
+    }
+  }, []);
+
+  // 加入收藏
+  useEffect(() => {
+    if (isLoggedIn) {
+      setUserId(userinfo.id);
+      try {
+        async function liked() {
+          let likeJson = JSON.stringify(like);
+          let res = await axios.put('http://localhost:3001/api/products', {
+            likeJson,
+            userId,
+          });
+          // console.log(res.data);
+        }
+        liked();
+      } catch (e) {
+        console.error(e);
+      }
+    }
+  }, [like]);
+
   // 抓取產品資料
   useEffect(() => {
     try {
@@ -82,40 +120,6 @@ function Products() {
     minPriceFilter,
     maxPriceFilter,
   ]);
-
-  // 收藏
-  const [userId, setUserId] = useState(0);
-  const [like, setLike] = useState([]);
-  // 取得收藏資料
-  useEffect(() => {
-    async function getLiked() {
-      let res = await axios.get('http://localhost:3001/api/products/liked');
-      if (res.data[0].liked) {
-        setLike(JSON.parse(res.data[0].liked));
-      }
-    }
-    getLiked();
-  }, []);
-
-  // 加入收藏
-  useEffect(() => {
-    if (isLoggedIn) {
-      setUserId(userinfo.id);
-      try {
-        async function liked() {
-          let likeJson = JSON.stringify(like);
-          let res = await axios.put('http://localhost:3001/api/products', {
-            likeJson,
-            userId,
-          });
-          // console.log(res.data);
-        }
-        liked();
-      } catch (e) {
-        console.error(e);
-      }
-    }
-  }, [like]);
 
   function Number(min, max) {
     const array = [];
@@ -223,11 +227,11 @@ function Products() {
     return pages;
   }
 
+  // 購物車
   useEffect(() => {
     setCompleteAdd(false);
   }, [shape, amount]);
 
-  // 購物車
   const { addItem, items } = useCart();
 
   // 訊息框

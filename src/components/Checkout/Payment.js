@@ -25,7 +25,7 @@ function Payment() {
     setAddressSelected(event.target.value);
   };
 
-  const { cart, items, isInCart } = useCart();
+  const { cart, items, isInCart, clearCart } = useCart();
 
   // 取得地址資料
   const addressData = JSON.parse(localStorage.getItem('myAddress'));
@@ -53,10 +53,17 @@ function Payment() {
   };
 
   async function Pay(e) {
-    e.preventDefault();
-    let res = axios.post('http://localhost:3001/api/payment', { orderMsg });
-    console.log(res.data);
-    navigate('/cart/checkout/thankyou');
+    try {
+      e.preventDefault();
+      let res = await axios.post('http://localhost:3001/api/payment', {
+        orderMsg,
+      });
+      // 成功後清空購物車
+      clearCart();
+      navigate('/cart/checkout/thankyou');
+    } catch (err) {
+      console.log('新增訂單錯誤', err);
+    }
   }
 
   return (

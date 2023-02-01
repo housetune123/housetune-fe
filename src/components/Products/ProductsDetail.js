@@ -12,7 +12,6 @@ import { Link } from 'react-router-dom';
 import moment from 'moment';
 import zhTw from '../zh-tw';
 import { useAuth } from '../Context/Authcontext';
-import { useNavigate } from 'react-router-dom';
 import { useCart } from '../../utils/useCart';
 
 function ProductsDetail() {
@@ -27,19 +26,27 @@ function ProductsDetail() {
   const [shape, setShape] = useState('藍色 Blue');
   const [amount, setAmount] = useState('1');
   const [inputDisplay, setInputDisplay] = useState('none');
-
   // 收藏
   const [userId, setUserId] = useState(userinfo.user_id || 0);
   const [like, setLike] = useState(userinfo.liked || []);
-  // 取得收藏資料
+  // 瀏覽紀錄
+  const [browse, setBrowse] = useState([]);
+
+  // 進入頁面取得收藏資料，localStorage
   useEffect(() => {
-    async function getLiked() {
-      let res = await axios.get('http://localhost:3001/api/products/liked');
-      if (res.data[0].liked) {
-        setLike(JSON.parse(res.data[0].liked));
+    try {
+      async function getLiked() {
+        let res = await axios.get('http://localhost:3001/api/products/liked');
+        if (res.data[0].liked) {
+          setLike(JSON.parse(res.data[0].liked));
+        }
       }
+      getLiked();
+    } catch (e) {
+      console.error(e);
     }
-    getLiked();
+    let browseStorage = JSON.parse(localStorage.getItem('brwose'));
+    setBrowse(browseStorage);
   }, []);
 
   // 加入收藏
@@ -62,55 +69,12 @@ function ProductsDetail() {
     }
   }, [like]);
 
-  // 瀏覽紀錄
-  const [browse, setBrowse] = useState([]);
-  // 進入頁面取得瀏覽紀錄session，抓取資料
+  // 瀏覽紀錄存入localStorage
   useEffect(() => {
-    try {
-      async function getBrowse() {
-        let res = await axios.get(`
-          http://localhost:3001/api/products/${prodId}
-        `);
-        setProdcut(res.data.data);
-        setRating(res.data.rating);
-        // 相關商品推薦
-        let res2 = await axios.get(
-          `http://localhost:3001/api/products/${res.data.data[0].category_product}/${prodId}
-        `
-        );
-        setCategory(res2.data);
-        let res3 = await axios.get('http://localhost:3001/api/products/browse');
-        // console.log(res.data.data);
-        setBrowse(res3.data.data);
-      }
-      getBrowse();
-      // console.log(browse, '[]');
-    } catch (e) {
-      console.error(e);
-    }
-  }, []);
-
-  // 瀏覽紀錄存入session
-  useEffect(() => {
-    try {
-      async function browseProducts() {
-        let res = await axios.post(
-          'http://localhost:3001/api/products',
-          { browse },
-          {
-            withCredentials: true,
-          }
-        );
-        let res2 = await axios.get('http://localhost:3001/api/products/browse');
-      }
-      browseProducts();
-    } catch (e) {
-      console.error(e);
-    }
-    // console.log(browse, '[browse]');
+    localStorage.setItem('brwose', JSON.stringify(browse));
   }, [browse]);
 
-  // 抓取產品資料
+  // 抓取產品資料，localStorage
   useEffect(() => {
     window.scrollTo(0, 150);
     try {
@@ -122,11 +86,12 @@ function ProductsDetail() {
         setProdcut(res.data.data);
         setRating(res.data.rating);
         // 瀏覽紀錄
-        let res3 = await axios.get('http://localhost:3001/api/products/browse');
-        const newBrowse = res3.data.data.filter((v, i) => {
+        let browseStorage = localStorage.getItem('brwose');
+        const newBrowse = JSON.parse(browseStorage).filter((v, i) => {
           return v.prod_id !== res.data.data[0].prod_id;
         });
         setBrowse([res.data.data[0], ...newBrowse]);
+
         let res2 = await axios.get(
           `http://localhost:3001/api/products/${res.data.data[0].category_product}/${prodId}`
         );
@@ -136,7 +101,6 @@ function ProductsDetail() {
     } catch (e) {
       console.error(e);
     }
-    // console.log(browse, '[prodId]');
   }, [prodId]);
 
   function Number(min, max) {

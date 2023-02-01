@@ -47,24 +47,31 @@ function Checkout({ setPayment }) {
     setUseCoupon(false);
     setCouponDetail({});
     async function getCoupon() {
-      // couponName = coupon;
-      let res = await axios.get(`http://localhost:3001/api/usecoupon/coupons`, {
-        params: { couponName: coupon },
-      });
-      // console.log(res.data);
-      let result = res.data[0];
-      // console.log(result);
-      if (result === undefined) {
-        console.log('沒有這個優惠碼');
-        alert('沒有這個優惠碼');
-        // console.log(couponDetail);
-      } else {
-        setCouponDetail({ ...result });
-        setUseCoupon(true);
-        // context 部分
-        setCouponInfo({ ...result });
-        setIsUsed(true);
-        alert('使用成功');
+      try {
+        // couponName = coupon;
+        let res = await axios.get(
+          `http://localhost:3001/api/usecoupon/coupons`,
+          {
+            params: { couponName: coupon },
+          }
+        );
+        // console.log(res.data);
+        let result = res.data[0];
+        // console.log(result);
+        if (result === undefined) {
+          console.log('沒有這個優惠碼');
+          alert('沒有這個優惠碼');
+          // console.log(couponDetail);
+        } else {
+          setCouponDetail({ ...result });
+          setUseCoupon(true);
+          // context 部分
+          setCouponInfo({ ...result });
+          setIsUsed(true);
+          alert('使用成功');
+        }
+      } catch (err) {
+        console.log('抓取優惠券錯誤!');
       }
     }
     getCoupon();

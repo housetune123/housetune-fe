@@ -17,6 +17,8 @@ import InspDetail1 from './components/Inspiration/Insp_detail1';
 import AddUsedProducts from './components/UsedProducts/AddUsedProducts';
 import EditUsedProducts from './components/UsedProducts/EditUsedProducts';
 
+import UsedProducts from './components/Products/UsedProducts';
+
 // home-page branch
 import PersonalStore from './components/PersonalStore/PersonalStore';
 import Main from './components/Main';
@@ -101,11 +103,11 @@ function App() {
               <Route
                 path="/products/category/:categoryRoom"
                 element={<Products />}
-              />
+              ></Route>
               <Route
                 path="/used/products/detail"
                 element={<UsedProductDetail />}
-              />
+              ></Route>
 
               <Route exact path="inspiration">
                 <Route index={true} element={<Inspiration />} />
@@ -114,10 +116,12 @@ function App() {
 
               {/* used */}
               <Route path="usedstore" element={<PersonalStore />} />
+              <Route path="used/products" element={<UsedProducts />} />
               <Route
-                path="used/products/detail"
+                path="/used/products/detail"
                 element={<UsedProductDetail />}
               ></Route>
+              <Route path="usedproduct/add" element={<AddUsedProducts />} />
 
               {/* user */}
               <Route path="login" element={<Login />} />
