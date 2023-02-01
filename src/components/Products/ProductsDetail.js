@@ -82,7 +82,7 @@ function ProductsDetail() {
         let res = await axios.get(
           `http://localhost:3001/api/products/${prodId}`
         );
-        // console.log(res.data);
+        // console.log(res.data.rating[0].stars);
         setProdcut(res.data.data);
         setRating(res.data.rating);
         // 瀏覽紀錄
@@ -109,6 +109,16 @@ function ProductsDetail() {
       array.push(i);
     }
     return array;
+  }
+
+  function Star() {
+    let star = 0;
+    for (let i = 0; i < rating.length; i++) {
+      star += rating[i].stars;
+    }
+    star = star / rating.length;
+    star = star.toFixed(1);
+    return star;
   }
 
   const solidStar = {
@@ -649,22 +659,15 @@ function ProductsDetail() {
               )}
               {rating.length > 0 && (
                 <div className="bg-white p-3">
-                  {product.map((v, i) => {
-                    return (
-                      <div key={v.prod_id}>
-                        <p className="h3 text-info-dark">
-                          <span className="fw-bold">{v.rating}</span>/5
-                        </p>
-                        {/* 商品星星 */}
-                        <div>
-                          <p className="text-danger mb-0">
-                            {solidStar[v.rating]}
-                            {regularStar[v.rating]}
-                          </p>
-                        </div>
-                      </div>
-                    );
-                  })}
+                  {/* 商品星星 */}
+                  <div>
+                    <p className="h3 text-info-dark mb-0">
+                      <span className="pe-2">
+                        <i className="fa-solid fa-star"></i>
+                      </span>
+                      <span className="fw-bold">{Star()}</span>
+                    </p>
+                  </div>
                 </div>
               )}
               {/* 客人評價 */}

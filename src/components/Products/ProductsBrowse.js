@@ -60,7 +60,7 @@ function ProductsBrowse({ browse, setBrowse }) {
                     </div>
                     <div className="card-body text-left">
                       <h5 className="card-title text-info">NT $ {v.price}</h5>
-                      <h6 className="card-title text-gray-300 text-truncate">
+                      <h6 className="card-title text-gray-300 text-truncate pb-1 mb-0">
                         {v.name}
                       </h6>
                       {v.amount === 0 ? (
@@ -96,7 +96,7 @@ function ProductsBrowse({ browse, setBrowse }) {
                       </div>
                       <div className="card-body text-left">
                         <h5 className="card-title text-info">NT $ {v.price}</h5>
-                        <h6 className="card-title text-gray-300 text-truncate">
+                        <h6 className="card-title text-gray-300 text-truncate pb-1 mb-0">
                           {v.name}
                         </h6>
                         {v.amount === 0 ? (

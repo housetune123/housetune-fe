@@ -64,7 +64,7 @@ function NewArrival() {
                       </div>
                       <div className="card-body text-left">
                         <h5 className="card-title text-info">NT$ {v.price}</h5>
-                        <h6 className="card-title text-gray-300 text-truncate">
+                        <h6 className="card-title text-gray-300 text-truncate mb-0 pb-2">
                           {v.name}
                         </h6>
                         {v.amount === 0 ? (
