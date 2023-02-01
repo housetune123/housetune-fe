@@ -113,7 +113,7 @@ function App() {
               {/* user */}
               <Route path="login" element={<Login />} />
               <Route path="forgot" element={<ForgotPage />} />
-              <Route path="forgot/reset" element={<ResetPassword />} />
+              <Route path="password/edit" element={<ResetPassword />} />
               <Route path="register" element={<Register />} />
               <Route path="user" element={<UserPage />} />
 
