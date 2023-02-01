@@ -31,6 +31,7 @@ import Cart from './components/Cart/Cart';
 import Login from './components/Login/Login';
 import Register from './components/Register/Register';
 import ForgotPage from './components/Login/ForgotPage';
+import ResetPassword from './components/Login/ResetPassword';
 
 // 排版元件
 import Header from './components/HeaderFooter/Header';
@@ -112,6 +113,7 @@ function App() {
               {/* user */}
               <Route path="login" element={<Login />} />
               <Route path="forgot" element={<ForgotPage />} />
+              <Route path="forgot/reset" element={<ResetPassword />} />
               <Route path="register" element={<Register />} />
               <Route path="user" element={<UserPage />} />
 
