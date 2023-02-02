@@ -59,9 +59,9 @@ export default function Table({ columns, data }) {
                   {column.render('Header')}
                   {column.isSorted ? (
                     column.isSortedDesc ? (
-                      <i class="fa-solid fa-caret-up p-1 text-gray-300" />
+                      <i class="fa-solid fa-caret-up ps-1 text-gray-300" />
                     ) : (
-                      <i class="fa-solid fa-caret-down p-1 text-gray-300" />
+                      <i class="fa-solid fa-caret-down ps-1 text-gray-300" />
                     )
                   ) : (
                     ''

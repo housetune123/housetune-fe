@@ -8,6 +8,9 @@ import './SellerCenter.scss';
 
 function Myproduct() {
   const { userinfo } = useAuth();
+
+  console.log(userinfo);
+
   axios.defaults.withCredentials = true;
 
   const columns = useMemo(
@@ -38,9 +41,11 @@ function Myproduct() {
         accessor: 'valid',
         Cell: (props) => {
           return props.value === 1 ? (
-            <button className="btn">已上架</button>
+            <button className="btn btn-gray-400" disabled>
+              已上架
+            </button>
           ) : (
-            <button className="btn" disabled>
+            <button className="btn btn-gray-100" disabled>
               已下架
             </button>
           );
@@ -54,32 +59,61 @@ function Myproduct() {
               <button className="btn btn-primary-300">編輯</button>
             </Link>
             <button
-              type="button"
               className="btn btn-primary-300"
-              onClick={() => validChange(value.useP_id, value.valid)}
+              onClick={() =>
+                validChange(value.useP_id, value.valid, userinfo.id)
+              }
             >
-              下架
+              {value.valid === 1 ? '下架' : '上架'}
             </button>
-            <Link to={''}>
+            <Link to={`/used/products/${value.useP_id}`}>
               <button className="btn btn-primary-300">預覽</button>
             </Link>
             <button
-              className="btn btn-primary-300"
-              onClick={() => deleteProduct(value)}
+              class="btn btn-primary"
+              data-bs-toggle="modal"
+              data-bs-target="#exampleModal"
+              className="btn btn-danger text-white"
             >
               刪除
             </button>
+
+            <div
+              class="modal fade"
+              id="exampleModal"
+              tabindex="-1"
+              aria-labelledby="exampleModalLabel"
+              aria-hidden="true"
+            >
+              <div class="modal-dialog">
+                <div class="modal-content">
+                  <div class="modal-body p-5 fs-5">確定刪除</div>
+                  <div class="modal-footer">
+                    <button
+                      class="btn btn-primary-300 text-white"
+                      data-bs-dismiss="modal"
+                    >
+                      取消
+                    </button>
+                    <button
+                      class="btn btn-danger text-white"
+                      onClick={() => deleteProduct(value.useP_id, userinfo.id)}
+                    >
+                      刪除
+                    </button>
+                  </div>
+                </div>
+              </div>
+            </div>
           </div>
         ),
       },
     ],
-    []
+    [userinfo]
   );
 
   const [data, setData] = useState([]);
-  const [productId, setproductId] = useState();
-  const [productValid, setProductValid] = useState();
-
+  // 抓資料
   useEffect(() => {
     (async () => {
       const result = await axios.post(
@@ -92,30 +126,29 @@ function Myproduct() {
     })();
   }, [userinfo]);
 
-  //上下架
-  function validChange(id, valid) {
+  // 上下架
+  async function validChange(id, valid, user_id) {
     if (valid === 1) {
       valid = 0;
     } else {
       valid = 1;
     }
-    setproductId(id);
-    setProductValid(valid);
-    console.log(id, valid);
-    (async () => {
-      const result = await axios.put(
-        'http://localhost:3001/api/seller/usedproduct',
-        {
-          id: productId,
-          valid: productValid,
-        }
-      );
-      setData(result.data);
-    })();
+    const result = await axios.put('http://localhost:3001/api/seller/valid', {
+      id,
+      valid,
+      user_id,
+    });
+    setData(result.data);
   }
 
   // 刪除
-  function deleteProduct(row) {}
+  async function deleteProduct(id, user_id) {
+    const result = await axios.post('http://localhost:3001/api/seller/delete', {
+      id,
+      user_id,
+    });
+    setData(result.data);
+  }
 
   return (
     <div className="my-product">

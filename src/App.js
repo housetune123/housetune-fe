@@ -147,14 +147,14 @@ function App() {
 
               {/* personal-store */}
               <Route path=":userAcct" element={<PersonalStore />} />
+              <Route path="seller/product/add" element={<AddUsedProducts />} />
+              <Route
+                path="seller/product/edit/:useP_id"
+                element={<EditUsedProducts />}
+              />
               <Route path="seller" element={<SellerCenter />}>
                 <Route index element={<SellerMain />} />
                 <Route path="product" element={<SalesProduct />} />
-                <Route path="product/add" element={<AddUsedProducts />} />
-                <Route
-                  path="product/edit/:useP_id"
-                  element={<EditUsedProducts />}
-                />
                 <Route path="order" element={<SalesOrder />}>
                   <Route index element={<AllOrder />} />
                   <Route path="unpaid" element={<UnPaid />} />

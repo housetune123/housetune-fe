@@ -10,28 +10,14 @@ function AllOrder() {
 
   const [OrderList, setOrderList] = useState([]);
   useEffect(() => {
-    async function getOrderList() {
-      let response = await axios.post(
-        'http://localhost:3001/api/seller/salesorder/all',
-        {
-          id: userinfo.id,
-        }
-      );
-      setOrderList(response.data);
+    async function getOrder() {
+      let res = await axios.post('http://localhost:3001/api/seller/order/all', {
+        id: userinfo.id,
+      });
+      setOrderList(res.data);
     }
-    getOrderList();
+    getOrder();
   }, [userinfo]);
-
-  const [OrderDetail, setOrderDetail] = useState([]);
-  useEffect(() => {
-    async function getOrderDetail() {
-      let response = await axios.get(
-        `http://localhost:3001/api/seller/salesorder/detail`
-      );
-      setOrderDetail(response.data);
-    }
-    getOrderDetail();
-  }, []);
 
   function Orderstate(state) {
     if (state === 1) {
@@ -57,10 +43,10 @@ function AllOrder() {
     setClick(!click);
     setSelect(index);
   };
-  useEffect(() => {
-    console.log('render');
-    console.log(select);
-  }, [select]);
+  // useEffect(() => {
+  //   console.log('render');
+  //   console.log(select);
+  // }, [select]);
   return (
     //搜尋欄位
     <div className="container bg-white m-auto">
@@ -112,9 +98,13 @@ function AllOrder() {
         {/* 訂單清單 */}
         <div className="bg-white border p-2 m-2 ">
           {OrderList.map((item, index) => {
+            const prodId = Object.values(JSON.parse(item.product_id));
+            {
+              console.log(prodId);
+            }
             return (
               <div key={item.ordL_id}>
-                <p className="m-1">買家帳號：{item.buyer_account} </p>
+                <p className="m-1">買家帳號：{item.account} </p>
                 <hr />
                 <div class="row order-list-upper bg-white align-items-center justify-content-around m-auto p-3 my-2">
                   <div class="col-2 ">
@@ -141,12 +131,13 @@ function AllOrder() {
                         : 'accordion-menu mt-2'
                     }
                   >
-                    {OrderDetail.filter(
-                      (order) => order.order_id === item.ordL_id
-                    ).map((order, index) => {
+                    {prodId.map((order, index) => {
                       return (
-                        <div key={order.ordD_id}>
-                          <div class="row order-list-upper bg-white align-items-center justify-content-around m-auto p-3 my-2">
+                        <div key={index}>
+                          <div
+                            key={index}
+                            class="row order-list-upper bg-white align-items-center justify-content-around m-auto p-3 my-2"
+                          >
                             <img
                               class="d-block col-2 img-fluid"
                               src={`${process.env.REACT_APP_IMAGE_URL}/images/used/${order.img}`}
@@ -155,25 +146,22 @@ function AllOrder() {
                             <div class="col-3 row align-items-center d-flex justify-content-between ">
                               <div class=" p-auto ">
                                 <p>
-                                  <strong>
-                                    {order.name}
-                                    {/* Menu Curiosity Cabinet H168cm 珍古系列 橡木 收納 櫥櫃 */}
-                                  </strong>
+                                  <strong>{order.name}</strong>
                                 </p>
-                                <p>{order.style}</p>
+                                <p>{order.shape}</p>
                               </div>
                             </div>
                             <div class="col-2">
                               <p>
                                 <strong>數量</strong>
-                                {order.amount}
+                                {order.quantity}
                               </p>
                             </div>
                             <div class="col-2 ">
                               <p>
                                 <strong>價格</strong>
                                 NT$
-                                {order.price}
+                                {order.total}
                               </p>
                             </div>
                           </div>
