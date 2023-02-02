@@ -46,7 +46,7 @@ function ProductsDetail() {
       console.error(e);
     }
     let browseStorage = JSON.parse(localStorage.getItem('brwose'));
-    setBrowse(browseStorage);
+    setBrowse(browseStorage || []);
   }, []);
 
   // 加入收藏
@@ -86,11 +86,13 @@ function ProductsDetail() {
         setProdcut(res.data.data);
         setRating(res.data.rating);
         // 瀏覽紀錄
-        let browseStorage = localStorage.getItem('brwose');
-        const newBrowse = JSON.parse(browseStorage).filter((v, i) => {
-          return v.prod_id !== res.data.data[0].prod_id;
-        });
-        setBrowse([res.data.data[0], ...newBrowse]);
+        if (browse) {
+          let browseStorage = localStorage.getItem('brwose');
+          const newBrowse = JSON.parse(browseStorage).filter((v, i) => {
+            return v.prod_id !== res.data.data[0].prod_id;
+          });
+          setBrowse([res.data.data[0], ...newBrowse]);
+        }
 
         let res2 = await axios.get(
           `http://localhost:3001/api/products/${res.data.data[0].category_product}/${prodId}`
@@ -699,7 +701,7 @@ function ProductsDetail() {
         <ProductsFeatured catagory={catagory}></ProductsFeatured>
 
         {/* 最近瀏覽商品 */}
-        {browse.length > 1 && (
+        {browse && browse.length > 1 && (
           <section className="pb-5">
             <ProductsBrowse
               browse={browse}

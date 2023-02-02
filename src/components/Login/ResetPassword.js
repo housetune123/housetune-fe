@@ -1,11 +1,17 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import axios from 'axios';
+import { useAuth } from '../Context/Authcontext';
 
 function ResetPassword() {
+  const { isLoggedIn } = useAuth();
   const location = useLocation();
   const navigate = useNavigate();
   const [password, setPassword] = useState({ pwd: '', rePwd: '' });
+  const [res, setRes] = useState({
+    state: '',
+    message: '',
+  });
 
   async function handleSubmit(e) {
     e.preventDefault();
@@ -17,11 +23,34 @@ function ResetPassword() {
     const pathArray = location.search;
     const token = pathArray.replace('?', '');
 
-    let res = await axios.put(`http://localhost:3001/api/auth/reset`, {
-      password,
-      token,
-    });
+    try {
+      let res = await axios.put(`http://localhost:3001/api/auth/reset`, {
+        password,
+        token,
+      });
+      // console.log(res.data.state);
+      setRes({
+        state: res.data.state,
+        message: res.data.message,
+      });
+    } catch (e) {
+      console.error(e);
+    }
   }
+
+  useEffect(() => {
+    if (isLoggedIn) {
+      navigate('/');
+    }
+  }, [isLoggedIn]);
+
+  useEffect(() => {
+    if (res.state === 'SUCCESS') {
+      alert('密碼重置成功');
+      navigate('/login');
+    }
+  }, [res]);
+
   return (
     <>
       <main className="pageBG bg-orange py-lg-5 py-4">
@@ -41,6 +70,7 @@ function ResetPassword() {
               <div className="row d-flex justify-content-center">
                 <div className="col-12 col-lg-8">
                   <input
+                    required
                     className="form-control"
                     type="password"
                     placeholder="新密碼 (至少6個字元)"
@@ -52,6 +82,7 @@ function ResetPassword() {
                     }}
                   ></input>
                   <input
+                    required
                     className="form-control"
                     type="password"
                     placeholder="確認新密碼"
@@ -62,6 +93,11 @@ function ResetPassword() {
                       setPassword({ ...password, rePwd: e.target.value });
                     }}
                   ></input>
+                  {res.state === 'FAILED' && (
+                    <div>
+                      <p className="text-danger">{res.message}</p>
+                    </div>
+                  )}
                   <div className="mt-4 mb-5 d-flex justify-content-center">
                     <button
                       className="btn btn-primary-300 me-2 w-100"

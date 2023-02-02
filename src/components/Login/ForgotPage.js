@@ -11,6 +11,7 @@ function ForgotPage() {
     to_name: '',
     link: '<a href="http://localhost:3000/password/edit">變更密碼</a>',
     to_email: toEmail || '',
+    reset_link: '<a href="http://localhost:3000/forgot">此</a>',
   });
   const [res, setRes] = useState({ result: '', text: '' });
 
