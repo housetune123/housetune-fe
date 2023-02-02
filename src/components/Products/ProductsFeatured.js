@@ -60,12 +60,16 @@ function ProductsFeatured({ catagory }) {
                       </div>
                       <div className="card-body text-left text-decoration-none">
                         <h5 className="card-title text-info">NT $ {v.price}</h5>
-                        <h6 className="card-title text-gray-300 text-truncate">
+                        <h6 className="card-title text-gray-300 text-truncate pb-1 mb-0">
                           {v.name}
                         </h6>
-                        <p className="card-text text-danger">
-                          僅剩 {v.amount} 件 !
-                        </p>
+                        {v.amount === 0 ? (
+                          <p className="card-text text-danger">已售完</p>
+                        ) : (
+                          <p className="card-text text-primary-200">
+                            僅剩 {v.amount} 件 !
+                          </p>
+                        )}
                       </div>
                     </div>
                   </div>
