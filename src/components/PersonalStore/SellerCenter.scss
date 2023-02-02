@@ -1,0 +1,58 @@
+.seller-center {
+  .seller-header {
+    .logo-image {
+      max-height: 70px;
+      max-width: 180px;
+    }
+  }
+  .seller-aside-box {
+    min-width: 220px;
+  }
+  .seller-aside {
+    position: fixed;
+    min-width: 220px;
+    height: 100%;
+    .aside-icon {
+      min-width: 40px;
+    }
+  }
+  .seller-wrapper {
+    min-height: 100vh;
+    min-width: calc(100% - 220px);
+  }
+}
+
+.my-product {
+  table {
+    text-align: center;
+    width: 100%;
+    thead {
+      background-color: #b7b0bf;
+      height: 50px;
+      tr {
+        th {
+        border: 2px solid #ccc;
+        }
+      }
+    }
+    tbody {
+      tr {
+        height: 100px;
+        td {
+          border: 2px solid #ccc;
+          margin: auto;
+          img {
+            height: 100px;
+            margin: 10px;
+          }
+          button {
+            margin: 5px;
+          }
+        }
+      }
+      tr:hover {
+        background-color: #fff;
+      }
+    }
+  }
+}

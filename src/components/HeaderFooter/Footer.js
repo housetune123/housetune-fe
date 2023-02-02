@@ -57,19 +57,23 @@ function Footer() {
   }
 
   // 以下頁面不要顯示 FOOTER
-  if (location.pathname === '/checkout/information') {
-    return <></>;
-  }
-  if (location.pathname === '/checkout/shipping') {
-    return <></>;
-  }
-  if (location.pathname === '/checkout/payment') {
-    return <></>;
-  }
-  if (location.pathname === '/checkout/thankyou') {
-    return <></>;
-  }
-  if (location.pathname === '/usedproduct/add') {
+  if (
+    location.pathname === '/checkout/information' ||
+    location.pathname === '/checkout/shipping' ||
+    location.pathname === '/checkout/payment' ||
+    location.pathname === '/checkout/thankyou' ||
+    location.pathname === '/seller' ||
+    location.pathname === '/seller/product' ||
+    location.pathname === '/seller/order' ||
+    location.pathname === '/seller/order/unpaid' ||
+    location.pathname === '/seller/order/toship' ||
+    location.pathname === '/seller/order/completed' ||
+    location.pathname === '/seller/order/cancelled' ||
+    location.pathname === '/seller/order' ||
+    location.pathname === '/seller/product/add' ||
+    location.pathname.includes('/seller/product/edit/') ||
+    location.pathname === '*'
+  ) {
     return <></>;
   }
 

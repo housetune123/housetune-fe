@@ -1,11 +1,11 @@
 import axios from 'axios';
 import React from 'react';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import './AddUsedProducts.scss';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router-dom';
 import { useAuth } from '../Context/Authcontext';
 
-function AddUsedProducts() {
+function EditUsedProducts() {
   const navigate = useNavigate();
   const { userinfo, setUserInfo, isLoggedIn, setIsLoggedIn } = useAuth();
   axios.defaults.withCredentials = true;
@@ -16,13 +16,27 @@ function AddUsedProducts() {
   const [prodNameLength, setProdNameLength] = useState(0);
   const [descLength, setDescLength] = useState(0);
 
-  // add
+  const { useP_id } = useParams();
+
+  const [originValue, setOriginValue] = useState([]);
+  useEffect(() => {
+    async function fetchData() {
+      let response = await axios.get(
+        `http://localhost:3001/usedproduct/edit/${useP_id}`
+      );
+      console.log(response.data);
+      setOriginValue(response.data[0]);
+    }
+    fetchData();
+  }, []);
+
+  // edit
   const [inputValue, setInputValue] = useState({
     img: '',
     name: '',
     categoryRoom: '',
     categoryProduct: '',
-    description: '',
+    description: '這裡是編輯頁',
     originalPrice: '',
     price: '',
     amount: '',
@@ -30,16 +44,30 @@ function AddUsedProducts() {
     valid: '',
   });
 
-  // TODO: sidebar 的 checked 判斷
   function handleChange(e) {
-    setInputValue({ ...inputValue, [e.target.name]: e.target.value });
+    setOriginValue({ ...originValue, [e.target.name]: e.target.value });
   }
 
   // FileUpload
   function handUpload(e) {
     setInputValue({ ...inputValue, img: e.target.files[0] });
   }
-
+  // ResetBtn
+  function resetForm() {
+    setInputValue({
+      ...inputValue,
+      img: '',
+      name: '',
+      categoryRoom: '',
+      categoryProduct: '',
+      description: '這裡是編輯頁面',
+      originalPrice: '',
+      price: '',
+      amount: '',
+      boughtIn: '',
+      valid: '',
+    });
+  }
   // SubmitBtn
   async function handleSubmit(e) {
     console.log(inputValue);
@@ -63,23 +91,6 @@ function AddUsedProducts() {
     console.log(response.data);
     // 導到二手商品清單
     navigate('/seller/product');
-  }
-
-  // ResetBtn
-  function resetForm() {
-    setInputValue({
-      ...inputValue,
-      img: '',
-      name: '',
-      categoryRoom: '',
-      categoryProduct: '',
-      description: '這裡是新增頁面',
-      originalPrice: '',
-      price: '',
-      amount: '',
-      boughtIn: '',
-      valid: '',
-    });
   }
   return (
     <>
@@ -191,7 +202,7 @@ function AddUsedProducts() {
                         placeholder="請輸入商品名稱"
                         maxLength="50"
                         name="name"
-                        value={inputValue.name}
+                        value={originValue.name ? originValue.name : ''}
                         onChange={(e) => {
                           let content = e.target.value;
                           let length = content.split('').length;
@@ -211,12 +222,16 @@ function AddUsedProducts() {
                     </div>
                     <div className="d-none d-lg-inline  col col-lg-8">
                       <select
-                        name="categoryRoom"
-                        value={inputValue.categoryRoom}
+                        name="category_room"
                         required
                         className={
                           'form-control bg-white' +
                           (roomCat === null ? ' text-gray-100' : '')
+                        }
+                        value={
+                          originValue.category_room
+                            ? originValue.category_room
+                            : ''
                         }
                         onChange={(e) => {
                           setRoomCat(e.target.value);
@@ -240,11 +255,15 @@ function AddUsedProducts() {
                     </div>
                     <div className="d-none d-lg-inline col col-lg-8">
                       <select
-                        name="categoryProduct"
-                        value={inputValue.categoryProduct}
+                        name="category_product"
                         className={
                           'form-control bg-white' +
                           (prodCat === null ? ' text-gray-100' : '')
+                        }
+                        value={
+                          originValue.category_product
+                            ? originValue.category_product
+                            : ''
                         }
                         onChange={(e) => {
                           setProdCat(e.target.value);
@@ -277,7 +296,9 @@ function AddUsedProducts() {
                         required
                         minLength={10}
                         name="description"
-                        value={inputValue.description}
+                        value={
+                          originValue.description ? originValue.description : ''
+                        }
                         onChange={(e) => {
                           let content = e.target.value;
                           let length = content.split('').length;
@@ -301,9 +322,13 @@ function AddUsedProducts() {
                       <input
                         className="form-control bg-white"
                         type="number"
-                        name="originalPrice"
-                        value={inputValue.originalPrice}
+                        name="original_price"
                         required
+                        value={
+                          originValue.original_price
+                            ? originValue.original_price
+                            : ''
+                        }
                         min={1}
                         placeholder="請輸入原價"
                         onKeyUp={(e) => {
@@ -321,8 +346,8 @@ function AddUsedProducts() {
                         className="form-control bg-white"
                         type="number"
                         name="price"
-                        value={inputValue.price}
                         required
+                        value={originValue.price ? originValue.price : ''}
                         min={0}
                         placeholder="請輸入售價"
                         onKeyUp={(e) => {
@@ -340,19 +365,15 @@ function AddUsedProducts() {
                         className="form-control bg-white"
                         type="number"
                         name="amount"
-                        value={inputValue.amount}
                         required
+                        value={originValue.amount ? originValue.amount : ''}
                         min={0}
                         placeholder="0"
-                        onMouseUp={(e) => {
-                          handleChange(e);
-                        }}
+                        onMouseUp={(e) => {}}
                         onKeyUp={(e) => {
                           e.target.value = e.target.value.replace(/[^\d]/g, '');
                         }}
-                        onChange={(e) => {
-                          handleChange(e);
-                        }}
+                        onChange={handleChange}
                       />
                     </div>
                   </div>
@@ -370,12 +391,16 @@ function AddUsedProducts() {
                         className="form-control bg-white"
                         required
                         type="number"
-                        name="boughtIn"
-                        value={inputValue.boughtIn}
+                        name="bought_in"
+                        value={
+                          originValue.bought_in ? originValue.bought_in : ''
+                        }
                         placeholder="1911"
                         min={1911}
                         max={2023}
-                        onMouseUp={handleChange}
+                        onMouseUp={(e) => {
+                          handleChange(e);
+                        }}
                         onKeyUp={(e) => {
                           e.target.value = e.target.value.replace(/[^\d]/g, '');
                         }}
@@ -387,6 +412,7 @@ function AddUsedProducts() {
                       />
                     </div>
                   </div>
+                  {/* TODO:撈資料 */}
                   <div className="row mt-3 mt-lg-4 mb-4">
                     <div className="col-lg-1"></div>
                     <div className="col-lg-2 mb-3 dfaic">是否發布</div>
@@ -435,11 +461,16 @@ function AddUsedProducts() {
                         <i className="fa-solid fa-list-ul"> 房間分類</i>
                       </li>
                       <select
-                        name="categoryRoom"
+                        name="category_room"
                         required
                         className={
                           'bg-white col-5' +
                           (roomCat === null ? ' text-gray-100' : '')
+                        }
+                        value={
+                          originValue.category_room
+                            ? originValue.category_room
+                            : ''
                         }
                         onChange={(e) => {
                           setRoomCat(e.target.value);
@@ -467,6 +498,7 @@ function AddUsedProducts() {
                           'bg-white col-5' +
                           (prodCat === null ? ' text-gray-100' : '')
                         }
+                        value={inputValue.categoryProduct}
                         onChange={(e) => {
                           setProdCat(e.target.value);
                           handleChange(e);
@@ -497,14 +529,19 @@ function AddUsedProducts() {
                       <input
                         className="bg-white col-5 text-end"
                         type="number"
-                        name="originalPrice"
                         required
+                        value={inputValue.originalPrice}
                         min={0}
                         placeholder="設定"
                         onKeyUp={(e) => {
                           e.target.value = e.target.value.replace(/[^\d]/g, '');
                         }}
-                        onChange={handleChange}
+                        onChange={(e) => {
+                          setInputValue({
+                            ...inputValue,
+                            originalPrice: e.target.value,
+                          });
+                        }}
                       />
                     </div>
                     <div className="row mt-3 mb-3">
@@ -514,14 +551,19 @@ function AddUsedProducts() {
                       <input
                         className="bg-white col-5 text-end"
                         type="number"
-                        name="price"
                         required
+                        value={inputValue.price}
                         min={0}
                         placeholder="設定"
                         onKeyUp={(e) => {
                           e.target.value = e.target.value.replace(/[^\d]/g, '');
                         }}
-                        onChange={handleChange}
+                        onChange={(e) => {
+                          setInputValue({
+                            ...inputValue,
+                            price: e.target.value,
+                          });
+                        }}
                       />
                     </div>
 
@@ -532,15 +574,20 @@ function AddUsedProducts() {
                       <input
                         className="bg-white col-5 text-end"
                         type="number"
-                        name="amount"
                         required
+                        value={inputValue.amount}
                         min={0}
                         placeholder="0"
-                        onMouseUp={handleChange}
+                        onMouseUp={(e) => {}}
                         onKeyUp={(e) => {
                           e.target.value = e.target.value.replace(/[^\d]/g, '');
                         }}
-                        onChange={handleChange}
+                        onChange={(e) => {
+                          setInputValue({
+                            ...inputValue,
+                            amount: e.target.value,
+                          });
+                        }}
                       />
                     </div>
                     <div className="row mt-3">
@@ -551,21 +598,20 @@ function AddUsedProducts() {
                         className="g-white col-5 text-end"
                         required
                         type="number"
-                        name="boughtIn"
+                        value={inputValue.boughtIn}
                         placeholder="1911"
                         min={1911}
                         max={2023}
-                        onMouseUp={(e) => {
-                          if (e.target.value.length <= 4) {
-                            handleChange(e);
-                          }
-                        }}
+                        onMouseUp={(e) => {}}
                         onKeyUp={(e) => {
                           e.target.value = e.target.value.replace(/[^\d]/g, '');
                         }}
                         onChange={(e) => {
                           if (e.target.value.length <= 4) {
-                            handleChange(e);
+                            setInputValue({
+                              ...inputValue,
+                              boughtIn: e.target.value,
+                            });
                           }
                         }}
                       />
@@ -633,9 +679,9 @@ function AddUsedProducts() {
                       <button
                         type="submit"
                         className="text-white bg-primary-200"
-                        onClick={handleSubmit}
+                        // onClick={handleSubmit}
                       >
-                        送出
+                        修改
                       </button>
                     </div>
                   </div>
@@ -649,4 +695,4 @@ function AddUsedProducts() {
   );
 }
 
-export default AddUsedProducts;
+export default EditUsedProducts;

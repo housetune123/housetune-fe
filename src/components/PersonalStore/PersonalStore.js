@@ -1,11 +1,19 @@
 import { useEffect, useState } from 'react';
+import { useParams } from 'react-router-dom';
 import './PersonalStore.scss';
 import axios from 'axios';
 import BreadCrumb from '../Layout/BreadCrumb';
+import moment from 'moment';
 
 function PersonalStore() {
+  const { userAcct } = useParams();
   const [products, setProducts] = useState([]);
+  const [rating, setRating] = useState([]);
 
+  // useEffect(() => {
+  //   console.log('render');
+  //   console.log(user[0].rating);
+  // }, [user]);
   // 儲存 select 狀態
   const [shape, setShape] = useState('');
   const [amount, setAmount] = useState('');
@@ -14,12 +22,67 @@ function PersonalStore() {
 
   useEffect(() => {
     async function getProducts() {
-      let res = await axios.get('http://localhost:3001/products');
-      // console.log(res);
-      setProducts(res.data);
+      let res = await axios.get(`http://localhost:3001/api/seller/${userAcct}`);
+      setProducts(res.data.data);
+      setRating(res.data.rating);
+      // console.log(res.data.user);
     }
     getProducts();
-  }, []);
+  }, [userAcct]);
+
+  const productStar = {
+    1: (
+      <span>
+        <i className="fa-solid fa-star" />
+        <i className="fa-regular fa-star" />
+        <i className="fa-regular fa-star" />
+        <i className="fa-regular fa-star" />
+        <i className="fa-regular fa-star" />
+      </span>
+    ),
+    2: (
+      <span>
+        <i className="fa-solid fa-star" />
+        <i className="fa-solid fa-star" />
+        <i className="fa-regular fa-star" />
+        <i className="fa-regular fa-star" />
+        <i className="fa-regular fa-star" />
+      </span>
+    ),
+    3: (
+      <span>
+        <i className="fa-solid fa-star" />
+        <i className="fa-solid fa-star" />
+        <i className="fa-solid fa-star" />
+        <i className="fa-regular fa-star" />
+        <i className="fa-regular fa-star" />
+      </span>
+    ),
+    4: (
+      <span>
+        <i className="fa-solid fa-star" />
+        <i className="fa-solid fa-star" />
+        <i className="fa-solid fa-star" />
+        <i className="fa-solid fa-star" />
+        <i className="fa-regular fa-star" />
+      </span>
+    ),
+    5: (
+      <span>
+        <i className="fa-solid fa-star" />
+        <i className="fa-solid fa-star" />
+        <i className="fa-solid fa-star" />
+        <i className="fa-solid fa-star" />
+        <i className="fa-solid fa-star" />
+      </span>
+    ),
+  };
+  // 平均星星
+  const averageStar =
+    Math.round(
+      (rating.reduce((acc, pilot) => acc + pilot.stars, 0) / rating.length) * 10
+    ) / 10;
+
   return (
     <>
       <main className="bg-orange personal-store">
@@ -28,7 +91,7 @@ function PersonalStore() {
           <div className="d-flex justify-content-between border-0">
             {/* 左側條件設定 */}
             <div className="col-2 d-none d-lg-block ">
-              <h3 className="mb-5 text-info-dark">Alice 的賣場</h3>
+              <h3 className="mb-5 text-info-dark">{userAcct} 的賣場</h3>
               <h5 className="text-info">條件設定</h5>
               <hr className="simple" />
               <div className="accordion accordion-flush">
@@ -199,7 +262,7 @@ function PersonalStore() {
                   </div>
                 </div>
                 {/* 價格 */}
-                <div className="accordion-item">
+                {/* <div className="accordion-item">
                   <h2
                     className="accordion-header"
                     id="panelsStayOpen-headingTwo"
@@ -247,9 +310,9 @@ function PersonalStore() {
                       </div>
                     </div>
                   </div>
-                </div>
+                </div> */}
                 {/* 使用情況 */}
-                <div className="accordion-item">
+                {/* <div className="accordion-item">
                   <h2
                     className="accordion-header"
                     id="panelsStayOpen-headingOne"
@@ -343,23 +406,20 @@ function PersonalStore() {
                       </div>
                     </div>
                   </div>
-                </div>
+                </div> */}
               </div>
             </div>
 
             {/* 右側排序、商品列表 */}
             <div className="col-12 col-lg-9">
               <h3 className="text-info-dark d-block d-md-none my-2">
-                Alice 的賣場
+                {userAcct} 的賣場
               </h3>
               <div className="bg-white p-4">
-                <p className="text-info-dark">4項商品</p>
+                <p className="text-info-dark">{products.length}項商品</p>
                 <p className="text-info-dark">
-                  評價 4.7
-                  <span>
-                    <i className="fa-solid fa-star-half-stroke"></i>
-                  </span>
-                  (17個評價)
+                  評價
+                  {isNaN(averageStar) ? 0 : averageStar} ({rating.length}個評價)
                 </p>
               </div>
               {/* 條件設定、排序依據 */}
@@ -380,7 +440,7 @@ function PersonalStore() {
                   </div>
                 </div>
                 {/* 排序依據 */}
-                <div className="d-flex align-items-center">
+                {/* <div className="d-flex align-items-center">
                   <div className="pe-3 d-block d-md-none">
                     <button
                       className="text-info-dark ps-0 col border-0 bg-orange"
@@ -411,7 +471,7 @@ function PersonalStore() {
                       <option value="7">日期（從新到舊）</option>
                     </select>
                   </div>
-                </div>
+                </div> */}
               </div>
               {/* 商品列表 */}
               <div className="row">
@@ -424,7 +484,7 @@ function PersonalStore() {
                     >
                       <div className="card border border-0 card-shadow position-relative">
                         <img
-                          src={`${process.env.REACT_APP_IMAGE_URL}/images/products/${v.category_name}/${img[0]}`}
+                          src={`${process.env.REACT_APP_IMAGE_URL}/images/used/${img[0]}`}
                           className="card-img-top bg-gray-200"
                           alt="..."
                         />
@@ -474,112 +534,54 @@ function PersonalStore() {
                   <div className="bg-white p-3">
                     <div>
                       <p className="h3 text-info-dark">
-                        <span className="fw-bold">0</span>/5
+                        <span className="fw-bold">
+                          {isNaN(averageStar) ? 0 : averageStar}
+                        </span>
+                        /<span className="fs-5">5</span>
                       </p>
                     </div>
                     {/* 星星 */}
                     <div>
-                      <p className="text-danger mb-0">
-                        <span>
-                          <i className="fa-solid fa-star"></i>
-                        </span>
-                        <span>
-                          <i className="fa-solid fa-star"></i>
-                        </span>
-                        <span>
-                          <i className="fa-solid fa-star"></i>
-                        </span>
-                        <span>
-                          <i className="fa-solid fa-star"></i>
-                        </span>
-                        <span>
-                          <i className="fa-solid fa-star-half-stroke"></i>
-                        </span>
-                      </p>
+                      <span className="text-danger mb-0 bg-danger">
+                        <i className="fa-regular fa-star"></i>
+                        <i className="fa-regular fa-star"></i>
+                        <i className="fa-regular fa-star"></i>
+                        <i className="fa-regular fa-star"></i>
+                        <i className="fa-regular fa-star"></i>
+                      </span>
                     </div>
                   </div>
-                  <div>
-                    <div className="pt-3 border-bottom border-1 border-gray-200">
-                      <div className="d-md-flex justify-content-between">
-                        <p className="mb-2">Ariel Shao</p>
-                        <p className="text-gray-200 mb-2">
-                          15小時前
-                          <span className="text-gray-400 ps-2">
-                            <span>
-                              <i className="fa-solid fa-star"></i>
-                            </span>
-                            <span>
-                              <i className="fa-solid fa-star"></i>
-                            </span>
-                            <span>
-                              <i className="fa-solid fa-star"></i>
-                            </span>
-                            <span>
-                              <i className="fa-solid fa-star"></i>
-                            </span>
-                            <span>
-                              <i className="fa-solid fa-star-half-stroke"></i>
-                            </span>
-                          </span>
-                        </p>
-                      </div>
-                      <div className="d-md-flex align-items-center">
-                        <div className="col-3 col-md-2">
-                          <img
-                            src="https://tw.portal-pokemon.com/play/resources/pokedex/img/pm/2b3f6ff00db7a1efae21d85cfb8995eaff2da8d8.png"
-                            alt=""
-                            className="object-cover"
-                          />
+
+                  {rating.map((v, i) => {
+                    const img = v.img.split(',');
+                    return (
+                      <div
+                        key={i}
+                        className="pt-3 border-bottom border-1 border-gray-200"
+                      >
+                        <div className="d-md-flex justify-content-between">
+                          <p className="mb-2">Ariel Shao</p>
+                          <p className="text-gray-200 mb-2">
+                            {moment(`${v.posted_at}`, 'YYYYMMDD').fromNow()}
+                            {productStar[v.stars]}
+                          </p>
                         </div>
-                        <p className="col-md-6 text-gray-300">
-                          珍古系列 橡木櫥櫃
-                        </p>
-                        <p className="text-gray-400 mb-2 col-md-4 text-md-end">
-                          很喜歡，簡單，精緻
-                        </p>
-                      </div>
-                    </div>
-                    <div className="pt-3 border-bottom border-1 border-gray-200">
-                      <div className="d-md-flex justify-content-between">
-                        <p className="mb-2">Ariel Shao</p>
-                        <p className="text-gray-200 mb-2">
-                          15小時前
-                          <span className="text-gray-400 ps-2">
-                            <span>
-                              <i className="fa-solid fa-star"></i>
-                            </span>
-                            <span>
-                              <i className="fa-solid fa-star"></i>
-                            </span>
-                            <span>
-                              <i className="fa-solid fa-star"></i>
-                            </span>
-                            <span>
-                              <i className="fa-solid fa-star"></i>
-                            </span>
-                            <span>
-                              <i className="fa-solid fa-star-half-stroke"></i>
-                            </span>
-                          </span>
-                        </p>
-                      </div>
-                      <div className="d-md-flex align-items-center">
-                        <div className="col-3 col-md-2">
-                          <img
-                            src="https://tw.portal-pokemon.com/play/resources/pokedex/img/pm/2b3f6ff00db7a1efae21d85cfb8995eaff2da8d8.png"
-                            alt=""
-                            className="object-cover"
-                          />
+                        <div className="d-md-flex align-items-center">
+                          <div className="col-3 col-md-2">
+                            <img
+                              src={`${process.env.REACT_APP_IMAGE_URL}/images/products/used/${img[0]}`}
+                              alt=""
+                              className="object-cover"
+                            />
+                          </div>
+                          <p className="col-md-6 text-gray-300">{v.name}</p>
+                          <p className="text-gray-400 mb-2 col-md-4 text-md-end">
+                            {v.comment}
+                          </p>
                         </div>
-                        <p className="col-md-6 text-gray-300">
-                          珍古系列 橡木櫥櫃
-                        </p>
-                        <p className="text-gray-400 mb-2 col-md-4 text-md-end">
-                          很喜歡，簡單，精緻
-                        </p>
                       </div>
-                    </div>
-                  </div>
+                    );
+                  })}
                 </div>
               </section>
             </div>

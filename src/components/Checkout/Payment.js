@@ -39,10 +39,17 @@ function Payment() {
 
   // 只取產品的 id , 數量 , 顏色
   const orderItems = items.map((val) => {
-    return { prod_id: val.prod_id, quantity: val.quantity, shape: val.shape };
+    // console.log(val);
+    return {
+      prod_id: val.prod_id,
+      quantity: val.quantity,
+      shape: val.shape,
+      imgs: val.img,
+      total: val.itemTotal,
+      name: val.name,
+    };
   });
-  // console.log('購買產品', orderItems);
-
+  console.log('購買產品', orderItems);
   const orderMsg = {
     userId: userinfo.id,
     address: address,
@@ -51,6 +58,7 @@ function Payment() {
     note: '',
     products: orderItems,
   };
+  console.log('orderMsg', orderMsg);
 
   async function Pay(e) {
     try {

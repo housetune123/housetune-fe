@@ -179,19 +179,24 @@ function Header() {
   }
 
   // 以下頁面不要顯示 HEADER
-  if (location.pathname === '/checkout/information') {
+  if (
+    location.pathname === '/checkout/information' ||
+    location.pathname === '/checkout/shipping' ||
+    location.pathname === '/checkout/payment' ||
+    location.pathname === '/checkout/thankyou' ||
+    location.pathname === '/seller' ||
+    location.pathname === '/seller/product' ||
+    location.pathname === '/seller/order' ||
+    location.pathname === '/seller/order/unpaid' ||
+    location.pathname === '/seller/order/toship' ||
+    location.pathname === '/seller/order/completed' ||
+    location.pathname === '/seller/order/cancelled' ||
+    location.pathname === '/seller/product/add' ||
+    location.pathname.includes('/seller/product/edit/') ||
+    location.pathname === '*'
+  ) {
     return <></>;
   }
-  if (location.pathname === '/checkout/shipping') {
-    return <></>;
-  }
-  if (location.pathname === '/checkout/payment') {
-    return <></>;
-  }
-  if (location.pathname === '/checkout/thankyou') {
-    return <></>;
-  }
-
   return (
     <>
       <header className="bg-white">

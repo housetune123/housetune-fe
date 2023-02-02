@@ -15,14 +15,28 @@ import Thankyou from './components/Checkout/Thankyou';
 import Inspiration from './components/Inspiration/Inspiration';
 import InspDetail1 from './components/Inspiration/Insp_detail1';
 import AddUsedProducts from './components/UsedProducts/AddUsedProducts';
+import EditUsedProducts from './components/UsedProducts/EditUsedProducts';
+
 import UsedProducts from './components/Products/UsedProducts';
 
 // home-page branch
-import PersonalStore from './components/Products/PersonalStore';
+import PersonalStore from './components/PersonalStore/PersonalStore';
 import Main from './components/Main';
 import Products from './components/Products/Products';
 import ProductDetail from './components/Products/ProductsDetail';
 import UsedProductDetail from './components/Products/UsedProductsDetail';
+
+// seller-center
+import SellerCenter from './components/PersonalStore/SellerCenter';
+import SellerMain from './components/PersonalStore/SellerMain';
+import SalesProduct from './components/PersonalStore/SalesProduct';
+import SalesOrder from './components/PersonalStore/SalesOrder';
+import AllOrder from './components/PersonalStore/SalesOrderContent/AllOrder';
+import UnPaid from './components/PersonalStore/SalesOrderContent/UnPaid';
+import ToShip from './components/PersonalStore/SalesOrderContent/ToShip';
+import Completed from './components/PersonalStore/SalesOrderContent/Completed';
+import Cancelled from './components/PersonalStore/SalesOrderContent/Cancelled';
+
 // user-page branch
 import UserPage from './components/UserPage/UserPage';
 
@@ -85,7 +99,7 @@ function App() {
             <Header />
             <Routes>
               <Route path="/" element={<Main />} />
-              <Route path="/products" element={<Products />}></Route>
+              <Route path="/products" element={<Products />} />
               <Route path="/products/:prodId" element={<ProductDetail />} />
               <Route
                 path="/products/category/:categoryRoom"
@@ -133,6 +147,26 @@ function App() {
                 <Route path="payment" element={<Payment />} />
               </Route>
 
+              {/* personal-store */}
+              <Route path=":userAcct" element={<PersonalStore />} />
+              <Route path="seller/product/add" element={<AddUsedProducts />} />
+              <Route
+                path="seller/product/edit/:useP_id"
+                element={<EditUsedProducts />}
+              />
+              <Route path="seller" element={<SellerCenter />}>
+                <Route index element={<SellerMain />} />
+                <Route path="product" element={<SalesProduct />} />
+                <Route path="order" element={<SalesOrder />}>
+                  <Route index element={<AllOrder />} />
+                  <Route path="unpaid" element={<UnPaid />} />
+                  <Route path="toship" element={<ToShip />} />
+                  <Route path="completed" element={<Completed />} />
+                  <Route path="cancelled" element={<Cancelled />} />
+                </Route>
+              </Route>
+
+              {/* notfound */}
               <Route path="*" element={<NotFound />} />
             </Routes>
             <Footer />
