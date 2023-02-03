@@ -12,8 +12,8 @@ function Chaticon() {
       alt="聊天室符號"
       className={
         'messenger position-fixed ' +
-        (isLoggedIn ? '' : 'd-none ') +
-        (chat ? 'd-none' : 'd-lg-block d-none')
+        (isLoggedIn ? 'd-none d-lg-block' : 'd-none ') +
+        (chat ? 'a' : '')
       }
       onClick={() => {
         setChat(!chat);
