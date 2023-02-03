@@ -50,7 +50,6 @@ function Products() {
   const [cart, setCart] = useState([]);
 
   // 收藏
-  const [userId, setUserId] = useState(0);
   const [like, setLike] = useState([]);
   // 取得收藏資料
   useEffect(() => {
@@ -70,10 +69,10 @@ function Products() {
   // 加入收藏
   useEffect(() => {
     if (isLoggedIn) {
-      setUserId(userinfo.id);
       try {
         async function liked() {
           let likeJson = JSON.stringify(like);
+          const userId = userinfo.id;
           let res = await axios.put('http://localhost:3001/api/products', {
             likeJson,
             userId,
