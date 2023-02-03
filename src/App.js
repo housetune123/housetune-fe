@@ -56,8 +56,22 @@ import Footer from './components/HeaderFooter/Footer';
 // 匯入 CartProvider
 import { CartProvider } from './utils/useCart';
 
-//重新整理時要一次資料
+//google登入
+import { GoogleContext } from './components/Context/Googlecontext';
+import RegisterGoogle from './components/Register/RegisterGoogle';
+
+//聊天室
+import Chaticon from './components/Chat/Chaticon';
+import Chat from './components/Chat/Chat';
+import { ChatContext } from './components/Context/Chatcontext';
+import io from 'socket.io-client';
+const socket = io.connect('http://localhost:3001');
+
 function App() {
+  const [googleInfo, setGoogleInfo] = useState({
+    email: '',
+    name: '',
+  });
   const [userinfo, setUserInfo] = useState({
     id: '',
     account: '',
@@ -75,7 +89,18 @@ function App() {
     createdat: '',
   });
   const [isLoggedIn, setIsLoggedIn] = useState(false);
+  const [chat, setChat] = useState(false);
+  const [reciever, setReciever] = useState('官方客服');
+  const [recieverId, setRecieverId] = useState(1);
+  const [message, setMessage] = useState('');
+  const [begin, setBegin] = useState(false);
+  const [messageList, setMessageList] = useState([]);
+  const [room, setRoom] = useState('test123');
+  const [otherReciever, setOtherReciever] = useState('');
+  const [switchZone, setSwitchZone] = useState(false);
+  const [newMessage, setNewMessage] = useState([]);
   axios.defaults.withCredentials = true;
+  //重新整理時要一次資料
   useEffect(() => {
     axios.get('http://localhost:3001/api/auth/member').then((res) => {
       setIsLoggedIn(res.data.loggedIn);
@@ -90,92 +115,132 @@ function App() {
   const [isUsed, setIsUsed] = useState(false);
 
   return (
-    <CartProvider>
-      <AuthContext.Provider
-        value={{ userinfo, setUserInfo, isLoggedIn, setIsLoggedIn }}
+    <GoogleContext.Provider value={{ googleInfo, setGoogleInfo }}>
+      <ChatContext.Provider
+        value={{
+          chat,
+          setChat,
+          reciever,
+          setReciever,
+          recieverId,
+          setRecieverId,
+          message,
+          setMessage,
+          begin,
+          setBegin,
+          messageList,
+          setMessageList,
+          room,
+          setRoom,
+          otherReciever,
+          setOtherReciever,
+          switchZone,
+          setSwitchZone,
+          newMessage,
+          setNewMessage,
+        }}
       >
-        <CouponContext.Provider
-          value={{ couponInfo, setCouponInfo, isUsed, setIsUsed }}
-        >
-          <BrowserRouter>
-            <Header />
-            <Routes>
-              <Route path="/" element={<Main />} />
-              <Route path="/products" element={<Products />} />
-              <Route path="/products/:prodId" element={<ProductDetail />} />
-              <Route
-                path="/products/category/:categoryRoom"
-                element={<Products />}
-              ></Route>
-              <Route
-                path="/used/products/detail"
-                element={<UsedProductDetail />}
-              ></Route>
+        <CartProvider>
+          <AuthContext.Provider
+            value={{ userinfo, setUserInfo, isLoggedIn, setIsLoggedIn }}
+          >
+            <CouponContext.Provider
+              value={{ couponInfo, setCouponInfo, isUsed, setIsUsed }}
+            >
+              <BrowserRouter>
+                <Header />
+                <Routes>
+                  <Route path="/" element={<Main />} />
+                  <Route path="/products" element={<Products />} />
+                  <Route path="/products/:prodId" element={<ProductDetail />} />
+                  <Route
+                    path="/products/category/:categoryRoom"
+                    element={<Products />}
+                  ></Route>
+                  <Route
+                    path="/used/products/detail"
+                    element={<UsedProductDetail />}
+                  ></Route>
 
-              <Route exact path="inspiration">
-                <Route index={true} element={<Inspiration />} />
-                <Route path="detail1" element={<InspDetail1 />} />
-              </Route>
+                  <Route exact path="inspiration">
+                    <Route index={true} element={<Inspiration />} />
+                    <Route path="detail1" element={<InspDetail1 />} />
+                  </Route>
 
-              {/* used */}
-              <Route path="usedstore" element={<PersonalStore />} />
-              <Route path="usedproducts" element={<UsedProducts />} />
-              <Route
-                path="/used/products/detail"
-                element={<UsedProductDetail />}
-              ></Route>
-              <Route path="usedproduct/add" element={<AddUsedProducts />} />
+                  {/* used */}
+                  <Route path="usedstore" element={<PersonalStore />} />
+                  <Route path="usedproducts" element={<UsedProducts />} />
+                  <Route
+                    path="/used/products/detail"
+                    element={<UsedProductsDetail />}
+                  ></Route>
+                  <Route path="usedproduct/add" element={<AddUsedProducts />} />
 
-              {/* user */}
-              <Route path="login" element={<Login />} />
-              <Route path="forgot" element={<ForgotPage />} />
-              <Route path="password/edit" element={<ResetPassword />} />
-              <Route path="register" element={<Register />} />
-              <Route path="user" element={<UserPage />} />
+                  {/* user */}
+                  <Route path="login" element={<Login />} />
+                  <Route path="register" element={<Register />} />
+                  <Route path="/register/google" element={<RegisterGoogle />} />
+                  <Route path="forgot" element={<ForgotPage />} />
+                  <Route path="password/edit" element={<ResetPassword />} />
+                  <Route path="register" element={<Register />} />
+                  <Route path="user" element={<UserPage />} />
 
-              {/* ckeckout */}
-              <Route path="cart" element={<Cart />} />
-              <Route
-                path="/cart/checkout/information"
-                element={<Information />}
-              />
-              <Route path="/cart/checkout/shipping" element={<Shipping />} />
-              <Route path="/cart/checkout/payment" element={<Payment />} />
-              <Route path="/cart/checkout/thankyou" element={<Thankyou />} />
+                  {/* ckeckout */}
+                  <Route path="cart" element={<Cart />} />
+                  <Route
+                    path="/cart/checkout/information"
+                    element={<Information />}
+                  />
+                  <Route
+                    path="/cart/checkout/shipping"
+                    element={<Shipping />}
+                  />
+                  <Route path="/cart/checkout/payment" element={<Payment />} />
+                  <Route
+                    path="/cart/checkout/thankyou"
+                    element={<Thankyou />}
+                  />
 
-              <Route path="checkout">
-                <Route path="information" element={<Information />} />
-                <Route path="shipping" element={<Shipping />} />
-                <Route path="payment" element={<Payment />} />
-              </Route>
+                  <Route path="checkout">
+                    <Route path="information" element={<Information />} />
+                    <Route path="shipping" element={<Shipping />} />
+                    <Route path="payment" element={<Payment />} />
+                  </Route>
 
-              {/* personal-store */}
-              <Route path=":userAcct" element={<PersonalStore />} />
-              <Route path="seller/product/add" element={<AddUsedProducts />} />
-              <Route
-                path="seller/product/edit/:useP_id"
-                element={<EditUsedProducts />}
-              />
-              <Route path="seller" element={<SellerCenter />}>
-                <Route index element={<SellerMain />} />
-                <Route path="product" element={<SalesProduct />} />
-                <Route path="order" element={<SalesOrder />}>
-                  <Route index element={<AllOrder />} />
-                  <Route path="unpaid" element={<UnPaid />} />
-                  <Route path="toship" element={<ToShip />} />
-                  <Route path="completed" element={<Completed />} />
-                  <Route path="cancelled" element={<Cancelled />} />
-                </Route>
-              </Route>
+                  {/* personal-store */}
+                  <Route path=":userAcct" element={<PersonalStore />} />
+                  <Route
+                    path="seller/product/add"
+                    element={<AddUsedProducts />}
+                  />
+                  <Route
+                    path="seller/product/edit/:useP_id"
+                    element={<EditUsedProducts />}
+                  />
+                  <Route path="seller" element={<SellerCenter />}>
+                    <Route index element={<SellerMain />} />
+                    <Route path="product" element={<SalesProduct />} />
+                    <Route path="order" element={<SalesOrder />}>
+                      <Route index element={<AllOrder />} />
+                      <Route path="unpaid" element={<UnPaid />} />
+                      <Route path="toship" element={<ToShip />} />
+                      <Route path="completed" element={<Completed />} />
+                      <Route path="cancelled" element={<Cancelled />} />
+                    </Route>
+                  </Route>
 
-              {/* notfound */}
-              <Route path="*" element={<NotFound />} />
-            </Routes>
-            <Footer />
-          </BrowserRouter>
-        </CouponContext.Provider>
-      </AuthContext.Provider>
-    </CartProvider>
+                  {/* notfound */}
+                  <Route path="*" element={<NotFound />} />
+                </Routes>
+                <Footer />
+                <Chaticon />
+                <Chat socket={socket} />
+              </BrowserRouter>
+            </CouponContext.Provider>
+          </AuthContext.Provider>
+        </CartProvider>
+      </ChatContext.Provider>
+    </GoogleContext.Provider>
   );
 }
 

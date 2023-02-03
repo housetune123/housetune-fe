@@ -61,6 +61,7 @@ const InputItem = [
     max: '',
     min: '',
     req: false,
+    class: 'd-flex align-items-center',
   },
   {
     title: '銀行帳號（二手商品收款用，非必填）',
@@ -70,6 +71,7 @@ const InputItem = [
     max: '',
     min: '',
     req: false,
+    class: 'd-flex align-items-center',
   },
 ];
 

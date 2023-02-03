@@ -1,13 +1,22 @@
 import React from 'react';
+import { useState } from 'react';
 import { Link } from 'react-router-dom';
 
 function Insp_detail1() {
+  const [show1, setShow1] = useState(false);
+  const [show2, setShow2] = useState(false);
+  const [show3, setShow3] = useState(false);
+  const [show4, setShow4] = useState(false);
+  const [show5, setShow5] = useState(false);
+  const [show6, setShow6] = useState(false);
+  const [show7, setShow7] = useState(false);
+  const [show8, setShow8] = useState(false);
   return (
     <>
       <div className="insp_1">
-        <div className="position-relative container p-4">
-          <div className="main">
-            <p className="crumb text-primary-200">
+        <div className="position-relative container">
+          <div>
+            <p className="crumb text-primary-200 mt-4">
               <Link
                 to="/inspiration"
                 className="text-decoration-none text-primary-200"
@@ -29,22 +38,126 @@ function Insp_detail1() {
                     className="w-100 d-block mx-auto"
                     src={`${process.env.REACT_APP_IMAGE_URL}/images/insp_details/1.jpeg`}
                     alt="大圖"
+                    onMouseLeave={() => {
+                      setShow1(false);
+                      setShow2(false);
+                      setShow3(false);
+                    }}
                   />
-                  <div className="insp1_btn1 position-absolute">
+                  <div
+                    className="insp1_btn1 position-absolute"
+                    onMouseEnter={() => {
+                      setShow1(true);
+                      setShow2(false);
+                      setShow3(false);
+                    }}
+                  >
                     <div className="hover-button-out d-flex justify-content-center align-items-center">
                       <div className="hover-button-inner"></div>
                     </div>
                   </div>
-                  <div className="insp1_btn2 position-absolute">
+                  <div
+                    className="insp1_btn2 position-absolute"
+                    onMouseEnter={() => {
+                      setShow2(true);
+                      setShow1(false);
+                      setShow3(false);
+                    }}
+                  >
                     <div className="hover-button-out d-flex justify-content-center align-items-center">
                       <div className="hover-button-inner"></div>
                     </div>
                   </div>
-                  <div className="insp1_btn3 position-absolute">
+                  <div
+                    className="insp1_btn3 position-absolute"
+                    onMouseEnter={() => {
+                      setShow3(true);
+                      setShow1(false);
+                      setShow2(false);
+                    }}
+                  >
                     <div className="hover-button-out d-flex justify-content-center align-items-center">
                       <div className="hover-button-inner"></div>
                     </div>
                   </div>
+                  <Link
+                    to="/products/193"
+                    className={
+                      'row w-30 rounded-pill bg-white position-absolute prod1-1 shadow ' +
+                      (show1 ? '' : 'd-none')
+                    }
+                    onMouseEnter={() => {
+                      setShow1(true);
+                    }}
+                  >
+                    <div className="col-6 p-0">
+                      <img
+                        className="w-100 rounded-pill"
+                        src={`${process.env.REACT_APP_IMAGE_URL}/images/insp_details/1-1.webp`}
+                        alt="1-1商品圖"
+                      />
+                    </div>
+                    <div className="col-6 d-flex flex-column justify-content-center p-0 pe-1">
+                      <h6>BLAVINGAD</h6>
+                      <h6 className="d-flex justify-content-between">
+                        <span>藍鯨填充玩具</span>
+                        <span>{'>'}</span>
+                      </h6>
+                      <h6>$749</h6>
+                    </div>
+                  </Link>
+                  <Link
+                    to="/products/194"
+                    className={
+                      'row w-30 rounded-pill bg-white position-absolute prod1-2 shadow ' +
+                      (show2 ? '' : 'd-none')
+                    }
+                    onMouseEnter={() => {
+                      setShow2(true);
+                    }}
+                  >
+                    <div className="col-6 p-0">
+                      <img
+                        className="w-100 rounded-pill"
+                        src={`${process.env.REACT_APP_IMAGE_URL}/images/insp_details/1-2.webp`}
+                        alt="1-2商品圖"
+                      />
+                    </div>
+                    <div className="col-6 d-flex flex-column justify-content-center p-0 pe-1">
+                      <h6>BLAVINGAD</h6>
+                      <h6 className="d-flex justify-content-between">
+                        <span>鯨魚單人被套組</span>
+                        <span>{'>'}</span>
+                      </h6>
+                      <h6>$599</h6>
+                    </div>
+                  </Link>
+                  <Link
+                    to="/products/195"
+                    className={
+                      'row w-40 rounded-4 bg-white position-absolute prod1-3 shadow ' +
+                      (show3 ? '' : 'd-none')
+                    }
+                    onMouseEnter={() => {
+                      setShow3(true);
+                    }}
+                  >
+                    <div className="col-6 p-0 d-flex justify-content-center">
+                      <img
+                        className="w-75"
+                        src={`${process.env.REACT_APP_IMAGE_URL}/images/insp_details/1-3.webp`}
+                        alt="1-3商品圖"
+                      />
+                    </div>
+                    <div className="col-6 d-flex flex-column justify-content-center p-0 pe-1">
+                      <h6>KURA</h6>
+                      <h6 className="d-flex justify-content-between">
+                        <span>松木翻轉式兒童床</span>
+                        <span>{'>'}</span>
+                      </h6>
+                      <h6>$8990</h6>
+                    </div>
+                  </Link>
                 </div>
               </div>
               {/* <svg class="position-absolute svg1" width="972" height="547">
@@ -63,12 +176,49 @@ function Insp_detail1() {
                         src={`${process.env.REACT_APP_IMAGE_URL}/images/insp_details/2.jpeg`}
                         className="card-img-top"
                         alt="小圖1"
+                        onMouseLeave={() => {
+                          setShow4(false);
+                        }}
                       />
-                      <div className="insp1_btn4 position-absolute">
+                      <div
+                        className="insp1_btn4 position-absolute"
+                        onMouseEnter={() => {
+                          setShow4(true);
+                        }}
+                      >
                         <div className="hover-button-out d-flex justify-content-center align-items-center">
                           <div className="hover-button-inner"></div>
                         </div>
                       </div>
+                      <Link
+                        to="/products/194"
+                        className={
+                          'row w-75 rounded-pill bg-white position-absolute prod2-1 shadow ' +
+                          (show4 ? '' : 'd-none')
+                        }
+                        onMouseEnter={() => {
+                          setShow4(true);
+                        }}
+                        onMouseLeave={() => {
+                          setShow4(false);
+                        }}
+                      >
+                        <div className="col-6 p-0">
+                          <img
+                            className="w-100 rounded-pill"
+                            src={`${process.env.REACT_APP_IMAGE_URL}/images/insp_details/2-1.webp`}
+                            alt="2-1商品圖"
+                          />
+                        </div>
+                        <div className="col-6 d-flex flex-column justify-content-center p-0 pe-1">
+                          <h6>BLAVINGAD</h6>
+                          <h6 className="d-flex justify-content-between">
+                            <span>鯨魚單人被套組</span>
+                            <span>{'>'}</span>
+                          </h6>
+                          <h6>$599</h6>
+                        </div>
+                      </Link>
                     </div>
                     <div className="card-body">
                       <h5 className="card-title text-info-dark fw-bold">
@@ -85,12 +235,49 @@ function Insp_detail1() {
                         src={`${process.env.REACT_APP_IMAGE_URL}/images/insp_details/3.jpeg`}
                         className="card-img-top"
                         alt="小圖2"
+                        onMouseLeave={() => {
+                          setShow5(false);
+                        }}
                       />
-                      <div className="insp1_btn5 position-absolute">
+                      <div
+                        className="insp1_btn5 position-absolute"
+                        onMouseEnter={() => {
+                          setShow5(true);
+                        }}
+                      >
                         <div className="hover-button-out d-flex justify-content-center align-items-center">
                           <div className="hover-button-inner"></div>
                         </div>
                       </div>
+                      <Link
+                        to="/products/196"
+                        className={
+                          'row w-75 rounded-pill bg-white position-absolute prod3-1 shadow ' +
+                          (show5 ? '' : 'd-none')
+                        }
+                        onMouseEnter={() => {
+                          setShow5(true);
+                        }}
+                        onMouseLeave={() => {
+                          setShow5(false);
+                        }}
+                      >
+                        <div className="col-6 p-0">
+                          <img
+                            className="w-100 rounded-pill"
+                            src={`${process.env.REACT_APP_IMAGE_URL}/images/insp_details/3-1.webp`}
+                            alt="3-1商品圖"
+                          />
+                        </div>
+                        <div className="col-6 d-flex flex-column justify-content-center p-0 pe-1">
+                          <h6>BLAVINGAD</h6>
+                          <h6 className="d-flex justify-content-between">
+                            <span>海豚填充玩具</span>
+                            <span>{'>'}</span>
+                          </h6>
+                          <h6>$299</h6>
+                        </div>
+                      </Link>
                     </div>
                     <div className="card-body">
                       <h5 className="card-title text-info-dark fw-bold">
@@ -111,17 +298,135 @@ function Insp_detail1() {
                         src={`${process.env.REACT_APP_IMAGE_URL}/images/insp_details/4.jpeg`}
                         className="card-img-top"
                         alt="小圖3"
+                        onMouseLeave={() => {
+                          setShow6(false);
+                          setShow7(false);
+                          setShow8(false);
+                        }}
                       />
-                      <div className="insp1_btn6 position-absolute">
+                      <div
+                        className="insp1_btn6 position-absolute"
+                        onMouseEnter={() => {
+                          setShow6(true);
+                          setShow7(false);
+                          setShow8(false);
+                        }}
+                      >
                         <div className="hover-button-out d-flex justify-content-center align-items-center">
                           <div className="hover-button-inner"></div>
                         </div>
                       </div>
-                      <div className="insp1_btn7 position-absolute">
+                      <div
+                        className="insp1_btn7 position-absolute"
+                        onMouseEnter={() => {
+                          setShow7(true);
+                          setShow6(false);
+                          setShow8(false);
+                        }}
+                      >
                         <div className="hover-button-out d-flex justify-content-center align-items-center">
                           <div className="hover-button-inner"></div>
                         </div>
                       </div>
+                      <div
+                        className="insp1_btn8 position-absolute"
+                        onMouseEnter={() => {
+                          setShow8(true);
+                          setShow6(false);
+                          setShow7(false);
+                        }}
+                      >
+                        <div className="hover-button-out d-flex justify-content-center align-items-center">
+                          <div className="hover-button-inner"></div>
+                        </div>
+                      </div>
+                      <Link
+                        to="/products/198"
+                        className={
+                          'row w-75 rounded-4 bg-white position-absolute prod4-2 shadow ' +
+                          (show6 ? '' : 'd-none')
+                        }
+                        onMouseEnter={() => {
+                          setShow6(true);
+                        }}
+                        onMouseLeave={() => {
+                          setShow6(false);
+                        }}
+                      >
+                        <div className="col-6 p-0">
+                          <img
+                            className="w-100 rounded-4"
+                            src={`${process.env.REACT_APP_IMAGE_URL}/images/insp_details/4-2.webp`}
+                            alt="4-2商品圖"
+                          />
+                        </div>
+                        <div className="col-6 d-flex flex-column justify-content-center p-0 pe-1">
+                          <h6>BLAVINGAD</h6>
+                          <h6 className="d-flex justify-content-between">
+                            <span>章魚填充玩具</span>
+                            <span>{'>'}</span>
+                          </h6>
+                          <h6>$499</h6>
+                        </div>
+                      </Link>
+                      <Link
+                        to="/products/197"
+                        className={
+                          'row w-75 rounded-4 bg-white position-absolute prod4-1 shadow ' +
+                          (show7 ? '' : 'd-none')
+                        }
+                        onMouseEnter={() => {
+                          setShow7(true);
+                        }}
+                        onMouseLeave={() => {
+                          setShow7(false);
+                        }}
+                      >
+                        <div className="col-6 p-0">
+                          <img
+                            className="w-100 rounded-4"
+                            src={`${process.env.REACT_APP_IMAGE_URL}/images/insp_details/4-1.webp`}
+                            alt="4-1商品圖"
+                          />
+                        </div>
+                        <div className="col-6 d-flex flex-column justify-content-center p-0 pe-1">
+                          <h6>BLAVINGAD</h6>
+                          <h6 className="d-flex justify-content-between">
+                            <span>章魚靠枕套</span>
+                            <span>{'>'}</span>
+                          </h6>
+                          <h6>$249</h6>
+                        </div>
+                      </Link>
+                      <Link
+                        to="/products/199"
+                        className={
+                          'row w-75 rounded-4 bg-white position-absolute prod4-3 shadow ' +
+                          (show8 ? '' : 'd-none')
+                        }
+                        onMouseEnter={() => {
+                          setShow8(true);
+                        }}
+                        onMouseLeave={() => {
+                          setShow8(false);
+                        }}
+                      >
+                        <div className="col-6 p-0">
+                          <img
+                            className="w-100 rounded-4"
+                            src={`${process.env.REACT_APP_IMAGE_URL}/images/insp_details/4-3.webp`}
+                            alt="4-3商品圖"
+                          />
+                        </div>
+                        <div className="col-6 d-flex flex-column justify-content-center p-0 pe-1">
+                          <h6>BLAVINGAD</h6>
+                          <h6 className="d-flex justify-content-between">
+                            <span>彩色釣魚玩具</span>
+                            <span>{'>'}</span>
+                          </h6>
+                          <h6>$439</h6>
+                        </div>
+                      </Link>
                     </div>
 
                     <div className="d-lg-none d-block card-body">
@@ -201,11 +506,6 @@ function Insp_detail1() {
               </button>
             </div>
           </div>
-          <img
-            src={`${process.env.REACT_APP_IMAGE_URL}/images/messenger.svg`}
-            alt="聊天室符號"
-            className="messenger position-fixed"
-          />
         </div>
       </div>
     </>

@@ -3,6 +3,7 @@ import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { HeaderItems } from './MenuItems';
 import axios from 'axios';
 import { useAuth } from '../Context/Authcontext';
+import { useGoogle } from '../Context/Googlecontext';
 
 import './Layout.scss';
 
@@ -14,11 +15,32 @@ function Header() {
   const location = useLocation();
   //登入登出相關
   const { userinfo, setUserInfo, isLoggedIn, setIsLoggedIn } = useAuth();
+  const { googleInfo, setGoogleInfo } = useGoogle();
   async function logout() {
     let response = await axios.post('http://localhost:3001/api/auth/logout');
     alert(response.data.msg);
     setIsLoggedIn(false);
     setUserInfo('');
+    setUserInfo({
+      id: '',
+      account: '',
+      name: '',
+      phone: '',
+      email: '',
+      address: '',
+      bankcode: '',
+      bankaccount: '',
+      liked: '',
+      cart: '',
+      validcoupons: '',
+      invalidcoupons: '',
+      rating: '',
+      createdat: '',
+    });
+    setGoogleInfo({
+      email: '',
+      name: '',
+    });
     navigate('/');
   }
 
