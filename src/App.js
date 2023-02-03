@@ -17,7 +17,9 @@ import InspDetail1 from './components/Inspiration/Insp_detail1';
 import AddUsedProducts from './components/UsedProducts/AddUsedProducts';
 import EditUsedProducts from './components/UsedProducts/EditUsedProducts';
 
-import UsedProducts from './components/Products/UsedProducts';
+// usedproducts
+import UsedProducts from './components/UsedProducts/UsedProducts';
+import UsedProductsDetail from './components/UsedProducts/UsedProductsDetail';
 
 // home-page branch
 import PersonalStore from './components/PersonalStore/PersonalStore';
@@ -117,7 +119,7 @@ function App() {
 
               {/* used */}
               <Route path="usedstore" element={<PersonalStore />} />
-              <Route path="used/products" element={<UsedProducts />} />
+              <Route path="usedproducts" element={<UsedProducts />} />
               <Route
                 path="/used/products/detail"
                 element={<UsedProductDetail />}
