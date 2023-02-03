@@ -29,14 +29,14 @@ function ForgotPage() {
 
         emailjs
           .send(
-            'service_f26sn1c',
-            'template_xy2ldjj',
+            'service_i4gdgpe',
+            'template_ho17oor',
             {
               ...templateParams,
               link: `<a href="http://localhost:3000/password/edit?${res.data.token}">變更密碼</a>`,
               to_name: res.data.data[0].name,
             },
-            'uithpNCq2Sb1LkpJu'
+            'eDoGYNwaGS951-5ZH'
           )
           .then(
             function (response) {
@@ -55,7 +55,7 @@ function ForgotPage() {
             }
           );
       } else {
-        setRes({ result: 'FAILED', text: '此信箱尚未註冊' });
+        setRes({ result: 'FAILED', text: '您輸入的 Email 沒有查詢到帳號' });
       }
     })();
   };
