@@ -71,7 +71,7 @@ function Checkout({ setPayment }) {
           alert('使用成功');
         }
       } catch (err) {
-        console.log('抓取優惠券錯誤!');
+        alert('抓取優惠券錯誤!');
       }
     }
     getCoupon();
@@ -81,7 +81,6 @@ function Checkout({ setPayment }) {
     cart.cartTotal -
     (Object.keys(couponDetail).length === 0 ? '0' : couponDetail.discount);
   cart['finalPayment'] = payment;
-  // console.log(cart);
 
   return (
     <>
