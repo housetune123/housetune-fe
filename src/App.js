@@ -59,6 +59,7 @@ import { CartProvider } from './utils/useCart';
 //google登入
 import { GoogleContext } from './components/Context/Googlecontext';
 import RegisterGoogle from './components/Register/RegisterGoogle';
+import GoogleBundle from './components/Register/GoogleBundle';
 
 //聊天室
 import Chaticon from './components/Chat/Chaticon';
@@ -180,6 +181,7 @@ function App() {
                   <Route path="login" element={<Login />} />
                   <Route path="register" element={<Register />} />
                   <Route path="/register/google" element={<RegisterGoogle />} />
+                  <Route path="/google/bundle" element={<GoogleBundle />} />
                   <Route path="forgot" element={<ForgotPage />} />
                   <Route path="password/edit" element={<ResetPassword />} />
                   <Route path="register" element={<Register />} />

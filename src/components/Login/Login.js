@@ -49,9 +49,9 @@ function Login() {
   // }, []);
   axios.defaults.withCredentials = true;
   function handleCallBackResponse(response) {
-    console.log('Encoded JWT ID token: ' + response.credential);
+    // console.log('Encoded JWT ID token: ' + response.credential);
     var userObj = jwt_decode(response.credential);
-    console.log(userObj.name);
+    // console.log(userObj.name);
     setGoogleInfo({
       email: userObj.email,
       name: userObj.name,
@@ -87,6 +87,9 @@ function Login() {
         } catch (e) {
           if (e.response.data.errors) {
             alert(e.response.data.errors[0]['msg']);
+          } else if (e.response.data.bundle) {
+            alert(e.response.data.bundle[0]['msg']);
+            navigate('/google/bundle');
           } else {
             navigate('/register/google');
           }
