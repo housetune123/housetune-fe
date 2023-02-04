@@ -169,14 +169,14 @@ function Chat({ socket }) {
   }, [reciever]);
 
   useEffect(() => {
-    console.log(newMessage);
+    // console.log(newMessage);
     let replica = newMessage;
     let replica1 = replica.map((x) => x.sender);
-    console.log(replica1);
+    // console.log(replica1);
     let last = replica1[replica1.length - 1];
     if (replica1.indexOf(last) < replica1.length - 1) {
       replica.pop();
-      console.log(replica);
+      // console.log(replica);
       setNewMessage([]);
       for (let i = 0; i < replica.length; i++) {
         setNewMessage((list) => [...list, replica[i]]);
@@ -247,7 +247,7 @@ function Chat({ socket }) {
         <h4 className="bg-primary-300 text-center text-white py-2 position-relative">
           和{reciever}的對話
           <i
-            class="fa-solid fa-xmark position-absolute"
+            className="fa-solid fa-xmark position-absolute"
             onClick={() => {
               setChat(false);
             }}
