@@ -227,7 +227,7 @@ function RegisterGoogle() {
     }
     try {
       let response = await axios.post(
-        'http://localhost:3001/api/auth/register',
+        'http://localhost:3001/api/auth/register/google',
         member
       );
       alert(response.data);
@@ -253,7 +253,9 @@ function RegisterGoogle() {
       navigate('/user');
     } catch (e) {
       // console.log(e.response);
-      alert(e.response1.data.errors[0]['msg']);
+      if (e.response.data) {
+        alert(e.response.data.errors[0]['msg']);
+      }
     }
   }
   const [city, setCity] = useState('');
