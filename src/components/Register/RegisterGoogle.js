@@ -1,8 +1,10 @@
 import React from 'react';
 import './Register.scss';
-import InputItem from './InputItem';
 import { Link, useNavigate } from 'react-router-dom';
 import { useState } from 'react';
+import { useGoogle } from '../Context/Googlecontext';
+import { useAuth } from '../Context/Authcontext';
+import { useChat } from '../Context/Chatcontext';
 import axios from 'axios';
 
 function subcity(city) {
@@ -75,15 +77,96 @@ function subcity(city) {
   }
 }
 
-function Register() {
+function RegisterGoogle() {
+  const { googleInfo, setGoogleInfo } = useGoogle();
   const navigate = useNavigate();
   // let regex = new RegExp('[a-z0-9]+@[a-z]+.[a-z]{2,3}');
+  const [inputItem, setInputitem] = useState([
+    {
+      title: '會員帳號',
+      type: 'text',
+      preset: '請輸入會員帳號',
+      name: 'account',
+      max: '20',
+      min: '4',
+      req: true,
+    },
+    {
+      title: '會員密碼',
+      type: 'password',
+      preset: '請輸入會員密碼',
+      name: 'password',
+      max: '12',
+      min: '6',
+      req: true,
+    },
+    {
+      title: '確認密碼',
+      type: 'password',
+      preset: '請再次輸入會員密碼',
+      name: 'rePassword',
+      max: '12',
+      min: '6',
+      req: true,
+    },
+    {
+      title: '會員姓名',
+      type: 'text',
+      preset: '請輸入會員姓名',
+      name: 'name',
+      max: '',
+      min: '',
+      req: true,
+      value: googleInfo.name,
+      disabled: 'disabled',
+    },
+    {
+      title: 'E-mail',
+      type: 'text',
+      preset: '請輸入電子信箱',
+      name: 'email',
+      max: '',
+      min: '',
+      req: true,
+      value: googleInfo.email,
+      disabled: 'disabled',
+    },
+    {
+      title: '連絡電話',
+      type: 'text',
+      preset: '請輸入連絡電話',
+      name: 'phone',
+      max: '',
+      min: '',
+      req: true,
+    },
+    {
+      title: '銀行代碼（二手商品收款用，非必填）',
+      type: 'text',
+      preset: '',
+      name: 'bankcode',
+      max: '',
+      min: '',
+      req: false,
+      class: 'd-flex align-items-center',
+    },
+    {
+      title: '銀行帳號（二手商品收款用，非必填）',
+      type: 'text',
+      preset: '',
+      name: 'bankaccount',
+      max: '',
+      min: '',
+      req: false,
+      class: 'd-flex align-items-center',
+    },
+  ]);
   const [member, setMemeber] = useState({
     account: '',
     password: '',
     rePassword: '',
-    name: '',
-    email: '',
+    name: googleInfo.name,
+    email: googleInfo.email,
     phone: '',
     address1: '',
     address2: '',
@@ -112,6 +195,29 @@ function Register() {
     setCity(e.target.value);
     handleChange(e);
   }
+  const { userinfo, setUserInfo, isLoggedIn, setIsLoggedIn } = useAuth();
+  const {
+    chat,
+    setChat,
+    reciever,
+    setReciever,
+    recieverId,
+    setRecieverId,
+    message,
+    setMessage,
+    begin,
+    setBegin,
+    messageList,
+    setMessageList,
+    room,
+    setRoom,
+    otherReciever,
+    setOtherReciever,
+    switchZone,
+    setSwitchZone,
+    newMessage,
+    setNewMessage,
+  } = useChat();
 
   async function handleSubmit(e) {
     e.preventDefault();
@@ -125,10 +231,29 @@ function Register() {
         member
       );
       alert(response.data);
-      navigate('/login');
+      let response1 = await axios.post(
+        'http://localhost:3001/api/auth/login/google',
+        googleInfo
+      );
+      let response2 = await axios.get('http://localhost:3001/api/auth/member');
+      setIsLoggedIn(response2.data.loggedIn);
+      setChat(false);
+      setReciever('官方客服');
+      setRecieverId(1);
+      setMessage('');
+      setBegin(false);
+      setMessageList([]);
+      setRoom('test123');
+      setOtherReciever('');
+      setSwitchZone(false);
+      setNewMessage([]);
+      if (response2.data.userInfo) {
+        setUserInfo(response2.data.userInfo);
+      }
+      navigate('/user');
     } catch (e) {
       // console.log(e.response);
-      alert(e.response.data.errors[0]['msg']);
+      alert(e.response1.data.errors[0]['msg']);
     }
   }
   const [city, setCity] = useState('');
@@ -152,7 +277,7 @@ function Register() {
               <h1 className="text-center text-info fw-bold">加入會員</h1>
             </div>
             {/* form input */}
-            {InputItem.map((it, i) => {
+            {inputItem.map((it, i) => {
               return (
                 <div key={i} className="row mt-4 mt-lg-5">
                   <div className="col-4 d-none d-lg-block">
@@ -170,6 +295,8 @@ function Register() {
                       minLength={it.min}
                       onChange={handleChange}
                       name={it.name}
+                      value={it.value ? it.value : null}
+                      disabled={it.disabled ? it.disabled : false}
                     ></input>
                   </div>
                   {/* {errors[it.name]} */}
@@ -269,6 +396,12 @@ function Register() {
                   <Link
                     to="/login"
                     className="text-decoration-none text-primary-300 d-none d-lg-inline"
+                    onClick={() => {
+                      setGoogleInfo({
+                        email: '',
+                        name: '',
+                      });
+                    }}
                   >
                     點我登入
                   </Link>
@@ -291,4 +424,4 @@ function Register() {
   );
 }
 
-export default Register;
+export default RegisterGoogle;

@@ -122,10 +122,6 @@ export const FooterItems = [
         title: '二手買賣',
         path: '/',
       },
-      {
-        title: '聊天室',
-        path: '/',
-      },
     ],
   },
 ];
