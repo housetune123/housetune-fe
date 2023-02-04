@@ -23,6 +23,7 @@ import UsedProductsDetail from './components/UsedProducts/UsedProductsDetail';
 
 // home-page branch
 import PersonalStore from './components/PersonalStore/PersonalStore';
+import { CategoryContext } from './components/Context/CategoryContext';
 import Main from './components/Main';
 import Products from './components/Products/Products';
 import ProductDetail from './components/Products/ProductsDetail';
@@ -100,6 +101,7 @@ function App() {
   const [otherReciever, setOtherReciever] = useState('');
   const [switchZone, setSwitchZone] = useState(false);
   const [newMessage, setNewMessage] = useState([]);
+  const [categoryProduct, setCategoryProduct] = useState('');
   axios.defaults.withCredentials = true;
   //重新整理時要一次資料
   useEffect(() => {
@@ -148,96 +150,112 @@ function App() {
             <CouponContext.Provider
               value={{ couponInfo, setCouponInfo, isUsed, setIsUsed }}
             >
-              <BrowserRouter>
-                <Header />
-                <Routes>
-                  <Route path="/" element={<Main />} />
-                  <Route path="/products" element={<Products />} />
-                  <Route path="/products/:prodId" element={<ProductDetail />} />
-                  <Route
-                    path="/products/category/:categoryRoom"
-                    element={<Products />}
-                  ></Route>
-                  <Route
-                    path="/used/products/detail"
-                    element={<UsedProductDetail />}
-                  ></Route>
+              <CategoryContext.Provider
+                value={{ categoryProduct, setCategoryProduct }}
+              >
+                <BrowserRouter>
+                  <Header />
+                  <Routes>
+                    <Route path="/" element={<Main />} />
+                    <Route path="/products" element={<Products />} />
+                    <Route
+                      path="/products/:prodId"
+                      element={<ProductDetail />}
+                    />
+                    <Route
+                      path="/products/category/:categoryRoom"
+                      element={<Products />}
+                    ></Route>
+                    <Route
+                      path="/used/products/detail"
+                      element={<UsedProductDetail />}
+                    ></Route>
 
-                  <Route exact path="inspiration">
-                    <Route index={true} element={<Inspiration />} />
-                    <Route path="detail1" element={<InspDetail1 />} />
-                  </Route>
-
-                  {/* used */}
-                  <Route path="usedstore" element={<PersonalStore />} />
-                  <Route path="usedproducts" element={<UsedProducts />} />
-                  <Route
-                    path="/used/products/detail"
-                    element={<UsedProductsDetail />}
-                  ></Route>
-                  <Route path="usedproduct/add" element={<AddUsedProducts />} />
-
-                  {/* user */}
-                  <Route path="login" element={<Login />} />
-                  <Route path="register" element={<Register />} />
-                  <Route path="/register/google" element={<RegisterGoogle />} />
-                  <Route path="/google/bundle" element={<GoogleBundle />} />
-                  <Route path="forgot" element={<ForgotPage />} />
-                  <Route path="password/edit" element={<ResetPassword />} />
-                  <Route path="register" element={<Register />} />
-                  <Route path="user" element={<UserPage />} />
-
-                  {/* ckeckout */}
-                  <Route path="cart" element={<Cart />} />
-                  <Route
-                    path="/cart/checkout/information"
-                    element={<Information />}
-                  />
-                  <Route
-                    path="/cart/checkout/shipping"
-                    element={<Shipping />}
-                  />
-                  <Route path="/cart/checkout/payment" element={<Payment />} />
-                  <Route
-                    path="/cart/checkout/thankyou"
-                    element={<Thankyou />}
-                  />
-
-                  <Route path="checkout">
-                    <Route path="information" element={<Information />} />
-                    <Route path="shipping" element={<Shipping />} />
-                    <Route path="payment" element={<Payment />} />
-                  </Route>
-
-                  {/* personal-store */}
-                  <Route path=":userAcct" element={<PersonalStore />} />
-                  <Route
-                    path="seller/product/add"
-                    element={<AddUsedProducts />}
-                  />
-                  <Route
-                    path="seller/product/edit/:useP_id"
-                    element={<EditUsedProducts />}
-                  />
-                  <Route path="seller" element={<SellerCenter />}>
-                    <Route index element={<SellerMain />} />
-                    <Route path="product" element={<SalesProduct />} />
-                    <Route path="order" element={<SalesOrder />}>
-                      <Route index element={<AllOrder />} />
-                      <Route path="unpaid" element={<UnPaid />} />
-                      <Route path="toship" element={<ToShip />} />
-                      <Route path="completed" element={<Completed />} />
-                      <Route path="cancelled" element={<Cancelled />} />
+                    <Route exact path="inspiration">
+                      <Route index={true} element={<Inspiration />} />
+                      <Route path="detail1" element={<InspDetail1 />} />
                     </Route>
-                  </Route>
 
-                  {/* notfound */}
-                  <Route path="*" element={<NotFound />} />
-                </Routes>
-                <Footer />
-                <Chaticon />
-                <Chat socket={socket} />
-              </BrowserRouter>
+                    {/* used */}
+                    <Route path="usedstore" element={<PersonalStore />} />
+                    <Route path="usedproducts" element={<UsedProducts />} />
+                    <Route
+                      path="/used/products/detail"
+                      element={<UsedProductsDetail />}
+                    ></Route>
+                    <Route
+                      path="usedproduct/add"
+                      element={<AddUsedProducts />}
+                    />
+
+                    {/* user */}
+                    <Route path="login" element={<Login />} />
+                    <Route path="register" element={<Register />} />
+                    <Route
+                      path="/register/google"
+                      element={<RegisterGoogle />}
+                    />
+                    <Route path="/google/bundle" element={<GoogleBundle />} />
+                    <Route path="forgot" element={<ForgotPage />} />
+                    <Route path="password/edit" element={<ResetPassword />} />
+                    <Route path="register" element={<Register />} />
+                    <Route path="user" element={<UserPage />} />
+
+                    {/* ckeckout */}
+                    <Route path="cart" element={<Cart />} />
+                    <Route
+                      path="/cart/checkout/information"
+                      element={<Information />}
+                    />
+                    <Route
+                      path="/cart/checkout/shipping"
+                      element={<Shipping />}
+                    />
+                    <Route
+                      path="/cart/checkout/payment"
+                      element={<Payment />}
+                    />
+                    <Route
+                      path="/cart/checkout/thankyou"
+                      element={<Thankyou />}
+                    />
+
+                    <Route path="checkout">
+                      <Route path="information" element={<Information />} />
+                      <Route path="shipping" element={<Shipping />} />
+                      <Route path="payment" element={<Payment />} />
+                    </Route>
+
+                    {/* personal-store */}
+                    <Route path=":userAcct" element={<PersonalStore />} />
+                    <Route
+                      path="seller/product/add"
+                      element={<AddUsedProducts />}
+                    />
+                    <Route
+                      path="seller/product/edit/:useP_id"
+                      element={<EditUsedProducts />}
+                    />
+                    <Route path="seller" element={<SellerCenter />}>
+                      <Route index element={<SellerMain />} />
+                      <Route path="product" element={<SalesProduct />} />
+                      <Route path="order" element={<SalesOrder />}>
+                        <Route index element={<AllOrder />} />
+                        <Route path="unpaid" element={<UnPaid />} />
+                        <Route path="toship" element={<ToShip />} />
+                        <Route path="completed" element={<Completed />} />
+                        <Route path="cancelled" element={<Cancelled />} />
+                      </Route>
+                    </Route>
+
+                    {/* notfound */}
+                    <Route path="*" element={<NotFound />} />
+                  </Routes>
+                  <Footer />
+                  <Chaticon />
+                  <Chat socket={socket} />
+                </BrowserRouter>
+              </CategoryContext.Provider>
             </CouponContext.Provider>
           </AuthContext.Provider>
         </CartProvider>
