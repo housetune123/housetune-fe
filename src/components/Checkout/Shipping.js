@@ -12,11 +12,9 @@ function Shipping(props) {
   const { userinfo } = useAuth();
 
   const addressData = JSON.parse(localStorage.getItem('myAddress'));
-  // console.log(addressData);
   const address = `${addressData.district + addressData.address},${
     addressData.postcode + addressData.city
   },${addressData.country}`;
-  // console.log(address);
 
   return (
     <>
