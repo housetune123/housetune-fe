@@ -79,8 +79,7 @@ function Checkout({ setPayment }) {
   // 款項 購物車 - 優惠券 + 運費
   let payment =
     cart.cartTotal -
-    (Object.keys(couponDetail).length === 0 ? '0' : couponDetail.discount) +
-    300;
+    (Object.keys(couponDetail).length === 0 ? '0' : couponDetail.discount);
   cart['finalPayment'] = payment;
   // console.log(cart);
 
@@ -165,7 +164,7 @@ function Checkout({ setPayment }) {
           </div>
           <div className="d-flex justify-content-between my-2">
             <span className="fs-7">運費</span>
-            <span className="fs-7">$300</span>
+            <span className="fs-7">$0</span>
           </div>
         </div>
 
