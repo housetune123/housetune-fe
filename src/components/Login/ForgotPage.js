@@ -33,7 +33,7 @@ function ForgotPage() {
             'template_ho17oor',
             {
               ...templateParams,
-              link: `<a href="http://localhost:3000/password/edit?${res.data.token}">變更密碼</a>`,
+              link: `<a href="http://localhost:3000/password/edit?token=${res.data.token}">變更密碼</a>`,
               to_name: res.data.data[0].name,
             },
             'eDoGYNwaGS951-5ZH'
