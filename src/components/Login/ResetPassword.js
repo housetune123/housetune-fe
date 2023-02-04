@@ -21,7 +21,7 @@ function ResetPassword() {
     }
 
     const pathArray = location.search;
-    const token = pathArray.replace('?', '');
+    const token = pathArray.replace('?token=', '');
 
     try {
       let res = await axios.put(`http://localhost:3001/api/auth/reset`, {

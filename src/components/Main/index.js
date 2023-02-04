@@ -5,8 +5,10 @@ import 'slick-carousel/slick/slick.css';
 import 'slick-carousel/slick/slick-theme.css';
 import './main.scss';
 import NewArrival from '../Layout/NewArrival';
+import { useCategory } from '../Context/CategoryContext';
 
 function Main() {
+  const { setCategoryProduct } = useCategory();
   // slider設定
   function SamplePrevArrow(props) {
     const { className, style, onClick } = props;
@@ -122,42 +124,62 @@ function Main() {
     {
       img: `${process.env.REACT_APP_IMAGE_URL}/images/main/sofa.webp`,
       text: '沙發 / Sofa',
+      path: '/products',
+      context: ['1'],
     },
     {
       img: `${process.env.REACT_APP_IMAGE_URL}/images/main/chair.webp`,
       text: '椅子 / Chairs',
+      path: '/products',
+      context: ['2'],
     },
     {
       img: `${process.env.REACT_APP_IMAGE_URL}/images/main/table.webp`,
       text: '桌子 / Table',
+      path: '/products',
+      context: ['3'],
     },
     {
       img: `${process.env.REACT_APP_IMAGE_URL}/images/main/cupboard.webp`,
       text: '櫥櫃 / Cupboard',
+      path: '/products',
+      context: ['4'],
     },
     {
       img: `${process.env.REACT_APP_IMAGE_URL}/images/main/beds.webp`,
       text: '床 / Beds',
+      path: '/products',
+      context: ['5'],
     },
     {
       img: `${process.env.REACT_APP_IMAGE_URL}/images/main/lighting.webp`,
       text: '燈 / Lighting',
+      path: '/products',
+      context: ['6'],
     },
     {
       img: `${process.env.REACT_APP_IMAGE_URL}/images/main/textile.webp`,
       text: '紡織 / Textile',
+      path: '/products',
+      context: ['7'],
     },
     {
       img: `${process.env.REACT_APP_IMAGE_URL}/images/main/decorations.webp`,
       text: '裝飾 / Decorations',
+      path: '/products',
+      context: ['8'],
     },
     {
       img: `${process.env.REACT_APP_IMAGE_URL}/images/main/Kitchen-Utensils.webp`,
       text: '廚具 / Kitchenware',
+      path: '/products',
+      context: ['9'],
     },
     {
       img: `${process.env.REACT_APP_IMAGE_URL}/images/main/bathroom.webp`,
       text: '浴室 / Bathroom',
+      path: '/products',
+      context: ['10'],
     },
   ];
   const [category, setCategory] = useState('房間分類 / Room Category');
@@ -245,7 +267,13 @@ function Main() {
                             key={i}
                             className="d-flex justify-content-center"
                           >
-                            <Link to="#/" className="text-decoration-none">
+                            <Link
+                              to={v.path}
+                              className="text-decoration-none"
+                              onClick={() => {
+                                setCategoryProduct(v.context);
+                              }}
+                            >
                               <div className="card border border-0 mb-4">
                                 <img
                                   src={img}

@@ -4,6 +4,7 @@ import { useAuth } from '../Context/Authcontext';
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import { useCart } from '../../utils/useCart';
+import { useBeforeCoupon } from '../Context/CouponContext';
 
 import './Checkout.scss';
 
@@ -26,6 +27,7 @@ function Payment() {
   };
 
   const { cart, items, isInCart, clearCart } = useCart();
+  const { couponInfo, setCouponInfo, isUsed, setIsUsed } = useBeforeCoupon();
 
   // 取得地址資料
   const addressData = JSON.parse(localStorage.getItem('myAddress'));
@@ -33,11 +35,9 @@ function Payment() {
   const address = `${addressData.district + addressData.address},${
     addressData.postcode + addressData.city
   },${addressData.country}`;
-  // console.log(address);
+  console.log('couponInfo', couponInfo);
 
-  // console.log(userinfo);
-
-  // 只取產品的 id , 數量 , 顏色
+  // 取產品資訊
   const orderItems = items.map((val) => {
     // console.log(val);
     return {
@@ -47,18 +47,24 @@ function Payment() {
       imgs: val.img,
       total: val.itemTotal,
       name: val.name,
+      categoryR_name: val.categoryR_name,
     };
   });
   console.log('購買產品', orderItems);
+  console.log('cart', cart);
+  const setCoupo1n = [{ ...couponInfo }];
+  console.log('setCoupo1n', setCoupo1n);
   const orderMsg = {
-    userId: userinfo.id,
-    address: address,
-    price: cart.finalPayment,
-    state: '1',
-    note: '',
-    products: orderItems,
+    userId: userinfo.id, // userID
+    address: address, // 地址
+    price: cart.finalPayment, // 最終款項
+    state: '1', // 訂單狀態
+    note: '', // 備註
+    products: orderItems, // 商品資訊
+    shippingFee: 0,
+    couponUse: setCoupo1n, // 使用優惠券資訊
   };
-  console.log('orderMsg', orderMsg);
+  console.log('orderMsg', orderMsg.couponUse);
 
   async function Pay(e) {
     try {
@@ -66,9 +72,12 @@ function Payment() {
       let res = await axios.post('http://localhost:3001/api/payment', {
         orderMsg,
       });
+      console.log('res:', res.data);
       // 成功後清空購物車
-      clearCart();
-      navigate('/cart/checkout/thankyou');
+      if (res.data.length > 0) {
+        clearCart();
+        navigate('/cart/checkout/thankyou');
+      }
     } catch (err) {
       console.log('新增訂單錯誤', err);
     }
