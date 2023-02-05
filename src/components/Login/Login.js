@@ -7,11 +7,13 @@ import { useAuth } from '../Context/Authcontext';
 import { useChat } from '../Context/Chatcontext';
 import { useGoogle } from '../Context/Googlecontext';
 import jwt_decode from 'jwt-decode';
+import { useFacebook } from '../Context/FacebookContext';
 
 function Login() {
   const navigate = useNavigate();
   const { googleInfo, setGoogleInfo } = useGoogle();
   const { userinfo, setUserInfo, isLoggedIn, setIsLoggedIn } = useAuth();
+  const { FBInfo } = useFacebook();
   const [value, setValue] = useState('');
   const [member, setMemeber] = useState({
     account: '',
@@ -96,7 +98,7 @@ function Login() {
     fetchData();
   }, [googleInfo]);
   useEffect(() => {
-    console.log(process.env);
+    // console.log(process.env);
     /* global google */
     google.accounts.id.initialize({
       client_id: process.env.REACT_APP_GOOGLE_ID,
@@ -144,6 +146,16 @@ function Login() {
     }
   }
 
+  // FB使用者點擊登入
+  const handleFBLogin = () => {
+    // 跳出 Facebook 登入的對話框
+    window.FB.login(
+      function (response) {
+        // console.log('handleFBLogin', response);
+      },
+      { scope: 'public_profile,email' }
+    );
+  };
   return (
     <>
       <div className="pageBG bg-orange py-lg-5 py-4">
@@ -221,6 +233,16 @@ function Login() {
                   </div>
                 </div>
                 <div className="col-8 d-flex justify-content-end">
+                  <div
+                    class="fb-login-button"
+                    data-width=""
+                    data-size="medium"
+                    data-button-type="login_with"
+                    data-layout="default"
+                    data-auto-logout-link="false"
+                    data-use-continue-as="false"
+                    onClick={handleFBLogin}
+                  ></div>
                   <p className="my-0 me-3 d-flex align-items-center">或</p>
                   <div id="signInDiv"></div>
                 </div>

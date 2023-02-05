@@ -5,7 +5,7 @@ import axios from 'axios';
 import { useAuth } from '../Context/Authcontext';
 import { useGoogle } from '../Context/Googlecontext';
 import { useCategory } from '../Context/CategoryContext';
-
+import { useFacebook } from '../Context/FacebookContext';
 import './Layout.scss';
 
 // 購物車數字
@@ -18,6 +18,7 @@ function Header() {
   //登入登出相關
   const { userinfo, setUserInfo, isLoggedIn, setIsLoggedIn } = useAuth();
   const { googleInfo, setGoogleInfo } = useGoogle();
+  const { authResponse } = useFacebook();
   async function logout() {
     let response = await axios.post('http://localhost:3001/api/auth/logout');
     alert(response.data.msg);
@@ -44,7 +45,17 @@ function Header() {
       name: '',
     });
     navigate('/');
+    if (authResponse.status === 'connected') {
+      handleFBLogout();
+    }
   }
+
+  // FB使用者登出
+  const handleFBLogout = () => {
+    window.FB.logout(function (response) {
+      // console.log('handleFBLogout', response);
+    });
+  };
 
   // -----dropdown-----
   const [dropdown, setDropdown] = useState(false);

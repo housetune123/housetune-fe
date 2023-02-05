@@ -61,6 +61,9 @@ import { CartProvider } from './utils/useCart';
 import { GoogleContext } from './components/Context/Googlecontext';
 import RegisterGoogle from './components/Register/RegisterGoogle';
 
+// FB登入
+import { FacebookContext } from './components/Context/FacebookContext';
+
 //聊天室
 import Chaticon from './components/Chat/Chaticon';
 import Chat from './components/Chat/Chat';
@@ -113,151 +116,203 @@ function App() {
     });
   }, []);
 
+  // FB登入
+  const [authResponse, setResponse] = useState();
+  const [FBInfo, setFBInfo] = useState();
+  useEffect(() => {
+    // SDK 載入完成時會立即呼叫 fbAsyncInit，在這個函式中對 Facebook SDK 進行初始化
+    window.fbAsyncInit = function () {
+      // 初始化 Facebook SDK
+      window.FB.init({
+        appId: process.env.REACT_APP_FB_APP_ID,
+        cookie: true,
+        xfbml: true,
+        version: 'v16.0',
+      });
+
+      // 取得使用者登入狀態
+      window.FB.getLoginStatus(function (response) {
+        console.log('[refreshLoginStatus]', response);
+        setResponse(response);
+      });
+
+      // fields 中是帶入字串
+      window.FB.api(
+        '/me',
+        'GET',
+        { fields: 'name,email' },
+        function (response) {
+          // response 會包含 name 和 id
+          setFBInfo(response);
+          // console.log('FB.api', response);
+          // {name: '林俐君', email: 'buzy89456@gmail.com', id: '5980008448746316'}
+        }
+      );
+
+      window.FB.AppEvents.logPageView();
+    };
+
+    // 載入 Facebook SDK
+    (function (d, s, id) {
+      var js,
+        fjs = d.getElementsByTagName(s)[0];
+      if (d.getElementById(id)) {
+        return;
+      }
+      js = d.createElement(s);
+      js.id = id;
+      js.src = 'https://connect.facebook.net/zh_TW/sdk.js';
+      fjs.parentNode.insertBefore(js, fjs);
+    })(document, 'script', 'facebook-jssdk');
+  }, []);
+
   const [couponInfo, setCouponInfo] = useState({});
   const [isUsed, setIsUsed] = useState(false);
 
   return (
     <GoogleContext.Provider value={{ googleInfo, setGoogleInfo }}>
-      <ChatContext.Provider
-        value={{
-          chat,
-          setChat,
-          reciever,
-          setReciever,
-          recieverId,
-          setRecieverId,
-          message,
-          setMessage,
-          begin,
-          setBegin,
-          messageList,
-          setMessageList,
-          room,
-          setRoom,
-          otherReciever,
-          setOtherReciever,
-          switchZone,
-          setSwitchZone,
-          newMessage,
-          setNewMessage,
-        }}
-      >
-        <CartProvider>
-          <AuthContext.Provider
-            value={{ userinfo, setUserInfo, isLoggedIn, setIsLoggedIn }}
-          >
-            <CouponContext.Provider
-              value={{ couponInfo, setCouponInfo, isUsed, setIsUsed }}
+      <FacebookContext.Provider value={{ FBInfo, authResponse }}>
+        <ChatContext.Provider
+          value={{
+            chat,
+            setChat,
+            reciever,
+            setReciever,
+            recieverId,
+            setRecieverId,
+            message,
+            setMessage,
+            begin,
+            setBegin,
+            messageList,
+            setMessageList,
+            room,
+            setRoom,
+            otherReciever,
+            setOtherReciever,
+            switchZone,
+            setSwitchZone,
+            newMessage,
+            setNewMessage,
+          }}
+        >
+          <CartProvider>
+            <AuthContext.Provider
+              value={{ userinfo, setUserInfo, isLoggedIn, setIsLoggedIn }}
             >
-              <CategoryContext.Provider
-                value={{ categoryProduct, setCategoryProduct }}
+              <CouponContext.Provider
+                value={{ couponInfo, setCouponInfo, isUsed, setIsUsed }}
               >
-                <BrowserRouter>
-                  <Header />
-                  <Routes>
-                    <Route path="/" element={<Main />} />
-                    <Route path="/products" element={<Products />} />
-                    <Route
-                      path="/products/:prodId"
-                      element={<ProductDetail />}
-                    />
-                    <Route
-                      path="/products/category/:categoryRoom"
-                      element={<Products />}
-                    ></Route>
-                    <Route
-                      path="/used/products/detail"
-                      element={<UsedProductDetail />}
-                    ></Route>
+                <CategoryContext.Provider
+                  value={{ categoryProduct, setCategoryProduct }}
+                >
+                  <BrowserRouter>
+                    <Header />
+                    <Routes>
+                      <Route path="/" element={<Main />} />
+                      <Route path="/products" element={<Products />} />
+                      <Route
+                        path="/products/:prodId"
+                        element={<ProductDetail />}
+                      />
+                      <Route
+                        path="/products/category/:categoryRoom"
+                        element={<Products />}
+                      ></Route>
+                      <Route
+                        path="/used/products/detail"
+                        element={<UsedProductDetail />}
+                      ></Route>
 
-                    <Route exact path="inspiration">
-                      <Route index={true} element={<Inspiration />} />
-                      <Route path="detail1" element={<InspDetail1 />} />
-                    </Route>
-
-                    {/* used */}
-                    <Route path="usedstore" element={<PersonalStore />} />
-                    <Route path="usedproducts" element={<UsedProducts />} />
-                    <Route
-                      path="/used/products/detail"
-                      element={<UsedProductsDetail />}
-                    ></Route>
-                    <Route
-                      path="usedproduct/add"
-                      element={<AddUsedProducts />}
-                    />
-
-                    {/* user */}
-                    <Route path="login" element={<Login />} />
-                    <Route path="register" element={<Register />} />
-                    <Route
-                      path="/register/google"
-                      element={<RegisterGoogle />}
-                    />
-                    <Route path="forgot" element={<ForgotPage />} />
-                    <Route path="password/edit" element={<ResetPassword />} />
-                    <Route path="register" element={<Register />} />
-                    <Route path="user" element={<UserPage />} />
-
-                    {/* ckeckout */}
-                    <Route path="cart" element={<Cart />} />
-                    <Route
-                      path="/cart/checkout/information"
-                      element={<Information />}
-                    />
-                    <Route
-                      path="/cart/checkout/shipping"
-                      element={<Shipping />}
-                    />
-                    <Route
-                      path="/cart/checkout/payment"
-                      element={<Payment />}
-                    />
-                    <Route
-                      path="/cart/checkout/thankyou"
-                      element={<Thankyou />}
-                    />
-
-                    <Route path="checkout">
-                      <Route path="information" element={<Information />} />
-                      <Route path="shipping" element={<Shipping />} />
-                      <Route path="payment" element={<Payment />} />
-                    </Route>
-
-                    {/* personal-store */}
-                    <Route path=":userAcct" element={<PersonalStore />} />
-                    <Route
-                      path="seller/product/add"
-                      element={<AddUsedProducts />}
-                    />
-                    <Route
-                      path="seller/product/edit/:useP_id"
-                      element={<EditUsedProducts />}
-                    />
-                    <Route path="seller" element={<SellerCenter />}>
-                      <Route index element={<SellerMain />} />
-                      <Route path="product" element={<SalesProduct />} />
-                      <Route path="order" element={<SalesOrder />}>
-                        <Route index element={<AllOrder />} />
-                        <Route path="unpaid" element={<UnPaid />} />
-                        <Route path="toship" element={<ToShip />} />
-                        <Route path="completed" element={<Completed />} />
-                        <Route path="cancelled" element={<Cancelled />} />
+                      <Route exact path="inspiration">
+                        <Route index={true} element={<Inspiration />} />
+                        <Route path="detail1" element={<InspDetail1 />} />
                       </Route>
-                    </Route>
 
-                    {/* notfound */}
-                    <Route path="*" element={<NotFound />} />
-                  </Routes>
-                  <Footer />
-                  <Chaticon />
-                  <Chat socket={socket} />
-                </BrowserRouter>
-              </CategoryContext.Provider>
-            </CouponContext.Provider>
-          </AuthContext.Provider>
-        </CartProvider>
-      </ChatContext.Provider>
+                      {/* used */}
+                      <Route path="usedstore" element={<PersonalStore />} />
+                      <Route path="usedproducts" element={<UsedProducts />} />
+                      <Route
+                        path="/used/products/detail"
+                        element={<UsedProductsDetail />}
+                      ></Route>
+                      <Route
+                        path="usedproduct/add"
+                        element={<AddUsedProducts />}
+                      />
+
+                      {/* user */}
+                      <Route path="login" element={<Login />} />
+                      <Route path="register" element={<Register />} />
+                      <Route
+                        path="/register/google"
+                        element={<RegisterGoogle />}
+                      />
+                      <Route path="forgot" element={<ForgotPage />} />
+                      <Route path="password/edit" element={<ResetPassword />} />
+                      <Route path="register" element={<Register />} />
+                      <Route path="user" element={<UserPage />} />
+
+                      {/* ckeckout */}
+                      <Route path="cart" element={<Cart />} />
+                      <Route
+                        path="/cart/checkout/information"
+                        element={<Information />}
+                      />
+                      <Route
+                        path="/cart/checkout/shipping"
+                        element={<Shipping />}
+                      />
+                      <Route
+                        path="/cart/checkout/payment"
+                        element={<Payment />}
+                      />
+                      <Route
+                        path="/cart/checkout/thankyou"
+                        element={<Thankyou />}
+                      />
+
+                      <Route path="checkout">
+                        <Route path="information" element={<Information />} />
+                        <Route path="shipping" element={<Shipping />} />
+                        <Route path="payment" element={<Payment />} />
+                      </Route>
+
+                      {/* personal-store */}
+                      <Route path=":userAcct" element={<PersonalStore />} />
+                      <Route
+                        path="seller/product/add"
+                        element={<AddUsedProducts />}
+                      />
+                      <Route
+                        path="seller/product/edit/:useP_id"
+                        element={<EditUsedProducts />}
+                      />
+                      <Route path="seller" element={<SellerCenter />}>
+                        <Route index element={<SellerMain />} />
+                        <Route path="product" element={<SalesProduct />} />
+                        <Route path="order" element={<SalesOrder />}>
+                          <Route index element={<AllOrder />} />
+                          <Route path="unpaid" element={<UnPaid />} />
+                          <Route path="toship" element={<ToShip />} />
+                          <Route path="completed" element={<Completed />} />
+                          <Route path="cancelled" element={<Cancelled />} />
+                        </Route>
+                      </Route>
+
+                      {/* notfound */}
+                      <Route path="*" element={<NotFound />} />
+                    </Routes>
+                    <Footer />
+                    <Chaticon />
+                    <Chat socket={socket} />
+                  </BrowserRouter>
+                </CategoryContext.Provider>
+              </CouponContext.Provider>
+            </AuthContext.Provider>
+          </CartProvider>
+        </ChatContext.Provider>
+      </FacebookContext.Provider>
     </GoogleContext.Provider>
   );
 }
