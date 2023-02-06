@@ -255,7 +255,7 @@ function Chat({ socket }) {
         </h4>
         <button
           className={
-            'w-50 align-self-center ' +
+            'bg-primary-300 text-white w-50 align-self-center ' +
             (begin === false && switchZone === false ? '' : 'd-none')
           }
           onClick={handleBegin}
@@ -278,7 +278,7 @@ function Chat({ socket }) {
               <div key={i} className="message">
                 <div
                   className={
-                    'message-content d-flex ' +
+                    'mx-2 message-content d-flex ' +
                     (userinfo.id === v.senderId ? 'flex-row-reverse' : '')
                   }
                 >
@@ -293,7 +293,7 @@ function Chat({ socket }) {
                     {v.message}
                   </p>
                 </div>
-                <div className="message-meta">
+                <div className="mx-2 message-meta">
                   <p className={userinfo.id === v.senderId ? 'text-end' : ''}>
                     {v.time}
                     {v.sender}
@@ -304,11 +304,11 @@ function Chat({ socket }) {
           })}
           <div className="anchor"></div>
         </div>
-        <div className="input-area d-flex position-relative">
+        <div className="input-area d-flex position-relative bg-gray">
           <input
             disabled={begin ? '' : 'disabled'}
             type="text"
-            className="w-90 border-0 bg-gray text"
+            className="w-90 border-0 bg-gray text me-2"
             placeholder="請輸入訊息"
             value={message}
             onChange={(e) => {
@@ -330,14 +330,19 @@ function Chat({ socket }) {
                 setOtherReciever(e.target.value);
               }}
             />
-            <button onClick={handleSwitch}>送出</button>
+            <button
+              className="bg-primary-300 text-white"
+              onClick={handleSwitch}
+            >
+              送出
+            </button>
           </div>
           <i
-            className="fa-solid fa-paper-plane bg-gray w-10 d-flex align-items-center"
+            className="text-primary-300 fa-solid fa-paper-plane bg-gray w-10 d-flex align-items-center"
             onClick={sendMessage}
           ></i>
           <i
-            className="fa-solid fa-people-arrows bg-gray w-10 d-flex align-items-center"
+            className="text-primary-300 fa-solid fa-people-arrows bg-gray w-10 d-flex align-items-center"
             onClick={() => {
               setSwitchZone(!switchZone);
               setBegin(!begin);
