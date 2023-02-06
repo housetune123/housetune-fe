@@ -17,7 +17,7 @@ function EditUsedProducts() {
   const [descLength, setDescLength] = useState(0);
 
   const { useP_id } = useParams();
-
+  console.log(useP_id);
   const [originValue, setOriginValue] = useState([]);
   useEffect(() => {
     async function fetchData() {

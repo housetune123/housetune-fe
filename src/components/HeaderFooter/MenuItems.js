@@ -35,7 +35,7 @@ export const HeaderItems = [
   },
   {
     title: '二手專區',
-    path: '/',
+    path: '/usedproducts',
   },
   {
     title: 'F A Q',

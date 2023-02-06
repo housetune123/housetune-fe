@@ -5,6 +5,7 @@ import UsedProductsList from './UsedProductsList';
 // import ReactPaginate from 'react-paginate';
 import _ from 'lodash';
 import './UsedProductsDetail.scss';
+import ProductsBrowse from '../Products/ProductsBrowse';
 
 function UsedProducts() {
   const [usedProducts, setUsedProducts] = useState([]);
@@ -14,7 +15,7 @@ function UsedProducts() {
       try {
         let res = await axios.get(`http://localhost:3001/usedproducts/`);
         setUsedProducts(res.data);
-        console.log(res);
+        // console.log(res);
       } catch (e) {
         console.error(e);
       }
@@ -27,8 +28,19 @@ function UsedProducts() {
   // 分類
   const [cats, setCats] = useState([]);
   //'沙發', '椅子','桌子','櫥櫃',
-  const catOptions = [1, 2, 3, 4];
-  const catText = ['沙發', '椅子', '桌子', '櫥櫃'];
+  const catOptions = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10];
+  const catText = [
+    '沙發',
+    '椅子',
+    '桌子',
+    '櫥櫃',
+    '床',
+    '燈具',
+    '織品',
+    '裝飾',
+    '櫥具',
+    '浴室用品',
+  ];
 
   // 價格區間
   const [from, setFrom] = useState('');
@@ -41,20 +53,20 @@ function UsedProducts() {
   const yearText = ['1年內', '1 - 3年', '3 - 5年', '5 - 10年', '10年以上'];
 
   const [ratings, setRatings] = useState([]);
-  //'五星', '四星','三星','兩星','一星'
-  const ratinsOptions = [5, 4, 3, 2, 1];
+  //'四星以上','3-4',2-3','2以下'
+  const ratingsOptions = [5, 4, 3, 2, 1, 0];
+  const ratingsText = [
+    '5分',
+    '4 - 5分',
+    '3 - 4分',
+    '2 - 3分',
+    '2 - 1分',
+    '1 - 0分',
+  ];
 
-  // //TODO:壞掉的分頁
-  // const [itemOffset, setItemOffset] = useState(0);//itemOffeset is the first index of the first item in the current page
-  // const itemsPerPage = 4;
-  // const endOffset = itemOffset + itemsPerPage;
-  // const currentItems = usedProducts.slice(itemOffset, endOffset);
-  // const pageCount = Math.ceil(usedProducts.length / itemsPerPage);
-
-  // 分頁用
-  // pageNow 目前頁號
-  // perPage 每頁多少數量
-  // pageTotal 目前有多少頁
+  //TODO:加入喜愛清單
+  const [liked, setLiked] = useState(usedProducts.liked);
+  //分頁
   const [pageNow, setPageNow] = useState(1); // 預設為第1頁
   const [perPage, setPerPage] = useState(4); // 預設為每頁有2筆
   const [pageTotal, setPageTotal] = useState(0); // 預設總頁數為0
@@ -100,20 +112,21 @@ function UsedProducts() {
     });
   };
 
-  //TODO:賣家評價篩選
-  // const getSellerRatings = (usedProductsArray, ratings) => {
-  //   return usedProductsArray.filter((v, i) => {
-  //     if (v.rating > 4) {
-  //       return v.rating > 4;
-  //     }
-  //   });
-  // };
+  //賣家評價篩選
+  const getSellerRatings = (usedProductsArray, ratings) => {
+    return usedProductsArray.filter((v, i) => {
+      return ratings.includes(Math.floor(v.rating));
+    });
+  };
 
-  //分頁頁碼選取
-  // const handlePageClick = (event) => {
-  //   const newOffset = (event.selected * itemsPerPage) % usedProducts.length;
-  //   setItemOffset(newOffset);
-  // };
+  //TODO:加入喜愛清單action
+  const addLike = (usedProductsArray, likedArray, productId) => {
+    if (likedArray.includes(usedProductsArray)) {
+      return usedProductsArray !== liked;
+    } else {
+      usedProductsArray.push(productId);
+    }
+  };
 
   useEffect(() => {
     let newUsedProductsArray = [...usedProducts];
@@ -134,7 +147,9 @@ function UsedProducts() {
         years
       );
     }
-    // console.log(newUsedProductsArray)
+    if (ratings.length !== 0) {
+      newUsedProductsArray = getSellerRatings(newUsedProductsArray, ratings);
+    }
 
     // 拆分頁
     //  _.chunk([1,2,3,4], 2) => [[1,2],[3,4]]
@@ -147,7 +162,7 @@ function UsedProducts() {
       setUsedProductsDisplay([]);
       setPageTotal(0);
     }
-  }, [usedProducts, cats, from, to, years, ratings, perPage]);
+  }, [usedProducts, cats, from, to, years, ratings]);
   return (
     <>
       <div className="bg-orange text-info">
@@ -222,6 +237,7 @@ function UsedProducts() {
                                 for="flexCheckDefault"
                               >
                                 {catText[v - 1]}
+                                {/* （ {v.category_product=} ） */}
                               </label>
                             </div>
                           );
@@ -362,76 +378,37 @@ function UsedProducts() {
                       aria-labelledby="panelsStayOpen-headingFour"
                     >
                       <div className="accordion-body">
-                        <div class="form-check">
-                          <input
-                            class="form-check-input"
-                            type="checkbox"
-                            value=""
-                            id="flexCheckDefault"
-                          />
-                          <label
-                            class="form-check-label"
-                            for="flexCheckDefault"
-                          >
-                            所有(10)
-                          </label>
-                        </div>
-                        <div class="form-check">
-                          <input
-                            class="form-check-input"
-                            type="checkbox"
-                            value=""
-                            id="flexCheckDefault"
-                          />
-                          <label
-                            class="form-check-label"
-                            for="flexCheckDefault"
-                          >
-                            4分以上(3)
-                          </label>
-                        </div>
-                        <div class="form-check">
-                          <input
-                            class="form-check-input"
-                            type="checkbox"
-                            value=""
-                            id="flexCheckDefault"
-                          />
-                          <label
-                            class="form-check-label"
-                            for="flexCheckDefault"
-                          >
-                            3-4分(15)
-                          </label>
-                        </div>
-                        <div class="form-check">
-                          <input
-                            class="form-check-input"
-                            type="checkbox"
-                            value=""
-                            id="flexCheckDefault"
-                          />
-                          <label
-                            class="form-check-label"
-                            for="flexCheckDefault"
-                          >
-                            2-3分(8)
-                          </label>
-                        </div>
-                        <div class="form-check">
-                          <input
-                            class="form-check-input"
-                            type="checkbox"
-                            value=""
-                            id="flexCheckDefault"
-                          />
-                          <label
-                            class="form-check-label"
-                            for="flexCheckDefault"
-                          >
-                            2分以下(11)
-                          </label>
-                        </div>
+                        {ratingsOptions.map((v, i) => {
+                          return (
+                            <div class="form-check" key={i}>
+                              <input
+                                class="form-check-input"
+                                type="checkbox"
+                                value={v}
+                                id="flexCheckDefault"
+                                checked={ratings.includes(v)}
+                                onChange={(e) => {
+                                  const value = Number(e.target.value);
+                                  if (ratings.includes(value)) {
+                                    setRatings(
+                                      ratings.filter((v2, i2) => {
+                                        return v2 !== value;
+                                      })
+                                    );
+                                  } else {
+                                    setRatings([...ratings, value]);
+                                  }
+                                }}
+                              />
+                              <label
+                                class="form-check-label"
+                                for="flexCheckDefault"
+                              >
+                                {ratingsText[i]}
+                              </label>
+                            </div>
+                          );
+                        })}
                       </div>
                     </div>
                   </div>
@@ -469,17 +446,8 @@ function UsedProducts() {
                   getCatUsedProducts={getCatUsedProducts}
                   getUsedProductsPriceRange={getUsedProductsPriceRange}
                   getUsedProductsYearRange={getUsedProductsYearRange}
-                  // getUsedProductsPriceRange={getUsedProductsPriceRange}
+                  addLike={addLike}
                 />
-                {/* <ReactPaginate
-                  breakLabel="..."
-                  nextLabel="next >"
-                  onPageChange={handlePageClick}
-                  pageRangeDisplayed={4}
-                  pageCount={pageCount}
-                  previousLabel="< previous"
-                  renderOnZeroPageCount={null}
-                /> */}
               </div>
             </div>
             <div class="pagination">
