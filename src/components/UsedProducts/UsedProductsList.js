@@ -7,11 +7,12 @@ import { useState } from 'react';
 function UsedProductsList({
   usedProducts,
   liked,
+  setLiked,
   getCatUsedProducts,
   getUsedProductsPriceRange,
   getUsedProductsYearRange,
   getSellerRatings,
-  addLike,
+  // addLike,
 }) {
   return (
     <div className="row overflow-hidden p-1 m-1 text-info">
@@ -28,8 +29,22 @@ function UsedProductsList({
                 <div className="d-flex justify-content-between">
                   <h5 className="card-title text-info">NT${v.price}</h5>
                   <i
-                    class="fa-regular fa-heart text-info pt-1 ps-2"
-                    onClick={addLike(v.useP_id, liked, v.useP_id)}
+                    className={
+                      liked && liked.includes(v.useP_id)
+                        ? 'fa-solid fa-heart text-danger'
+                        : 'fa-regular fa-heart text-info pt-1 ps-2'
+                    }
+                    onClick={() => {
+                      if (liked.includes(v.useP_id)) {
+                        setLiked(
+                          v.liked.filter((v2, i2) => {
+                            return v.liked !== v.useP_id;
+                          })
+                        );
+                      } else {
+                        setLiked([...v.like, v.useP_id]);
+                      }
+                    }}
                   ></i>
                 </div>
                 <h6 className="card-title text-gray-300">{v.product_name}</h6>

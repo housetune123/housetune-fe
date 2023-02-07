@@ -135,12 +135,13 @@ function UsedProductsDetail() {
                       <div className="py-2 py-md-4">
                         <p className="fs-6 text-gray-400 fs-sml mb-0 pt-1">
                           產品敘述： <br />
+                          {/* TODO: */}
                           既然，就我個人來說，沙發對我的意義，不能不說非常重大。領悟其中的道理也不是那麼的困難。把沙發輕鬆帶過，顯然並不適合。沙發似乎是一種巧合，但如果我們從一個更大的角度看待問題，這似乎是一種不可避免的事實。鄧拓告訴我們，古今中外有學問的人，有成就的人，總是十分注意積累的。知識就是積累起來的。我們對什麼事都不應該像“過眼煙雲”。希望各位能用心體會這段話。
                         </p>
                       </div>
                       <div className="pt-3 row justify-content-around gx-1 gx-md-0">
                         <Link
-                          to={`/${v.seller_id}`}
+                          to={`/${v.account}`}
                           className="btn bg-gray border border-2 border-primary-200 text-primary-300 btn-cart col-md-5 col-auto btn-seller"
                         >
                           前往{v.name}的賣場

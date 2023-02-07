@@ -15,6 +15,7 @@ function UsedProducts() {
       try {
         let res = await axios.get(`http://localhost:3001/usedproducts/`);
         setUsedProducts(res.data);
+        setLiked(JSON.parse(res.data.liked));
         // console.log(res);
       } catch (e) {
         console.error(e);
@@ -65,7 +66,8 @@ function UsedProducts() {
   ];
 
   //TODO:加入喜愛清單
-  const [liked, setLiked] = useState(usedProducts.liked);
+  const [liked, setLiked] = useState([]);
+  console.log(liked);
   //分頁
   const [pageNow, setPageNow] = useState(1); // 預設為第1頁
   const [perPage, setPerPage] = useState(4); // 預設為每頁有2筆
@@ -120,13 +122,14 @@ function UsedProducts() {
   };
 
   //TODO:加入喜愛清單action
-  const addLike = (usedProductsArray, likedArray, productId) => {
-    if (likedArray.includes(usedProductsArray)) {
-      return usedProductsArray !== liked;
-    } else {
-      usedProductsArray.push(productId);
-    }
-  };
+  // const addLike = (likedArray, productId) => {
+  //   if (likedArray.includes(productId)) {
+  //     return likedArray !== likedArray;
+  //   } else {
+  //     likedArray.push(productId);
+  //     // usedProductsArray.push(productId);
+  //   }
+  // };
 
   useEffect(() => {
     let newUsedProductsArray = [...usedProducts];
@@ -446,7 +449,7 @@ function UsedProducts() {
                   getCatUsedProducts={getCatUsedProducts}
                   getUsedProductsPriceRange={getUsedProductsPriceRange}
                   getUsedProductsYearRange={getUsedProductsYearRange}
-                  addLike={addLike}
+                  // addLike={addLike}
                 />
               </div>
             </div>
