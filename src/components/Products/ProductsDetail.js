@@ -13,6 +13,7 @@ import moment from 'moment';
 import zhTw from '../zh-tw';
 import { useAuth } from '../Context/Authcontext';
 import { useCart } from '../../utils/useCart';
+import { Modal, Button } from 'react-bootstrap';
 
 function ProductsDetail() {
   // 登入登出
@@ -225,7 +226,7 @@ function ProductsDetail() {
     slidesToScroll: 1,
   };
   // 購物車
-  const { addItem, items } = useCart();
+  const { addItem, items, clearCart } = useCart();
 
   useEffect(() => {
     setCompleteAdd(false);
@@ -234,11 +235,13 @@ function ProductsDetail() {
   // 訊息框
   const [resultMsg, setResultMsg] = useState({});
   const [completeAdd, setCompleteAdd] = useState(false);
+  const [show, setShow] = useState(false);
 
   const MessageMap = {
     1: '新增成功!',
     2: '新增失敗 請重新選擇數量!',
     3: '已達購買數量上限!',
+    4: '購物車內含有非官方商品，是否清空購物車？',
   };
 
   function addToCart() {
@@ -251,18 +254,10 @@ function ProductsDetail() {
     console.log(item);
     console.log(items);
 
-    // addItem({
-    //   ...item,
-    //   id: item.prod_id + `-${shape}`,
-    //   shape: shape,
-    // });
-
     let overBuy = false;
     let buyingItemIndex;
-    // 判斷 選取的產品 購買數量不超過庫存
-    // cart.amount 是庫存
-    // items[i].quantity 是購物車該項目的數量
 
+    // 判斷 選取的產品 購買數量不超過庫存
     // 購物車為空直接 + 進去
     if (items.length === 0) {
       addItem({
@@ -274,40 +269,38 @@ function ProductsDetail() {
       setCompleteAdd(true);
     } else {
       // 確認有沒有這筆商品的 id
-      let found = items.find((obj) => {
-        return obj.id === item.prod_id + `-${shape}`;
-      });
-      // 沒找到 => 加進去
-      if (found === undefined) {
-        addItem({
-          ...item,
-          id: item.prod_id + `-${shape}`,
-          shape: shape,
-        });
-        setResultMsg(MessageMap[1]);
-        setCompleteAdd(true);
+      // 多判斷有無 seller_id (是否存在二手商品)
+      let itemObj = items[0];
+      const keys = Object.keys(itemObj);
+      if (keys.includes('seller_id') === true) {
+        setResultMsg(MessageMap[4]);
+        setShow(true);
       } else {
-        for (let i in items) {
-          console.log(items[i]);
-          // 單純判斷 id
-          if (items[i].id === item.prod_id + `-${shape}`) {
-            // console.log(
-            //   `檢查到相同id items[i].id : ${items[i].id} , item.prod_id : ${
-            //     item.prod_id + `-${shape}`
-            //   }`
-            // );
-            if (items[i].quantity === thisProduct.amount) {
-              overBuy = true;
-              buyingItemIndex = i;
-              setResultMsg(MessageMap[3]);
-              setCompleteAdd(true);
-            } else {
-              // console.log(
-              //   `還能購買 ${thisProduct.amount - items[i].quantity} 個`
-              // );
-              overBuy = false;
-              buyingItemIndex = i;
-              confirmAmounts();
+        let found = items.find((obj) => {
+          return obj.id === item.prod_id + `-${shape}`;
+        });
+        if (found === undefined) {
+          addItem({
+            ...item,
+            id: item.prod_id + `-${shape}`,
+            shape: shape,
+          });
+          setResultMsg(MessageMap[1]);
+          setCompleteAdd(true);
+        } else {
+          for (let i in items) {
+            // 單純判斷 id
+            if (items[i].id === item.prod_id + `-${shape}`) {
+              if (items[i].quantity === thisProduct.amount) {
+                overBuy = true;
+                buyingItemIndex = i;
+                setResultMsg(MessageMap[3]);
+                setCompleteAdd(true);
+              } else {
+                overBuy = false;
+                buyingItemIndex = i;
+                confirmAmounts();
+              }
             }
           }
         }
@@ -315,27 +308,14 @@ function ProductsDetail() {
     }
 
     // 如果超過庫存數 不要 addItem
-    // console.log(overBuy);
-    // console.log('確認index', buyingItemIndex);
-
     function confirmAmounts() {
       if (overBuy === false) {
         // 購物車 + 選取 <= 庫存 => 可以新增
         // 購物車 + 選取 > 庫存 => 新增失敗
         if (+amount + items[buyingItemIndex].quantity > +thisProduct.amount) {
-          // console.log(
-          //   `無法新增這麼多數量 選取數量:${amount} , 購物車裡的數量 ${items[buyingItemIndex].quantity} 庫存數${thisProduct.amount}`
-          // );
           setResultMsg(MessageMap[2]);
           setCompleteAdd(true);
         } else {
-          // console.log(
-          //   `新增成功 選取數量:${+amount} , 購物車裡的數量 ${+items[
-          //     buyingItemIndex
-          //   ].quantity} -- 庫存數${thisProduct.amount} 新增後數量 => ${
-          //     +amount + items[buyingItemIndex].quantity
-          //   }`
-          // );
           addItem({
             ...item,
             id: item.prod_id + `-${shape}`,
@@ -713,6 +693,45 @@ function ProductsDetail() {
           </section>
         )}
       </div>
+      {/* 彈出視窗 */}
+      <Modal
+        show={show}
+        onHide={() => {
+          setShow(false);
+        }}
+      >
+        <Modal.Header closeButton>
+          <Modal.Title className="text-info fw-bold">提醒</Modal.Title>
+        </Modal.Header>
+        <Modal.Body
+          className="fw-bolder d-flex align-items-center"
+          style={{ minHeight: '5rem' }}
+        >
+          {resultMsg}
+        </Modal.Body>
+        <Modal.Footer>
+          <Button
+            className="btn btn-white"
+            variant="secondary"
+            onClick={() => {
+              setShow(false);
+            }}
+          >
+            關閉
+          </Button>
+
+          <Button
+            className="btn btn-primary-300"
+            variant="primary"
+            onClick={() => {
+              setShow(false);
+              clearCart();
+            }}
+          >
+            確認
+          </Button>
+        </Modal.Footer>
+      </Modal>
     </>
   );
 }

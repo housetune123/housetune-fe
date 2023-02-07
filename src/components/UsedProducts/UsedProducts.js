@@ -169,7 +169,7 @@ function UsedProducts() {
   return (
     <>
       <div className="bg-orange text-info">
-        <div className="container-fluid">
+        <div className="container">
           <nav aria-label="breadcrumb">
             <ol className="breadcrumb">
               <li className="breadcrumb-item">
@@ -180,7 +180,7 @@ function UsedProducts() {
               </li>
             </ol>
           </nav>
-          <div className="container-fluid">
+          <div className="container">
             <h3 className="mb-5">二手專區/Used Things</h3>
             <div className="d-flex justify-content-between border-0">
               <div className="col-2 d-none d-lg-block text-info ">

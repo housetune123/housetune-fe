@@ -31,14 +31,12 @@ function Payment() {
 
   // 取得地址資料
   const addressData = JSON.parse(localStorage.getItem('myAddress'));
-  // console.log(addressData);
   const address = `${addressData.district + addressData.address},${
     addressData.postcode + addressData.city
   },${addressData.country}`;
 
   // 取產品資訊
   const orderItems = items.map((val) => {
-    // console.log(val);
     return {
       prod_id: val.prod_id,
       quantity: val.quantity,
@@ -47,10 +45,10 @@ function Payment() {
       total: val.itemTotal,
       name: val.name,
       categoryR_name: val.categoryR_name,
+      seller_id: val.seller_id || '1',
+      seller_name: val.seller_name || '',
     };
   });
-  // console.log('購買產品', orderItems);
-  // console.log('cart', cart);
   const setCoupo1n = [{ ...couponInfo }];
   const orderMsg = {
     userId: userinfo.id, // userID

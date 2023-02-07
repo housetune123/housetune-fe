@@ -9,6 +9,7 @@ import { useAuth } from '../Context/Authcontext';
 function Cart(props) {
   // 引用登入狀態
   const { userinfo, setUserInfo, isLoggedIn, setIsLoggedIn } = useAuth();
+  const [isSecond, setIsSecond] = useState(false);
 
   // cart init
   // initialState = {
@@ -30,8 +31,16 @@ function Cart(props) {
   } = useCart();
 
   useEffect(() => {
-    // 查看購物車
-    // console.log('購物車內容', items);
+    if (items.length > 0) {
+      let itemObj = items[0];
+      const keys = Object.keys(itemObj);
+      // 檢查是否有 seller_id
+      if (keys.includes('seller_id') === false) {
+        setIsSecond(false);
+      } else {
+        setIsSecond(true);
+      }
+    }
   }, []);
 
   return (
@@ -65,19 +74,23 @@ function Cart(props) {
                   <img
                     className="d-block col-sm-2 col-4 img-fluid"
                     //TODO:
-                    src={`${process.env.REACT_APP_IMAGE_URL}/images/products/${val.categoryR_name}/${img[0]}`}
+                    src={
+                      !isSecond
+                        ? `${process.env.REACT_APP_IMAGE_URL}/images/products/${val.categoryR_name}/${img[0]}`
+                        : `${process.env.REACT_APP_IMAGE_URL}/images/used/${val.img}`
+                    }
                     alt=""
                   />
                   <div className=" col-sm-10 col-8  row align-items-center d-flex justify-content-between ">
                     <div className="col-sm-4 col-12 p-auto ">
                       {/* 品名 */}
-                      <p>
+                      <p className="fs-5">
                         <strong>{val.name}</strong>
                       </p>
                       {/* 款式 */}
                       <p>
-                        <strong> 款式 </strong>
-                        {val.shape}
+                        <strong> {!isSecond ? '款式' : '賣家'} </strong>
+                        {!isSecond ? val.shape : val.seller_name}
                       </p>
                       {/* 價格 */}
                       <p>
@@ -87,27 +100,40 @@ function Cart(props) {
                     </div>
                     {/* 數量 */}
                     <div className="mr-2 col-sm-3 row col-12 ">
-                      <button
-                        type="button"
-                        className="col-4 btn btn-primary-300"
-                        onClick={() => {
-                          minusOne(val.id);
-                        }}
-                      >
-                        -
-                      </button>
-                      <button type="button" className="col-4 btn btn-light">
-                        {val.quantity}
-                      </button>
-                      <button
-                        type="button"
-                        className="col-4 btn btn-primary-300"
-                        onClick={() => {
-                          plusOne(val.id);
-                        }}
-                      >
-                        +
-                      </button>
+                      {!isSecond ? (
+                        <>
+                          <button
+                            type="button"
+                            className="col-4 btn btn-primary-300"
+                            onClick={() => {
+                              minusOne(val.id);
+                            }}
+                          >
+                            -
+                          </button>
+                          <button type="button" className="col-4 btn btn-light">
+                            {val.quantity}
+                          </button>
+                          <button
+                            type="button"
+                            className="col-4 btn btn-primary-300"
+                            onClick={() => {
+                              plusOne(val.id);
+                            }}
+                          >
+                            +
+                          </button>
+                        </>
+                      ) : (
+                        <>
+                          <button
+                            type="button"
+                            className="col-12 text-center btn btn-light"
+                          >
+                            {val.quantity}
+                          </button>
+                        </>
+                      )}
                     </div>
                     <div className="col-sm-3 row col-12 ">
                       <p className=" col-sm-9 col-12 my-2 ">{val.itemTotal}</p>

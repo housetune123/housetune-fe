@@ -1,8 +1,10 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import './UsedProductsDetail.scss';
 import UsedProductsDetail from './UsedProductsDetail';
 import { useState } from 'react';
+import { useCart } from '../../utils/useCart';
+import { Modal, Button } from 'react-bootstrap';
 
 function UsedProductsList({
   usedProducts,
@@ -14,8 +16,63 @@ function UsedProductsList({
   getSellerRatings,
   // addLike,
 }) {
+  // 加入購物車彈跳視窗及訊息
+  const [show, setShow] = useState(false);
+  const [resultMsg, setResultMsg] = useState({});
+  const { addItem, items, clearCart } = useCart();
+  // console.log('prodDetail', prodDetail);
+  const MessageMap = {
+    1: '新增成功！',
+    2: '該商品已存在購物車！',
+    3: '購物車內含有官方或其他賣家的商品，是否清空購物車？',
+  };
+  function addToCart(v) {
+    const item = {
+      ...v,
+      quantity: 1,
+    };
+    console.log(item);
+    // 購物車為空直接 + 進去
+    if (items.length === 0) {
+      addItem({
+        ...item,
+        id: item.useP_id,
+        seller_id: item.seller_id,
+      });
+      setResultMsg(MessageMap[1]);
+    } else {
+      // 購物車內可以有多位賣家的 id
+      // 先確認是否存在 seller_id ， 再確認有沒有這筆商品的 id
+      let itemObj = items[0];
+      const keys = Object.keys(itemObj);
+      if (keys.includes('seller_id') === true) {
+        // 若賣家不同 => 清空購物車
+        if (v.seller_id !== items[0].seller_id) {
+          setResultMsg(MessageMap[3]);
+        } else {
+          let found = items.find((obj) => {
+            return obj.id === item.useP_id;
+          });
+          if (found === undefined) {
+            addItem({
+              ...item,
+              id: item.useP_id,
+              seller_id: item.seller_id,
+            });
+            setResultMsg(MessageMap[1]);
+          } else {
+            setResultMsg(MessageMap[2]);
+          }
+        }
+      } else {
+        setResultMsg(MessageMap[3]);
+      }
+    }
+    setShow(true);
+  }
+
   return (
-    <div className="row overflow-hidden p-1 m-1 text-info">
+    <div className="usedProduts-body row overflow-hidden p-1 m-1 text-info">
       {usedProducts.map((v, i) => {
         return (
           <div className="col-3 p-0 " key={v.useP_id}>
@@ -47,8 +104,8 @@ function UsedProductsList({
                     }}
                   ></i>
                 </div>
-                <h6 className="card-title text-gray-300">{v.product_name}</h6>
-                <p className="card-text text-gray-300">賣家：{v.name}</p>
+                <h6 className="card-title text-gray-300">{v.name}</h6>
+                <p className="card-text text-gray-300">賣家：{v.seller_name}</p>
                 <div className="d-flex justify-content-around buttons">
                   <Link
                     to={`./${v.useP_id}`} //網址要和Route裡想去的頁面一樣
@@ -56,15 +113,70 @@ function UsedProductsList({
                   >
                     顯示更多
                   </Link>
-                  <Link to="/" className="btn btn-sm btn-primary-300 btn-rect">
+                  <button
+                    className="btn btn-sm btn-primary-300 btn-rect"
+                    onClick={() => {
+                      addToCart(v);
+                    }}
+                  >
                     加入購物車
-                  </Link>
+                  </button>
                 </div>
               </div>
             </div>
           </div>
         );
       })}
+      {/* 彈出視窗 */}
+      <Modal
+        show={show}
+        onHide={() => {
+          setShow(false);
+        }}
+      >
+        <Modal.Header closeButton>
+          <Modal.Title className="text-info fw-bold">提醒</Modal.Title>
+        </Modal.Header>
+        <Modal.Body
+          className="fw-bolder d-flex align-items-center"
+          style={{ minHeight: '5rem' }}
+        >
+          {resultMsg}
+        </Modal.Body>
+        <Modal.Footer>
+          <Button
+            className="btn btn-white"
+            variant="secondary"
+            onClick={() => {
+              setShow(false);
+            }}
+          >
+            關閉
+          </Button>
+          {resultMsg === MessageMap[3] ? (
+            <Button
+              className="btn btn-primary-300"
+              variant="primary"
+              onClick={() => {
+                setShow(false);
+                clearCart();
+              }}
+            >
+              確認
+            </Button>
+          ) : (
+            <Button
+              className="clearBtn btn btn-primary-300"
+              variant="primary"
+              onClick={() => {
+                setShow(false);
+              }}
+            >
+              確認
+            </Button>
+          )}
+        </Modal.Footer>
+      </Modal>
     </div>
   );
 }
