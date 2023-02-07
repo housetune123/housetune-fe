@@ -70,7 +70,7 @@ function AllOrder() {
           return v.name.includes(SearchWord);
         });
       });
-      console.log(newFilter);
+      // console.log(newFilter);
       setSearchList(newFilter);
     }
     if (SearchWord.length === 0) {

@@ -195,22 +195,18 @@ function App() {
                     {/* ckeckout */}
                     <Route path="cart" element={<Cart />} />
                     <Route
-                      path="/cart/checkout/information"
+                      path="cart/checkout/information"
                       element={<Information />}
                     />
                     <Route
-                      path="/cart/checkout/shipping"
+                      path="cart/checkout/shipping"
                       element={<Shipping />}
                     />
+                    <Route path="cart/checkout/payment" element={<Payment />} />
                     <Route
-                      path="/cart/checkout/payment"
-                      element={<Payment />}
-                    />
-                    <Route
-                      path="/cart/checkout/thankyou"
+                      path="cart/checkout/thankyou"
                       element={<Thankyou />}
                     />
-                    
                     {/* personal-store */}
                     <Route path=":userAcct" element={<PersonalStore />} />
                     <Route path="seller" element={<SellerCenter />}>
@@ -224,7 +220,10 @@ function App() {
                         <Route path="cancelled" element={<Cancelled />} />
                       </Route>
                     </Route>
-                    <Route path="seller/product/add" element={<AddUsedProducts />} />
+                    <Route
+                      path="seller/product/add"
+                      element={<AddUsedProducts />}
+                    />
                     <Route
                       path="seller/product/edit/:useP_id"
                       element={<EditUsedProducts />}
