@@ -99,10 +99,7 @@ function ResetPassword() {
                     </div>
                   )}
                   <div className="mt-4 mb-5 d-flex justify-content-center">
-                    <button
-                      className="btn btn-primary-300 me-2 w-100"
-                      type="submit"
-                    >
+                    <button className="btn btn-primary-300 w-100" type="submit">
                       更改密碼
                     </button>
                   </div>

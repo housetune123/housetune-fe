@@ -653,7 +653,10 @@ function ProductsDetail() {
           {/* 評價 */}
           <section className="container pb-md-5 pb-3">
             <div className="bg-gray p-md-5 p-3">
-              <p className="text-info-dark">商品評價</p>
+              <p className="text-info-dark">
+                商品評價{' '}
+                {rating.length > 0 && <span> ({rating.length} 則)</span>}
+              </p>
               {rating.length < 1 && (
                 <div className="border-bottom border-gray-200 pt-3">
                   <p className="mb-2">尚未有任何評價</p>

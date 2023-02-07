@@ -14,7 +14,7 @@ import { useCart } from '../../utils/useCart';
 function Header() {
   const navigate = useNavigate();
   const location = useLocation();
-  const { setCategoryProduct } = useCategory();
+  const { setCategoryProduct, setSearchProduct } = useCategory();
   //登入登出相關
   const { userinfo, setUserInfo, isLoggedIn, setIsLoggedIn } = useAuth();
   const { googleInfo, setGoogleInfo } = useGoogle();
@@ -56,7 +56,8 @@ function Header() {
   // 搜尋
   const [data, setData] = useState();
   const [filterData, setFilterData] = useState();
-  const [searchWord, setSearchWord] = useState();
+  const [searchWord, setSearchWord] = useState('');
+  const [dataDisplay, setDataDisplay] = useState('display');
 
   useEffect(() => {
     try {
@@ -71,6 +72,7 @@ function Header() {
   }, [filterData]);
 
   const handleFilter = (e) => {
+    setDataDisplay('display');
     const searchWord = e.target.value;
     const newFilter = data.filter((v) => {
       return v.name.toLowerCase().includes(searchWord.toLowerCase());
@@ -305,37 +307,50 @@ function Header() {
                   type="search"
                   onChange={handleFilter}
                   placeholder="您在尋找什麼 ?"
+                  value={searchWord}
                 />
-                <button className="btn btn-primary-300 px-3" type="submit">
+                <button
+                  className="btn btn-primary-300 px-3"
+                  type="submit"
+                  onClick={() => {
+                    setSearchProduct(searchWord);
+                    setDataDisplay('none');
+                    setSearchWord('');
+                    navigate('/products');
+                  }}
+                >
                   <i className="fa-solid fa-magnifying-glass text-light" />
                 </button>
 
-                <div
-                  className={
-                    searchWord ? 'data-result position-absolute' : 'd-none'
-                  }
-                >
-                  {filterData?.map((v, i) => {
-                    return (
-                      <a
-                        href={`/products/${v.prod_id}`}
-                        className="d-block text-decoration-none data-item text-gray-400 py-3  px-3 d-flex align-items-center"
-                      >
-                        <img
-                          style={{ cursor: 'pointer' }}
-                          src={`${
-                            process.env.REACT_APP_IMAGE_URL
-                          }/images/products/${v.category_name}/${
-                            v.img.split(',')[0]
-                          }`}
-                          className="bg-gray-200 search-img"
-                          alt={`${v.name}`}
-                        />
-                        <span className="mx-3">{v.name}</span>
-                      </a>
-                    );
-                  })}
-                </div>
+                {dataDisplay === 'display' && (
+                  <div
+                    className={
+                      searchWord ? 'data-result position-absolute' : 'd-none'
+                    }
+                  >
+                    {filterData?.map((v, i) => {
+                      return (
+                        <a
+                          href={`/products/${v.prod_id}`}
+                          className="d-block text-decoration-none data-item text-gray-400 py-3  px-3 d-flex align-items-center"
+                          key={v.prod_id}
+                        >
+                          <img
+                            style={{ cursor: 'pointer' }}
+                            src={`${
+                              process.env.REACT_APP_IMAGE_URL
+                            }/images/products/${v.category_name}/${
+                              v.img.split(',')[0]
+                            }`}
+                            className="bg-gray-200 search-img"
+                            alt={`${v.name}`}
+                          />
+                          <span className="mx-3">{v.name}</span>
+                        </a>
+                      );
+                    })}
+                  </div>
+                )}
               </div>
             </div>
 
@@ -427,6 +442,7 @@ function Header() {
                   onMouseLeave={item.submenu && onMouseLeave}
                   onClick={() => {
                     setCategoryProduct([]);
+                    setSearchProduct('');
                   }}
                 >
                   <Link

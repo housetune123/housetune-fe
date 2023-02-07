@@ -101,7 +101,9 @@ function App() {
   const [otherReciever, setOtherReciever] = useState('');
   const [switchZone, setSwitchZone] = useState(false);
   const [newMessage, setNewMessage] = useState([]);
+  // 商品
   const [categoryProduct, setCategoryProduct] = useState('');
+  const [searchProduct, setSearchProduct] = useState('');
   axios.defaults.withCredentials = true;
   //重新整理時要一次資料
   useEffect(() => {
@@ -151,7 +153,12 @@ function App() {
               value={{ couponInfo, setCouponInfo, isUsed, setIsUsed }}
             >
               <CategoryContext.Provider
-                value={{ categoryProduct, setCategoryProduct }}
+                value={{
+                  categoryProduct,
+                  setCategoryProduct,
+                  searchProduct,
+                  setSearchProduct,
+                }}
               >
                 <BrowserRouter>
                   <Header />
@@ -210,7 +217,7 @@ function App() {
                       path="/cart/checkout/thankyou"
                       element={<Thankyou />}
                     />
-                    
+
                     {/* personal-store */}
                     <Route path=":userAcct" element={<PersonalStore />} />
                     <Route path="seller" element={<SellerCenter />}>
@@ -224,7 +231,10 @@ function App() {
                         <Route path="cancelled" element={<Cancelled />} />
                       </Route>
                     </Route>
-                    <Route path="seller/product/add" element={<AddUsedProducts />} />
+                    <Route
+                      path="seller/product/add"
+                      element={<AddUsedProducts />}
+                    />
                     <Route
                       path="seller/product/edit/:useP_id"
                       element={<EditUsedProducts />}

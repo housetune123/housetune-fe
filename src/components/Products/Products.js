@@ -12,7 +12,7 @@ import { useCart } from '../../utils/useCart';
 function Products() {
   // 登入登出
   const { userinfo, isLoggedIn } = useAuth();
-  const { categoryProduct } = useCategory();
+  const { categoryProduct, searchProduct } = useCategory();
   const {
     categoryRoom,
     currentPage,
@@ -21,6 +21,7 @@ function Products() {
     currentCategory,
     currentMin,
     currentMax,
+    currentSearch,
   } = useParams();
   const [products, setProducts] = useState([]);
 
@@ -101,7 +102,7 @@ function Products() {
           );
         } else {
           res = await axios.get(
-            `http://localhost:3001/api/products?currentSort=${sort}&currentStock=${stockFilter}&currentCategory=${categoryFilter}&currentMin=${minPriceFilter}&currentMax=${maxPriceFilter}&page=${page}`
+            `http://localhost:3001/api/products?currentSort=${sort}&currentStock=${stockFilter}&currentCategory=${categoryFilter}&currentMin=${minPriceFilter}&currentMax=${maxPriceFilter}&currentSearch=${searchProduct}&page=${page}`
           );
         }
         setProducts(res.data.data);
@@ -122,6 +123,7 @@ function Products() {
     categoryFilter,
     minPriceFilter,
     maxPriceFilter,
+    searchProduct,
   ]);
 
   function Number(min, max) {
@@ -356,7 +358,7 @@ function Products() {
             </h3>
           ) : (
             <h3 className="mb-md-5 mb-2 mt-md-0 mt-2 text-info-dark">
-              所有商品
+              {searchProduct ? `${searchProduct} 的搜尋結果` : '所有商品'}
             </h3>
           )}
           <div className="d-flex justify-content-between border-0">
