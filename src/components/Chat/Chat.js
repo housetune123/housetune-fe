@@ -323,6 +323,7 @@ function Chat({ socket }) {
           >
             <p className="my-auto">傳送訊息給</p>
             <input
+              className="mw-191"
               type="text"
               placeholder="請輸入收件者帳號"
               value={otherReciever}
