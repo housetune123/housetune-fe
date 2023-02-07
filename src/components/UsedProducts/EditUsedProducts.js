@@ -2,7 +2,7 @@ import axios from 'axios';
 import React from 'react';
 import { useEffect, useState } from 'react';
 import './AddUsedProducts.scss';
-import { useNavigate, useParams } from 'react-router-dom';
+import { Link, useNavigate, useParams } from 'react-router-dom';
 import { useAuth } from '../Context/Authcontext';
 
 function EditUsedProducts() {
@@ -15,83 +15,140 @@ function EditUsedProducts() {
   const [prodCat, setProdCat] = useState(null);
   const [prodNameLength, setProdNameLength] = useState(0);
   const [descLength, setDescLength] = useState(0);
+  const [check1, setCheck1] = useState(true);
+  const [check2, setCheck2] = useState(true);
+  const [check3, setCheck3] = useState(true);
 
   const { useP_id } = useParams();
+  const [originValue, setOriginValue] = useState({
+    img: '',
+    imgs: [],
+  });
 
-  const [originValue, setOriginValue] = useState([]);
+  // edit (從後端取得的資料格式)
+  // const [originValue, setOriginValue] = useState({
+  //   useP_id: '',
+  //   seller_id: '',
+  //   img: '',
+  //   name: '',
+  //   category_room: '',
+  //   category_product: '',
+  //   description: '',
+  //   original_price: '',
+  //   price: '',
+  //   amount: '',
+  //   bought_in: '',
+  //   valid: '',
+  // });
+
+  // checked判斷
+  useEffect(() => {
+    if (
+      originValue.name &&
+      originValue.category_room &&
+      originValue.category_product &&
+      originValue.description
+    ) {
+      setCheck1(true);
+    } else {
+      setCheck1(false);
+    }
+    if (originValue.original_price && originValue.price && originValue.amount) {
+      setCheck2(true);
+    } else {
+      setCheck2(false);
+    }
+    if (originValue.bought_in) {
+      setCheck3(true);
+    } else {
+      setCheck3(false);
+    }
+
+    if (originValue.name) {
+      let length = originValue.name.split('').length;
+      setProdNameLength(length);
+    }
+    if (originValue.description) {
+      let length = originValue.description.split('').length;
+      setDescLength(length);
+    }
+  }, [originValue]);
+
   useEffect(() => {
     async function fetchData() {
       let response = await axios.get(
         `http://localhost:3001/usedproduct/edit/${useP_id}`
       );
-      console.log(response.data);
+      console.log('這個使用者這筆訂單的資料', response.data[0]);
+      response.data[0].imgs = response.data[0].img.split(',');
       setOriginValue(response.data[0]);
+      setFileCount(response.data[0].imgs.length);
+      setRoomCat(response.data[0].category_room);
+      setProdCat(response.data[0].category_product);
     }
     fetchData();
   }, []);
-
-  // edit
-  const [inputValue, setInputValue] = useState({
-    img: '',
-    name: '',
-    categoryRoom: '',
-    categoryProduct: '',
-    description: '這裡是編輯頁',
-    originalPrice: '',
-    price: '',
-    amount: '',
-    boughtIn: '',
-    valid: '',
-  });
 
   function handleChange(e) {
     setOriginValue({ ...originValue, [e.target.name]: e.target.value });
   }
 
   // FileUpload
+  const [fileList, setFileList] = useState('');
+  const [fileStored, setFileStored] = useState([]);
   function handUpload(e) {
-    setInputValue({ ...inputValue, img: e.target.files[0] });
+    let length = e.target.files.length;
+    let a = '';
+    let b = [];
+    for (let i = 0; i < length; i++) {
+      a += ' ,';
+      a += e.target.files[i].name;
+      setFileList(a);
+    }
+    for (let i = 0; i < length; i++) {
+      b.push(e.target.files[i]);
+      setFileStored(b);
+    }
   }
-  // ResetBtn
-  function resetForm() {
-    setInputValue({
-      ...inputValue,
-      img: '',
-      name: '',
-      categoryRoom: '',
-      categoryProduct: '',
-      description: '這裡是編輯頁面',
-      originalPrice: '',
-      price: '',
-      amount: '',
-      boughtIn: '',
-      valid: '',
-    });
-  }
-  // SubmitBtn
+
+  const [fileCount, setFileCount] = useState(0);
+
+  useEffect(() => {
+    setOriginValue({ ...originValue, imgs: fileStored, img: fileList });
+    setFileCount(fileStored.length);
+  }, [fileStored, fileList]);
+
+  // SubmitBtn for Edit
   async function handleSubmit(e) {
-    console.log(inputValue);
+    console.log(originValue);
     e.preventDefault();
     let formData = new FormData();
+    formData.append('useP_id', originValue.useP_id);
     formData.append('id', userinfo.id);
-    formData.append('img', inputValue.img);
-    formData.append('name', inputValue.name);
-    formData.append('categoryRoom', inputValue.categoryRoom);
-    formData.append('categoryProduct', inputValue.categoryProduct);
-    formData.append('description', inputValue.description);
-    formData.append('originalPrice', inputValue.originalPrice);
-    formData.append('price', inputValue.price);
-    formData.append('amount', inputValue.amount);
-    formData.append('boughtIn', inputValue.boughtIn);
-    formData.append('valid', inputValue.valid);
-    let response = await axios.post(
-      'http://localhost:3001/usedproduct/add',
+    formData.append('img', originValue.img);
+    if (originValue.imgs) {
+      for (let i = 0; i < originValue.imgs.length; i++) {
+        formData.append('imgs', originValue.imgs[i]);
+      }
+    }
+    formData.append('name', originValue.name);
+    formData.append('category_room', originValue.category_room);
+    formData.append('category_product', originValue.category_product);
+    formData.append('description', originValue.description);
+    formData.append('original_price', originValue.original_price);
+    formData.append('price', originValue.price);
+    formData.append('amount', originValue.amount);
+    formData.append('bought_in', originValue.bought_in);
+    formData.append('valid', originValue.valid);
+    let response = await axios.put(
+      'http://localhost:3001/usedproduct/edit',
       formData
     );
-    console.log(response.data);
-    // 導到二手商品清單
+    // 回到二手商品清單
+    alert(response.data.msg);
     navigate('/seller/product');
   }
+
   return (
     <>
       <div className="add-used-products py-1">
@@ -105,12 +162,7 @@ function EditUsedProducts() {
                     type="checkbox"
                     id="basic"
                     name="basic"
-                    checked={
-                      inputValue.name &&
-                      inputValue.categoryRoom &&
-                      inputValue.categoryProduct &&
-                      inputValue.description
-                    }
+                    checked={check1}
                   />
                   <label htmlFor="basic" className="ms-2">
                     基本資訊
@@ -121,11 +173,7 @@ function EditUsedProducts() {
                     type="checkbox"
                     id="sales"
                     name="sales"
-                    checked={
-                      inputValue.originalPrice &&
-                      inputValue.price &&
-                      inputValue.amount
-                    }
+                    checked={check2}
                   />
                   <label htmlFor="basic" className="ms-2">
                     銷售資訊
@@ -136,7 +184,7 @@ function EditUsedProducts() {
                     type="checkbox"
                     id="other"
                     name="other"
-                    checked={inputValue.boughtIn}
+                    checked={check3}
                   />
                   <label htmlFor="other" className="ms-2">
                     其他
@@ -157,13 +205,27 @@ function EditUsedProducts() {
                   <h4 className="d-none d-lg-block text-gray-400 fw-bold m-4">
                     基本資訊
                   </h4>
-                  {/* TODO: 上傳多張圖片 "multiple" 僅供多選,但傳到資料庫有問題 */}
                   <div className="mobileStyle row mt-lg-5 align-items-center">
                     <div className="col-lg-1"></div>
                     <div className="d-none d-lg-inline col-lg-2 mb-3 dfaic">
                       <label htmlFor="pic">商品圖片</label>
                     </div>
-                    <div className="col col-lg-8">
+                    <div className="col col-lg-8 d-flex">
+                      <div
+                        className={'' + originValue.imgs ? 'd-flex' : 'd-none'}
+                      >
+                        {originValue.imgs.map((img) => {
+                          return (
+                            <div className="picBox text-center">
+                              <img
+                                className="img-fluid"
+                                src={`${process.env.REACT_APP_IMAGE_URL}/images/used/${img}`}
+                                alt=""
+                              />
+                            </div>
+                          );
+                        })}
+                      </div>
                       <label className="custom-mobile-upload text-primary-300 d-lg-none">
                         + 新增圖片
                         <input
@@ -173,12 +235,11 @@ function EditUsedProducts() {
                           onChange={handUpload}
                         />
                       </label>
-                      {/* TODO: 判斷圖片張數 */}
                       <div className="padStyle">
                         <label className="d-none d-lg-block custom-file-upload text-primary-300">
                           <i className="fa-regular fa-image"></i>
                           <h6 className="padText">新增圖片</h6>
-                          <div className="padText">(0/5)</div>
+                          <div className="padText">({fileCount}/5)</div>
                           <input
                             type="file"
                             multiple="multiple"
@@ -215,7 +276,7 @@ function EditUsedProducts() {
                       </div>
                     </div>
                   </div>
-                  <div className="row mt-3 mt-lg-5">
+                  <div className="row mt-lg-5">
                     <div className="col-lg-1"></div>
                     <div className="d-none d-lg-inline col-lg-2 mb-3 dfaic">
                       房間分類
@@ -248,7 +309,7 @@ function EditUsedProducts() {
                       </select>
                     </div>
                   </div>
-                  <div className="row mt-3 mt-lg-5">
+                  <div className="row mt-lg-5">
                     <div className="d-none d-lg-inline col-lg-1"></div>
                     <div className="d-none d-lg-inline col-lg-2 mb-3 dfaic">
                       商品分類
@@ -369,7 +430,9 @@ function EditUsedProducts() {
                         value={originValue.amount ? originValue.amount : ''}
                         min={0}
                         placeholder="0"
-                        onMouseUp={(e) => {}}
+                        onMouseUp={(e) => {
+                          handleChange(e);
+                        }}
                         onKeyUp={(e) => {
                           e.target.value = e.target.value.replace(/[^\d]/g, '');
                         }}
@@ -412,7 +475,7 @@ function EditUsedProducts() {
                       />
                     </div>
                   </div>
-                  {/* TODO:撈資料 */}
+
                   <div className="row mt-3 mt-lg-4 mb-4">
                     <div className="col-lg-1"></div>
                     <div className="col-lg-2 mb-3 dfaic">是否發布</div>
@@ -421,11 +484,11 @@ function EditUsedProducts() {
                         type="radio"
                         id="Y"
                         name="post"
-                        checked={inputValue.valid === 1}
+                        checked={originValue.valid === 1}
                         value={1}
                         onChange={(e) => {
-                          setInputValue({
-                            ...inputValue,
+                          setOriginValue({
+                            ...originValue,
                             valid: (e.target.value = 1),
                           });
                         }}
@@ -438,11 +501,11 @@ function EditUsedProducts() {
                         id="N"
                         name="post"
                         className="ms-3"
-                        checked={inputValue.valid === 0}
+                        checked={originValue.valid === 0}
                         value={0}
                         onChange={(e) => {
-                          setInputValue({
-                            ...inputValue,
+                          setOriginValue({
+                            ...originValue,
                             valid: (e.target.value = 0),
                           });
                         }}
@@ -454,7 +517,7 @@ function EditUsedProducts() {
                   </div>
                 </div>
                 {/* mobile productinfo */}
-                <div className="bg-white d-lg-none w-100">
+                <div className="bg-white d-lg-none w-100 mt-2">
                   <ul className="mobile_info list-unstyled">
                     <div className="row mt-1">
                       <li className="col-7">
@@ -462,7 +525,6 @@ function EditUsedProducts() {
                       </li>
                       <select
                         name="category_room"
-                        required
                         className={
                           'bg-white col-5' +
                           (roomCat === null ? ' text-gray-100' : '')
@@ -492,13 +554,16 @@ function EditUsedProducts() {
                         <i className="fa-solid fa-list-ul"> 商品分類</i>
                       </li>
                       <select
-                        name="categoryProduct"
-                        required
+                        name="category_product"
                         className={
                           'bg-white col-5' +
                           (prodCat === null ? ' text-gray-100' : '')
                         }
-                        value={inputValue.categoryProduct}
+                        value={
+                          originValue.category_product
+                            ? originValue.category_product
+                            : ''
+                        }
                         onChange={(e) => {
                           setProdCat(e.target.value);
                           handleChange(e);
@@ -529,19 +594,18 @@ function EditUsedProducts() {
                       <input
                         className="bg-white col-5 text-end"
                         type="number"
-                        required
-                        value={inputValue.originalPrice}
+                        name="original_price"
+                        value={
+                          originValue.original_price
+                            ? originValue.original_price
+                            : ''
+                        }
                         min={0}
                         placeholder="設定"
                         onKeyUp={(e) => {
                           e.target.value = e.target.value.replace(/[^\d]/g, '');
                         }}
-                        onChange={(e) => {
-                          setInputValue({
-                            ...inputValue,
-                            originalPrice: e.target.value,
-                          });
-                        }}
+                        onChange={handleChange}
                       />
                     </div>
                     <div className="row mt-3 mb-3">
@@ -551,19 +615,14 @@ function EditUsedProducts() {
                       <input
                         className="bg-white col-5 text-end"
                         type="number"
-                        required
-                        value={inputValue.price}
+                        name="price"
+                        value={originValue.price}
                         min={0}
                         placeholder="設定"
                         onKeyUp={(e) => {
                           e.target.value = e.target.value.replace(/[^\d]/g, '');
                         }}
-                        onChange={(e) => {
-                          setInputValue({
-                            ...inputValue,
-                            price: e.target.value,
-                          });
-                        }}
+                        onChange={handleChange}
                       />
                     </div>
 
@@ -574,20 +633,15 @@ function EditUsedProducts() {
                       <input
                         className="bg-white col-5 text-end"
                         type="number"
-                        required
-                        value={inputValue.amount}
+                        name="amount"
+                        value={originValue.amount}
                         min={0}
                         placeholder="0"
                         onMouseUp={(e) => {}}
                         onKeyUp={(e) => {
                           e.target.value = e.target.value.replace(/[^\d]/g, '');
                         }}
-                        onChange={(e) => {
-                          setInputValue({
-                            ...inputValue,
-                            amount: e.target.value,
-                          });
-                        }}
+                        onChange={handleChange}
                       />
                     </div>
                     <div className="row mt-3">
@@ -596,9 +650,11 @@ function EditUsedProducts() {
                       </li>
                       <input
                         className="g-white col-5 text-end"
-                        required
                         type="number"
-                        value={inputValue.boughtIn}
+                        name="bought_in"
+                        value={
+                          originValue.bought_in ? originValue.bought_in : ''
+                        }
                         placeholder="1911"
                         min={1911}
                         max={2023}
@@ -608,78 +664,25 @@ function EditUsedProducts() {
                         }}
                         onChange={(e) => {
                           if (e.target.value.length <= 4) {
-                            setInputValue({
-                              ...inputValue,
-                              boughtIn: e.target.value,
-                            });
+                            handleChange(e);
                           }
                         }}
                       />
                     </div>
-
-                    {/* TODO: toggle 切換 value 1 or 0 */}
-                    {/* <li className="row">
-                      <div className="col">
-                        <i class="fa-solid fa-upload">是否發布</i>
-                      </div>
-                      <div className="col">
-                        <input
-                          type="radio"
-                          id="Y"
-                          name="post"
-                          checked={inputValue.valid === 1}
-                          value={1}
-                          onChange={(e) => {
-                            setInputValue({
-                              ...inputValue,
-                              valid: (e.target.value = 1),
-                            });
-                          }}
-                        />
-                        <label htmlFor="Y" className="ms-2">
-                          是
-                        </label>
-                      </div>
-
-                      <div className="col">
-                        <input
-                          type="radio"
-                          id="N"
-                          name="post"
-                          className="ms-3"
-                          checked={inputValue.valid === 0}
-                          value={0}
-                          onChange={(e) => {
-                            setInputValue({
-                              ...inputValue,
-                              valid: (e.target.value = 0),
-                            });
-                          }}
-                        />
-                        <label htmlFor="N" className="ms-2">
-                          否
-                        </label>
-                      </div>
-                    </li> */}
                   </ul>
                 </div>
                 <div className="mt-lg-5 p-3 d-flex justify-content-center mb-lg-5">
                   <div className="d-none d-lg-block w-80"></div>
                   <div className="row">
                     <div className="col-6">
-                      <button
-                        type="reset"
-                        className="bg-white"
-                        onClick={resetForm}
-                      >
-                        取消
-                      </button>
+                      <Link to={'/seller/product'}>
+                        <button className="bg-white">取消</button>
+                      </Link>
                     </div>
                     <div className="col-6">
                       <button
                         type="submit"
                         className="text-white bg-primary-200"
-                        // onClick={handleSubmit}
                       >
                         修改
                       </button>

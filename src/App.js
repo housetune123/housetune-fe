@@ -208,7 +208,10 @@ function App() {
                       element={<Thankyou />}
                     />
                     {/* personal-store */}
-                    <Route path=":userAcct" element={<PersonalStore />} />
+                    <Route
+                      path=":userAcct"
+                      element={<PersonalStore socket={socket} />}
+                    />
                     <Route path="seller" element={<SellerCenter />}>
                       <Route index element={<SellerMain />} />
                       <Route path="product" element={<SalesProduct />} />
