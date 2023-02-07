@@ -66,7 +66,7 @@ function UsedProductsDetail() {
   const MessageMap = {
     1: '新增成功！',
     2: '該商品已存在購物車！',
-    3: '購物車內含有官方商品，是否清空購物車？',
+    3: '購物車內含有官方或其他賣家的商品，是否清空購物車？',
   };
 
   function addToCart(v) {
@@ -88,18 +88,23 @@ function UsedProductsDetail() {
       let itemObj = items[0];
       const keys = Object.keys(itemObj);
       if (keys.includes('seller_id') === true) {
-        let found = items.find((obj) => {
-          return obj.id === item.useP_id;
-        });
-        if (found === undefined) {
-          addItem({
-            ...item,
-            id: item.useP_id,
-            seller_id: item.seller_id,
-          });
-          setResultMsg(MessageMap[1]);
+        // 若賣家不同 => 清空購物車
+        if (v.seller_id !== items[0].seller_id) {
+          setResultMsg(MessageMap[3]);
         } else {
-          setResultMsg(MessageMap[2]);
+          let found = items.find((obj) => {
+            return obj.id === item.useP_id;
+          });
+          if (found === undefined) {
+            addItem({
+              ...item,
+              id: item.useP_id,
+              seller_id: item.seller_id,
+            });
+            setResultMsg(MessageMap[1]);
+          } else {
+            setResultMsg(MessageMap[2]);
+          }
         }
       } else {
         setResultMsg(MessageMap[3]);
@@ -138,7 +143,7 @@ function UsedProductsDetail() {
               {usedProduct.map((v, i) => {
                 return (
                   <div className="col-md-6" key={v.useP_id}>
-                    <h3 className="text-info-dark">{v.product_name}</h3>
+                    <h3 className="text-info-dark">{v.name}</h3>
                     <h6 className="text-info">NT$ {v.price}</h6>
                     <div className="pt-2"></div>
                     {/* 數量、加入購物車 */}
@@ -164,7 +169,7 @@ function UsedProductsDetail() {
                       <div className="py-2">
                         <p className="fs-6 text-gray-400 fs-sml mb-0">
                           {/* TODO:幾則評論 */}
-                          賣家：{v.name}
+                          賣家：{v.seller_name}
                           （平均{v.rating}分/10則評論）
                         </p>
                       </div>

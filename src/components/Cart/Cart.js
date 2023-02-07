@@ -85,14 +85,12 @@ function Cart(props) {
                     <div className="col-sm-4 col-12 p-auto ">
                       {/* 品名 */}
                       <p className="fs-5">
-                        <strong>
-                          {!isSecond ? val.name : val.product_name}
-                        </strong>
+                        <strong>{val.name}</strong>
                       </p>
                       {/* 款式 */}
                       <p>
                         <strong> {!isSecond ? '款式' : '賣家'} </strong>
-                        {!isSecond ? val.shape : val.name}
+                        {!isSecond ? val.shape : val.seller_name}
                       </p>
                       {/* 價格 */}
                       <p>

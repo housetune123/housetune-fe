@@ -24,14 +24,14 @@ function UsedProductsList({
   const MessageMap = {
     1: '新增成功！',
     2: '該商品已存在購物車！',
-    3: '購物車內含有官方商品，是否清空購物車？',
+    3: '購物車內含有官方或其他賣家的商品，是否清空購物車？',
   };
-
   function addToCart(v) {
     const item = {
       ...v,
       quantity: 1,
     };
+    console.log(item);
     // 購物車為空直接 + 進去
     if (items.length === 0) {
       addItem({
@@ -46,18 +46,23 @@ function UsedProductsList({
       let itemObj = items[0];
       const keys = Object.keys(itemObj);
       if (keys.includes('seller_id') === true) {
-        let found = items.find((obj) => {
-          return obj.id === item.useP_id;
-        });
-        if (found === undefined) {
-          addItem({
-            ...item,
-            id: item.useP_id,
-            seller_id: item.seller_id,
-          });
-          setResultMsg(MessageMap[1]);
+        // 若賣家不同 => 清空購物車
+        if (v.seller_id !== items[0].seller_id) {
+          setResultMsg(MessageMap[3]);
         } else {
-          setResultMsg(MessageMap[2]);
+          let found = items.find((obj) => {
+            return obj.id === item.useP_id;
+          });
+          if (found === undefined) {
+            addItem({
+              ...item,
+              id: item.useP_id,
+              seller_id: item.seller_id,
+            });
+            setResultMsg(MessageMap[1]);
+          } else {
+            setResultMsg(MessageMap[2]);
+          }
         }
       } else {
         setResultMsg(MessageMap[3]);
@@ -99,8 +104,8 @@ function UsedProductsList({
                     }}
                   ></i>
                 </div>
-                <h6 className="card-title text-gray-300">{v.product_name}</h6>
-                <p className="card-text text-gray-300">賣家：{v.name}</p>
+                <h6 className="card-title text-gray-300">{v.name}</h6>
+                <p className="card-text text-gray-300">賣家：{v.seller_name}</p>
                 <div className="d-flex justify-content-around buttons">
                   <Link
                     to={`./${v.useP_id}`} //網址要和Route裡想去的頁面一樣

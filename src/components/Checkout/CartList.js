@@ -6,19 +6,11 @@ import './Checkout.scss';
 import { useBeforeCoupon } from '../Context/CouponContext';
 
 function Checkout({ setPayment }) {
-  const {
-    cart,
-    items,
-    addItem,
-    removeItem,
-    updateItem,
-    clearCart,
-    isInCart,
-    plusOne,
-    minusOne,
-  } = useCart();
+  const { cart, items } = useCart();
   // 引入使用 coupon 的狀態
   const { couponInfo, setCouponInfo, isUsed, setIsUsed } = useBeforeCoupon();
+  // 判斷是官方 or 二手
+  const [isSecond, setIsSecond] = useState(false);
   // 設定是否使用優惠券
   const [useCoupon, setUseCoupon] = useState(false);
   // 優惠券名稱
@@ -30,6 +22,16 @@ function Checkout({ setPayment }) {
   const infoLength = Object.keys(couponInfo);
 
   useEffect(() => {
+    if (items.length > 0) {
+      let itemObj = items[0];
+      const keys = Object.keys(itemObj);
+      // 檢查是否有 seller_id
+      if (keys.includes('seller_id') === false) {
+        setIsSecond(false);
+      } else {
+        setIsSecond(true);
+      }
+    }
     if (!isUsed) {
       setUseCoupon(false);
     } else {
@@ -99,7 +101,11 @@ function Checkout({ setPayment }) {
                   <div className="position-relative">
                     <img
                       className="procduct-image"
-                      src={`${process.env.REACT_APP_IMAGE_URL}/images/products/${val.categoryR_name}/${img[0]}`}
+                      src={
+                        !isSecond
+                          ? `${process.env.REACT_APP_IMAGE_URL}/images/products/${val.categoryR_name}/${img[0]}`
+                          : `${process.env.REACT_APP_IMAGE_URL}/images/used/${val.img}`
+                      }
                       alt="/"
                     />
                     <div className="bg-gray-200 amount d-flex align-items-center justify-content-center">
@@ -108,8 +114,10 @@ function Checkout({ setPayment }) {
                   </div>
                 </div>
                 <div>
-                  <p className="fs-7 fw-bold px-3">{val.name}</p>
-                  <p className="fs-8 text-gray-300 px-3">{val.shape}</p>
+                  <p className="fs-7 fw-bold px-3 text-center">{val.name}</p>
+                  <p className="fs-8 text-gray-300 px-3 text-center">
+                    {!isSecond ? val.shape : '賣家 : ' + val.seller_name}
+                  </p>
                 </div>
                 <div>
                   <span className="fs-7 fw-bold">{val.itemTotal}</span>
