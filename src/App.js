@@ -27,7 +27,6 @@ import { CategoryContext } from './components/Context/CategoryContext';
 import Main from './components/Main';
 import Products from './components/Products/Products';
 import ProductDetail from './components/Products/ProductsDetail';
-import UsedProductDetail from './components/Products/UsedProductsDetail';
 
 // seller-center
 import SellerCenter from './components/PersonalStore/SellerCenter';
@@ -175,8 +174,8 @@ function App() {
                     {/* used */}
                     <Route path="usedproducts" element={<UsedProducts />} />
                     <Route
-                      path="usedproducts/:prodId"
-                      element={<UsedProductDetail />}
+                      path="usedproducts/:usedProdId"
+                      element={<UsedProductsDetail />}
                     />
 
                     {/* user */}
@@ -210,7 +209,7 @@ function App() {
                       path="/cart/checkout/thankyou"
                       element={<Thankyou />}
                     />
-                    
+
                     {/* personal-store */}
                     <Route path=":userAcct" element={<PersonalStore />} />
                     <Route path="seller" element={<SellerCenter />}>
@@ -224,7 +223,10 @@ function App() {
                         <Route path="cancelled" element={<Cancelled />} />
                       </Route>
                     </Route>
-                    <Route path="seller/product/add" element={<AddUsedProducts />} />
+                    <Route
+                      path="seller/product/add"
+                      element={<AddUsedProducts />}
+                    />
                     <Route
                       path="seller/product/edit/:useP_id"
                       element={<EditUsedProducts />}

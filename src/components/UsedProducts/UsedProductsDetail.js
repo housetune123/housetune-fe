@@ -3,10 +3,12 @@ import 'slick-carousel/slick/slick.css';
 import 'slick-carousel/slick/slick-theme.css';
 import BreadCrumb from '../Layout/BreadCrumb';
 import './UsedProductsDetail.scss';
-// import NewArrival from '../Layout/NewArrival';
+import NewArrival from '../Layout/NewArrival';
 import { useEffect, useState } from 'react';
 import axios from 'axios';
 import { useParams, Link } from 'react-router-dom';
+import { useCart } from '../../utils/useCart';
+import { Modal, Button } from 'react-bootstrap';
 
 function UsedProductsDetail() {
   const [usedProduct, setUsedProduct] = useState([]);
@@ -19,7 +21,7 @@ function UsedProductsDetail() {
         let res = await axios.get(
           `http://localhost:3001/usedproduct/${usedProdId}`
         ); //變數名需要和route 裡的變數名一樣
-        console.log(res.data); //[{…}]陣列裡的物件
+        console.log('res.data', res.data); //[{…}]陣列裡的物件
         setUsedProduct(res.data);
       } catch (e) {
         console.error(e);
@@ -56,6 +58,56 @@ function UsedProductsDetail() {
     slidesToScroll: 1,
   };
 
+  // 加入購物車彈跳視窗及訊息
+  const [show, setShow] = useState(false);
+  const [resultMsg, setResultMsg] = useState({});
+  const { addItem, items, clearCart } = useCart();
+  // console.log('prodDetail', prodDetail);
+  const MessageMap = {
+    1: '新增成功！',
+    2: '該商品已存在購物車！',
+    3: '購物車內含有官方商品，是否清空購物車？',
+  };
+
+  function addToCart(v) {
+    const item = {
+      ...v,
+      quantity: 1,
+    };
+    // 購物車為空直接 + 進去
+    if (items.length === 0) {
+      addItem({
+        ...item,
+        id: item.useP_id,
+        seller_id: item.seller_id,
+      });
+      setResultMsg(MessageMap[1]);
+    } else {
+      // 購物車內可以有多位賣家的 id
+      // 先確認是否存在 seller_id ， 再確認有沒有這筆商品的 id
+      let itemObj = items[0];
+      const keys = Object.keys(itemObj);
+      if (keys.includes('seller_id') === true) {
+        let found = items.find((obj) => {
+          return obj.id === item.useP_id;
+        });
+        if (found === undefined) {
+          addItem({
+            ...item,
+            id: item.useP_id,
+            seller_id: item.seller_id,
+          });
+          setResultMsg(MessageMap[1]);
+        } else {
+          setResultMsg(MessageMap[2]);
+        }
+      } else {
+        setResultMsg(MessageMap[3]);
+      }
+    }
+    setShow(true);
+  }
+
   return (
     <>
       <div className="used-product-detail">
@@ -75,19 +127,11 @@ function UsedProductsDetail() {
                         <img
                           className="object-cover"
                           alt=""
-                          //TODO:一直說ｉｍｇ undefined
-                          src={`${process.env.REACT_APP_IMAGE_URL}/images/used/${img}}`}
+                          src={`${process.env.REACT_APP_IMAGE_URL}/images/used/${v.img}`}
                         ></img>
                       </div>
                     );
                   })}
-                  {/* <div>
-                    <img
-                      className="object-cover"
-                      alt=""
-                      src={`${process.env.REACT_APP_IMAGE_URL}/images/products/Abbon-2.avif`}
-                    ></img>
-                  </div> */}
                 </Slider>
               </div>
               {/* 右側內容 */}
@@ -96,21 +140,21 @@ function UsedProductsDetail() {
                   <div className="col-md-6" key={v.useP_id}>
                     <h3 className="text-info-dark">{v.product_name}</h3>
                     <h6 className="text-info">NT$ {v.price}</h6>
-                    <div className="pt-2">
-                      {/* <p className="text-gray-400">
-                        <span className="text-primary-200">款式: </span>藍色
-                        Blue
-                      </p> */}
-                    </div>
+                    <div className="pt-2"></div>
                     {/* 數量、加入購物車 */}
                     <div className="row pt-2">
                       <p className="text-gray-400 col-5">
                         <span className="text-primary-200">
-                          數量: {v.amount}{' '}
+                          數量: {v.amount}
                         </span>
                       </p>
                       <div className="col-7">
-                        <button className="btn btn-cart bg-gray border border-2 border-primary-200 text-primary-300 btn-cart w-100 h-100">
+                        <button
+                          className="btn btn-cart bg-gray border border-2 border-primary-200 text-primary-300 btn-cart w-100 h-100"
+                          onClick={() => {
+                            addToCart(v);
+                          }}
+                        >
                           加入購物車
                         </button>
                       </div>
@@ -189,11 +233,61 @@ function UsedProductsDetail() {
               <p className="text-info-dark text-center pt-2">
                 不滿意？直接入手高品質全新傢俱！
               </p>
-              {/* <NewArrival /> */}
+              <NewArrival />
             </div>
           </section>
         </main>
       </div>
+      {/* 彈出視窗 */}
+      <Modal
+        show={show}
+        onHide={() => {
+          setShow(false);
+        }}
+      >
+        <Modal.Header closeButton>
+          <Modal.Title className="text-info fw-bold">提醒</Modal.Title>
+        </Modal.Header>
+        <Modal.Body
+          className="fw-bolder d-flex align-items-center"
+          style={{ minHeight: '5rem' }}
+        >
+          {resultMsg}
+        </Modal.Body>
+        <Modal.Footer>
+          <Button
+            className="btn btn-white"
+            variant="secondary"
+            onClick={() => {
+              setShow(false);
+            }}
+          >
+            關閉
+          </Button>
+          {resultMsg === MessageMap[3] ? (
+            <Button
+              className="btn btn-primary-300"
+              variant="primary"
+              onClick={() => {
+                setShow(false);
+                clearCart();
+              }}
+            >
+              確認
+            </Button>
+          ) : (
+            <Button
+              className="clearBtn btn btn-primary-300"
+              variant="primary"
+              onClick={() => {
+                setShow(false);
+              }}
+            >
+              確認
+            </Button>
+          )}
+        </Modal.Footer>
+      </Modal>
     </>
   );
 }
