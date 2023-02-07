@@ -33,21 +33,17 @@ function Chat({ socket }) {
     setNewMessage,
   } = useChat();
   const { userinfo, setUserInfo, isLoggedIn, setIsLoggedIn } = useAuth();
+  const [chatListAccount, setChatListAccount] = useState([]);
   async function handleBegin() {
     setBegin(true);
-    console.log(userinfo.name);
-    if (userinfo.name !== '官方客服') {
-      socket.emit('join_room', room);
+    // console.log(userinfo.name);
       socket.emit('join_room', userinfo.account);
-    } else {
-      socket.emit('join_room', room);
-    }
     try {
       let response = await axios.post('http://localhost:3001/api/chat/get', {
         userId: userinfo.id,
         recieverId: recieverId,
       });
-      console.log(response.data);
+      // console.log(response.data);
       for (let i = 0; i < response.data.length; i++) {
         let time1 = response.data[i].timestamp.slice(0, 10);
         let time2 = response.data[i].timestamp.slice(11, 16);
@@ -63,6 +59,14 @@ function Chat({ socket }) {
         };
         setMessageList((list) => [...list, messageStored]);
       }
+      let response1 = await axios.post(
+        'http://localhost:3001/api/chat/getlist',
+        {
+          userId: userinfo.id,
+        }
+      );
+      console.log(response1.data);
+      setChatListAccount(response1.data);
     } catch (e) {}
   }
   async function handleSwitch() {
@@ -84,7 +88,6 @@ function Chat({ socket }) {
         setSwitchZone(!switchZone);
         setBegin(!begin);
         setRoom(otherReciever);
-        socket.emit('join_room', response.data[0].account);
       }
     }
   }
@@ -137,10 +140,18 @@ function Chat({ socket }) {
       setMessageList((list) => [...list, messageData]);
       setMessage('');
       try {
-        let response = axios.post(
+        let response = await axios.post(
           'http://localhost:3001/api/chat',
           messageData
         );
+        let response1 = await axios.post(
+          'http://localhost:3001/api/chat/getlist',
+          {
+            userId: userinfo.id,
+          }
+        );
+        console.log(response1.data);
+        setChatListAccount(response1.data);
       } catch (e) {}
     }
   }
@@ -170,18 +181,29 @@ function Chat({ socket }) {
 
   useEffect(() => {
     // console.log(newMessage);
-    let replica = newMessage;
-    let replica1 = replica.map((x) => x.sender);
-    // console.log(replica1);
-    let last = replica1[replica1.length - 1];
-    if (replica1.indexOf(last) < replica1.length - 1) {
-      replica.pop();
-      // console.log(replica);
-      setNewMessage([]);
-      for (let i = 0; i < replica.length; i++) {
-        setNewMessage((list) => [...list, replica[i]]);
+    async function changeList() {
+      let replica = newMessage;
+      let replica1 = replica.map((x) => x.sender);
+      // console.log(replica1);
+      let last = replica1[replica1.length - 1];
+      if (replica1.indexOf(last) < replica1.length - 1) {
+        replica.pop();
+        // console.log(replica);
+        setNewMessage([]);
+        for (let i = 0; i < replica.length; i++) {
+          setNewMessage((list) => [...list, replica[i]]);
+        }
       }
+      let response1 = await axios.post(
+        'http://localhost:3001/api/chat/getlist',
+        {
+          userId: userinfo.id,
+        }
+      );
+      console.log(response1.data);
+      setChatListAccount(response1.data);
     }
+    changeList();
   }, [newMessage]);
   useEffect(() => {
     async function fetchdata() {
@@ -235,11 +257,38 @@ function Chat({ socket }) {
                   let replica = [...newMessage];
                   replica.splice(i, 1);
                   setNewMessage(replica);
-                  socket.emit('join_room', v.senderAccount);
                   setRoom(v.senderAccount);
                 }}
               >
                 {v.sender}
+              </p>
+            );
+          })}
+        </div>
+        <div
+          className={
+            'chatlist position-absolute text-white bg-primary-200 border ' +
+            (chatListAccount.length === 0 ? 'd-none' : '')
+          }
+        >
+          <p className="m-0 text-center">對話列表</p>
+          {chatListAccount.map((v, i) => {
+            return (
+              <p
+                className="m-0 text-center bg-white text-black border list"
+                key={i}
+                onClick={() => {
+                  setReciever(v.name);
+                  setRecieverId(v.id);
+                  setRoom(v.account);
+                  let replica = newMessage;
+                  let replica1 = replica.filter(
+                    (item) => item.senderId !== v.id
+                  );
+                  setNewMessage(replica1);
+                }}
+              >
+                {v.name}
               </p>
             );
           })}

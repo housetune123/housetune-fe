@@ -37,7 +37,14 @@
         max-height: 300px;
         overflow: auto;
     }
-    .noti{
+    .chatlist{
+        width: 120px;
+        top: 47.5px;
+        left: 100%;
+        max-height: 300px;
+        overflow: auto;
+    }
+    .noti, .list{
         cursor: pointer;
     }
     .mw-191{
