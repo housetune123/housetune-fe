@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '../Context/Authcontext';
 import axios from 'axios';
+import { useCart } from '../../utils/useCart';
 import './Checkout.scss';
 import 'leaflet/dist/leaflet.css';
 
@@ -17,6 +18,7 @@ L.Icon.Default.mergeOptions({
 });
 
 function Thankyou(props) {
+  const { clearCart } = useCart();
   const navigate = useNavigate();
   const position = [25.045102061647054, 121.52904696173054];
   const { userinfo, isLoggedIn } = useAuth();
@@ -30,9 +32,9 @@ function Thankyou(props) {
   }
 
   useEffect(() => {
+    clearCart();
     (async () => {
       let res = await axios.get('http://localhost:3001/api/payment/checkorder');
-      // console.log(res.data);
       setOrderNumber(res.data);
     })();
     setCompleteMsg(JSON.parse(localStorage.getItem('myAddress')));
@@ -82,18 +84,11 @@ function Thankyou(props) {
                 </MapContainer>
               </div>
               <div className="p-4">
-                <h5 className="fs-6 mb-4">您的訂單已確認</h5>
-                <div className="fs-7">
+                <h5 className="fs-5 mb-4">您的訂單已確認</h5>
+                <div className="fs-6">
                   <h6 className="text-info fw-bold">
-                    若您已完成付款則不需理會以下資訊，感謝您再度光臨Housetune。
+                    謝謝您的惠顧，期待您再度光臨Housetune。
                   </h6>
-                  <p>銀行匯款資訊：</p>
-                  <p>銀行：玉山銀行 岡山分行</p>
-                  <p>帳號：0956-942-000990</p>
-                  <p>戶名：浩斯度股份有限公司</p>
-                  <p>
-                    您好！此訂單將為您保留 3 天, 如三天內未付款，訂單將被取消。
-                  </p>
                 </div>
               </div>
             </div>

@@ -4,6 +4,7 @@ import './Products.scss';
 import axios from 'axios';
 import { useEffect, useState } from 'react';
 import { useAuth } from '../Context/Authcontext';
+import { useCategory } from '../Context/CategoryContext';
 
 // 購物車
 import { useCart } from '../../utils/useCart';
@@ -11,6 +12,7 @@ import { useCart } from '../../utils/useCart';
 function Products() {
   // 登入登出
   const { userinfo, isLoggedIn } = useAuth();
+  const { categoryProduct } = useCategory();
   const {
     categoryRoom,
     currentPage,
@@ -34,7 +36,9 @@ function Products() {
   const [minPriceFilter, setMinPriceFilter] = useState(currentMin || '');
   const [maxPriceFilter, setMaxPriceFilter] = useState(currentMax || '');
   // Filter 功能，分類
-  const [categoryFilter, setCategoryFilter] = useState(currentCategory || []);
+  const [categoryFilter, setCategoryFilter] = useState(
+    currentCategory || categoryProduct || []
+  );
 
   // 條件設定資料抓取
   // 供貨情況
@@ -50,7 +54,6 @@ function Products() {
   const [cart, setCart] = useState([]);
 
   // 收藏
-  const [userId, setUserId] = useState(0);
   const [like, setLike] = useState([]);
   // 取得收藏資料
   useEffect(() => {
@@ -70,10 +73,10 @@ function Products() {
   // 加入收藏
   useEffect(() => {
     if (isLoggedIn) {
-      setUserId(userinfo.id);
       try {
         async function liked() {
           let likeJson = JSON.stringify(like);
+          const userId = userinfo.id;
           let res = await axios.put('http://localhost:3001/api/products', {
             likeJson,
             userId,
@@ -547,6 +550,7 @@ function Products() {
                                   setCategoryFilter(newCategoryFilter);
                                 }
                               }}
+                              checked={categoryFilter.includes(`${v.id}`)}
                             />
                             <label
                               className="form-check-label text-info fs-sml"

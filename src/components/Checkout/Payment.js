@@ -1,9 +1,10 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { useAuth } from '../Context/Authcontext';
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import { useCart } from '../../utils/useCart';
+import { useBeforeCoupon } from '../Context/CouponContext';
 
 import './Checkout.scss';
 
@@ -26,6 +27,7 @@ function Payment() {
   };
 
   const { cart, items, isInCart, clearCart } = useCart();
+  const { couponInfo, setCouponInfo, isUsed, setIsUsed } = useBeforeCoupon();
 
   // 取得地址資料
   const addressData = JSON.parse(localStorage.getItem('myAddress'));
@@ -33,11 +35,8 @@ function Payment() {
   const address = `${addressData.district + addressData.address},${
     addressData.postcode + addressData.city
   },${addressData.country}`;
-  // console.log(address);
 
-  // console.log(userinfo);
-
-  // 只取產品的 id , 數量 , 顏色
+  // 取產品資訊
   const orderItems = items.map((val) => {
     // console.log(val);
     return {
@@ -47,32 +46,22 @@ function Payment() {
       imgs: val.img,
       total: val.itemTotal,
       name: val.name,
+      categoryR_name: val.categoryR_name,
     };
   });
-  console.log('購買產品', orderItems);
+  // console.log('購買產品', orderItems);
+  // console.log('cart', cart);
+  const setCoupo1n = [{ ...couponInfo }];
   const orderMsg = {
-    userId: userinfo.id,
-    address: address,
-    price: cart.finalPayment,
-    state: '1',
-    note: '',
-    products: orderItems,
+    userId: userinfo.id, // userID
+    address: address, // 地址
+    price: cart.finalPayment, // 最終款項
+    state: '1', // 訂單狀態
+    note: '', // 備註
+    products: orderItems, // 商品資訊
+    shippingFee: 0,
+    couponUse: setCoupo1n, // 使用優惠券資訊
   };
-  console.log('orderMsg', orderMsg);
-
-  async function Pay(e) {
-    try {
-      e.preventDefault();
-      let res = await axios.post('http://localhost:3001/api/payment', {
-        orderMsg,
-      });
-      // 成功後清空購物車
-      clearCart();
-      navigate('/cart/checkout/thankyou');
-    } catch (err) {
-      console.log('新增訂單錯誤', err);
-    }
-  }
 
   return (
     <>
@@ -209,9 +198,8 @@ function Payment() {
                       支付，以安全地完成購買程序。
                     </p>
                   </div>
-
                   {/* LINE Pay */}
-                  <div
+                  {/* <div
                     className="px-4 py-3 border-bottom border-gray-100"
                     onClick={() => {
                       setPaySelected('LinePay');
@@ -235,8 +223,8 @@ function Payment() {
                         </div>
                       </label>
                     </div>
-                  </div>
-                  <div
+                  </div> */}
+                  {/* <div
                     className={
                       paySelected === 'LinePay'
                         ? 'pay-content active bg-primary text-center py-4'
@@ -248,56 +236,7 @@ function Payment() {
                       <br />
                       Pay，以安全地完成購買程序。
                     </p>
-                  </div>
-
-                  {/* 綠界科技 */}
-                  <div
-                    className="px-4 py-3 border-bottom border-gray-100"
-                    onClick={() => {
-                      setPaySelected('ECPay');
-                    }}
-                  >
-                    <div className="form-check">
-                      <input
-                        className="form-check-input"
-                        type="radio"
-                        name="pay"
-                        onChange={payChange}
-                        checked={paySelected === 'ECPay'}
-                      />
-                      <label className="d-flex justify-content-between fs-7">
-                        綠界科技
-                        <div>
-                          <img
-                            src={`${process.env.REACT_APP_IMAGE_URL}/images/payment/VISA.svg`}
-                            alt="VISA"
-                          />
-                          <img
-                            src={`${process.env.REACT_APP_IMAGE_URL}/images/payment/Mastercard.svg`}
-                            alt="Mastercard"
-                          />
-                          <img
-                            src={`${process.env.REACT_APP_IMAGE_URL}/images/payment/JCB.svg`}
-                            alt="JCB"
-                          />
-                        </div>
-                      </label>
-                    </div>
-                  </div>
-                  <div
-                    className={
-                      paySelected === 'ECPay'
-                        ? 'pay-content active bg-primary text-center py-4'
-                        : 'pay-content bg-primary text-center'
-                    }
-                  >
-                    <p className="fs-7">
-                      按一下「立即付款」後，系統會將您重新導向至 綠界科
-                      <br />
-                      技，以安全地完成購買程序。
-                    </p>
-                  </div>
-
+                  </div> */}
                   {/* ATM 轉帳 / 銀行匯款 */}
                   <div
                     className="px-4 py-3"
@@ -404,9 +343,19 @@ function Payment() {
                     <span className="px-2 fs-7">重新填寫運送方式</span>
                   </Link>
                 </div>
-                <button className="btn btn-primary-300" onClick={Pay}>
-                  立即付款
-                </button>
+                <form
+                  method="get"
+                  action="http://localhost:3001/api/payment/creditPay"
+                >
+                  <input
+                    type="hidden"
+                    name="orderMessage"
+                    value={JSON.stringify(orderMsg)}
+                  />
+                  <button className="btn btn-primary-300" type="submit">
+                    立即付款
+                  </button>
+                </form>
               </div>
             </form>
           </div>

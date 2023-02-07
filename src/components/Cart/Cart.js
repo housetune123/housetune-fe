@@ -31,7 +31,7 @@ function Cart(props) {
 
   useEffect(() => {
     // 查看購物車
-    console.log('購物車內容', items);
+    // console.log('購物車內容', items);
   }, []);
 
   return (
@@ -139,7 +139,7 @@ function Cart(props) {
                   </div>
                   <div className=" d-flex justify-content-between">
                     <strong className="">運費</strong>
-                    <span className=" ">300</span>
+                    <span className=" ">0</span>
                   </div>
                 </div>
               </div>
@@ -159,7 +159,7 @@ function Cart(props) {
                 <hr />
                 <div className="d-flex justify-content-between ">
                   <strong className="">總金額</strong>
-                  <p className="">NT$ {cart.cartTotal + 300} </p>
+                  <p className="">NT$ {cart.cartTotal} </p>
                 </div>
                 <Link
                   to={isLoggedIn ? 'checkout/information' : '../login'}
