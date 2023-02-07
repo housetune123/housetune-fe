@@ -22,14 +22,14 @@ header {
     width: 100%;
     left: 0;
     padding: 0;
-    transition: 0.5s;
+    transition: 0.3s;
     max-height: 0;
     overflow: hidden;
     z-index: 5;
   }
 
   .dropdown-main.active {
-    max-height: 600px;
+    max-height: 100%;
     z-index: 9999;
   }
 
@@ -43,7 +43,7 @@ header {
     background-color: #fff;
     width: 100%;
     height: 100%;
-    position: fixed;
+    position: absolute;
     top: 80px;
     left: -100%;
     transition: 0.5s;
@@ -83,6 +83,48 @@ header {
     background-color: #da5260;
     border-radius: 100%;
     padding: 3px;
+  }
+  // search
+  .data-result {
+    margin-top: 3rem;
+    z-index: 999;
+    width: 100%;
+    height: 504px;
+    overflow: hidden;
+    .data-item {
+      background: white;
+    }
+    .data-item:hover {
+      background: #f5f4f6;
+    }
+    .search-img {
+      height: 40px;
+    }
+  }
+  .user-dropdown {
+    position: absolute;
+    top: 68px;
+    max-height: 0;
+    overflow: hidden;
+    transition: 0.5s;
+    box-shadow: 0px 0px 5px #83838333;
+    transform: translateX(50px);
+  }
+  .user-dropdown.active {
+    transition: 2s;
+    max-height: 100%;
+    background: #fff;
+    box-shadow: 0px 0px 5px #83838333;
+  }
+  .user-dropdown a:hover {
+    background: #b7b0bf;
+    color: #fff !important;
+    border-radius: 3px 3px 0 0;
+  }
+  .user-dropdown span:hover {
+    background: #b7b0bf;
+    color: #fff !important;
+    border-radius: 0 0 3px 3px;
   }
 }
 

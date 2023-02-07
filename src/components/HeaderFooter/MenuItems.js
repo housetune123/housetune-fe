@@ -35,7 +35,7 @@ export const HeaderItems = [
   },
   {
     title: '二手專區',
-    path: '/',
+    path: '/usedproducts',
   },
   {
     title: 'F A Q',
@@ -99,19 +99,19 @@ export const FooterItems = [
     submenu: [
       {
         title: '客廳',
-        path: '/',
+        path: '/products/category/1',
       },
       {
         title: '廚房',
-        path: '/',
+        path: '/products/category/2',
       },
       {
         title: '臥室',
-        path: '/',
+        path: '/products/category/3',
       },
       {
         title: '浴室',
-        path: '/',
+        path: '/products/category/4',
       },
     ],
   },
@@ -120,7 +120,7 @@ export const FooterItems = [
     submenu: [
       {
         title: '二手買賣',
-        path: '/',
+        path: '/usedproducts',
       },
     ],
   },

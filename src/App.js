@@ -166,10 +166,6 @@ function App() {
                       path="/products/category/:categoryRoom"
                       element={<Products />}
                     ></Route>
-                    <Route
-                      path="/used/products/detail"
-                      element={<UsedProductDetail />}
-                    ></Route>
 
                     <Route exact path="inspiration">
                       <Route index={true} element={<Inspiration />} />
@@ -177,15 +173,10 @@ function App() {
                     </Route>
 
                     {/* used */}
-                    <Route path="usedstore" element={<PersonalStore />} />
                     <Route path="usedproducts" element={<UsedProducts />} />
                     <Route
-                      path="/used/products/detail"
-                      element={<UsedProductsDetail />}
-                    ></Route>
-                    <Route
-                      path="usedproduct/add"
-                      element={<AddUsedProducts />}
+                      path="usedproducts/:prodId"
+                      element={<UsedProductDetail />}
                     />
 
                     {/* user */}
@@ -219,23 +210,9 @@ function App() {
                       path="/cart/checkout/thankyou"
                       element={<Thankyou />}
                     />
-
-                    <Route path="checkout">
-                      <Route path="information" element={<Information />} />
-                      <Route path="shipping" element={<Shipping />} />
-                      <Route path="payment" element={<Payment />} />
-                    </Route>
-
+                    
                     {/* personal-store */}
                     <Route path=":userAcct" element={<PersonalStore />} />
-                    <Route
-                      path="seller/product/add"
-                      element={<AddUsedProducts />}
-                    />
-                    <Route
-                      path="seller/product/edit/:useP_id"
-                      element={<EditUsedProducts />}
-                    />
                     <Route path="seller" element={<SellerCenter />}>
                       <Route index element={<SellerMain />} />
                       <Route path="product" element={<SalesProduct />} />
@@ -247,6 +224,11 @@ function App() {
                         <Route path="cancelled" element={<Cancelled />} />
                       </Route>
                     </Route>
+                    <Route path="seller/product/add" element={<AddUsedProducts />} />
+                    <Route
+                      path="seller/product/edit/:useP_id"
+                      element={<EditUsedProducts />}
+                    />
 
                     {/* notfound */}
                     <Route path="*" element={<NotFound />} />

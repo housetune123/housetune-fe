@@ -51,4 +51,36 @@
     font-size: medium;
     padding-top: 8px !important;
   }
+
+  .pagination {
+    list-style: none;
+    display: flex;
+    justify-content: center;
+    margin-top: 3rem;
+    .page-num {
+      padding: 5px 10px;
+      margin: 10px;
+      cursor: pointer;
+      border-radius: 3px;
+      font-weight: 600;
+      text-decoration: none;
+      color: #b7b0bf
+    }
+    .page-num:hover {
+      background: #988ea4;
+      color: white;
+    }
+    .page-btn {
+      padding: 8px 15px;
+      cursor: pointer;
+      border-radius: 3px;
+      font-weight: 600;
+      text-decoration: none;
+      color: #b7b0bf
+    }
+  }
+  .pagination .active {
+    // background: #746883;
+    color: #746883;
+  }
 }
