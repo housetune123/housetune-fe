@@ -1,6 +1,4 @@
 import React from 'react';
-import { Link } from 'react-router-dom';
-// import Link from 'react-scroll/modules/components/Link';
 import {
   useTable,
   useGlobalFilter,
@@ -34,23 +32,18 @@ export default function Table({ columns, data }) {
 
   return (
     <>
-      <div className="d-flex justify-content-between mb-3">
-        <div className="col-3">
-          <input
-            className="form-control"
-            value={state.globalFilter || ''}
-            onChange={(e) => {
-              setGlobalFilter(e.target.value);
-            }}
-            placeholder={'搜尋'}
-          />
-        </div>
-        <Link to="add">
-          <button className="btn btn-info col-auto">新增商品</button>
-        </Link>
+      <div className="my-3">
+        <input
+          className="form-control"
+          value={state.globalFilter || ''}
+          onChange={(e) => {
+            setGlobalFilter(e.target.value);
+          }}
+          placeholder={'搜尋'}
+        />
       </div>
 
-      <table {...getTableProps()}>
+      <table {...getTableProps()} className="bg-white">
         <thead>
           {headerGroups.map((headerGroup) => (
             <tr {...headerGroup.getHeaderGroupProps()}>
@@ -59,9 +52,9 @@ export default function Table({ columns, data }) {
                   {column.render('Header')}
                   {column.isSorted ? (
                     column.isSortedDesc ? (
-                      <i class="fa-solid fa-caret-up ps-1 text-gray-300" />
+                      <i className="fa-solid fa-caret-up ps-1 text-primary-300" />
                     ) : (
-                      <i class="fa-solid fa-caret-down ps-1 text-gray-300" />
+                      <i className="fa-solid fa-caret-down ps-1 text-primary-300" />
                     )
                   ) : (
                     ''
@@ -90,13 +83,13 @@ export default function Table({ columns, data }) {
       <div className="d-flex justify-content-end pagination mt-3">
         <div className="d-flex align-items-center mx-3">
           <button className="btn" onClick={() => previousPage()}>
-            <i class="fa-solid fa-angle-left text-gray-300 fs-7" />
+            <i className="fa-solid fa-angle-left text-primary-100 fs-7" />
           </button>
-          <span className="fw-bold mx-2 text-primary-400">
+          <span className="fw-bold mx-2 text-primary-300">
             {state.pageIndex + 1}
           </span>
           <button className="btn" onClick={() => nextPage()}>
-            <i class="fa-solid fa-angle-right text-gray-300 fs-7" />
+            <i className="fa-solid fa-angle-right text-primary-100 fs-7" />
           </button>
         </div>
         <div className="d-flex align-items-center">

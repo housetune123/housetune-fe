@@ -99,16 +99,12 @@ function App() {
             <Header />
             <Routes>
               <Route path="/" element={<Main />} />
-              <Route path="/products" element={<Products />} />
-              <Route path="/products/:prodId" element={<ProductDetail />} />
+              <Route path="products" element={<Products />} />
+              <Route path="products/:prodId" element={<ProductDetail />} />
               <Route
-                path="/products/category/:categoryRoom"
+                path="products/category/:categoryRoom"
                 element={<Products />}
-              ></Route>
-              <Route
-                path="/used/products/detail"
-                element={<UsedProductDetail />}
-              ></Route>
+              />
 
               <Route exact path="inspiration">
                 <Route index={true} element={<Inspiration />} />
@@ -116,13 +112,11 @@ function App() {
               </Route>
 
               {/* used */}
-              <Route path="usedstore" element={<PersonalStore />} />
-              <Route path="used/products" element={<UsedProducts />} />
+              <Route path="usedproducts" element={<UsedProducts />} />
               <Route
-                path="/used/products/detail"
+                path="usedproducts/:prodId"
                 element={<UsedProductDetail />}
-              ></Route>
-              <Route path="usedproduct/add" element={<AddUsedProducts />} />
+              />
 
               {/* user */}
               <Route path="login" element={<Login />} />
@@ -134,26 +128,15 @@ function App() {
               {/* ckeckout */}
               <Route path="cart" element={<Cart />} />
               <Route
-                path="/cart/checkout/information"
+                path="cart/checkout/information"
                 element={<Information />}
               />
-              <Route path="/cart/checkout/shipping" element={<Shipping />} />
-              <Route path="/cart/checkout/payment" element={<Payment />} />
-              <Route path="/cart/checkout/thankyou" element={<Thankyou />} />
-
-              <Route path="checkout">
-                <Route path="information" element={<Information />} />
-                <Route path="shipping" element={<Shipping />} />
-                <Route path="payment" element={<Payment />} />
-              </Route>
+              <Route path="cart/checkout/shipping" element={<Shipping />} />
+              <Route path="cart/checkout/payment" element={<Payment />} />
+              <Route path="cart/checkout/thankyou" element={<Thankyou />} />
 
               {/* personal-store */}
               <Route path=":userAcct" element={<PersonalStore />} />
-              <Route path="seller/product/add" element={<AddUsedProducts />} />
-              <Route
-                path="seller/product/edit/:useP_id"
-                element={<EditUsedProducts />}
-              />
               <Route path="seller" element={<SellerCenter />}>
                 <Route index element={<SellerMain />} />
                 <Route path="product" element={<SalesProduct />} />
@@ -165,6 +148,11 @@ function App() {
                   <Route path="cancelled" element={<Cancelled />} />
                 </Route>
               </Route>
+              <Route path="seller/product/add" element={<AddUsedProducts />} />
+              <Route
+                path="seller/product/edit/:useP_id"
+                element={<EditUsedProducts />}
+              />
 
               {/* notfound */}
               <Route path="*" element={<NotFound />} />

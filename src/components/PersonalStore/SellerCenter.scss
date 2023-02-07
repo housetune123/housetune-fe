@@ -31,7 +31,7 @@
       height: 50px;
       tr {
         th {
-        border: 2px solid #ccc;
+          border: 2px solid #ccc;
         }
       }
     }
@@ -54,5 +54,48 @@
         background-color: #fff;
       }
     }
+  }
+}
+
+.sales-order {
+  box-shadow: 0px 0px 8px rgba(0, 0, 0, 0.2);
+  .sales-order-tabs {
+    position: sticky;
+    z-index: 1;
+    top: 4.6rem;
+
+    .nav-item {
+      border-right: 1px solid #746883;
+    }
+    .nav-item:last-child {
+      border-right: none;
+    }
+  }
+}
+
+.sales-order-content {
+  .input-group input {
+    width: 60%;
+  }
+  .accordion-menu {
+    background: #ced4da71;
+    max-height: 0;
+    overflow: hidden;
+  }
+
+  .accordion-menu.active {
+    transition: 0.3s;
+    max-height: 100%;
+  }
+
+  .accordion-info {
+    background: #ced4da71;
+    max-height: 0;
+    overflow: hidden;
+  }
+
+  .accordion-info.active {
+    transition: 0.3s;
+    max-height: 100%;
   }
 }

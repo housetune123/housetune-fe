@@ -1,5 +1,5 @@
 import { Link, Outlet, useLocation } from 'react-router-dom';
-import './SalesOrder.scss';
+import './SellerCenter.scss';
 
 function SalesOrder() {
   const location = useLocation();
@@ -13,32 +13,34 @@ function SalesOrder() {
 
   return (
     <>
-      <div className="container bg-primary m-auto sales-order-tabs">
-        <ul className={'d-flex justify-content-center nav row mt-2'}>
-          {tabButtons.map((v, i) => {
-            return (
-              <li
-                key={i}
-                className={
-                  v.path !== location.pathname
-                    ? 'col nav-item border-top border-bottom border-start border-primary-300 p-0 bg-gray'
-                    : 'col nav-item border-top border-start border-primary-300 p-0 bg-white'
-                }
-              >
-                <Link
-                  to={v.path}
-                  className="nav-link text-info text-center mx-0"
+      <div className="sales-order">
+        <div className="container bg-primary m-auto sales-order-tabs">
+          <ul className={'d-flex justify-content-center nav row mt-2'}>
+            {tabButtons.map((v, i) => {
+              return (
+                <li
+                  key={i}
+                  className={
+                    v.path !== location.pathname
+                      ? 'col border-bottom border-primary-300 nav-item'
+                      : 'col border-primary-300 bg-white nav-item'
+                  }
                 >
-                  {v.title}
-                </Link>
-              </li>
-            );
-          })}
-        </ul>
+                  <Link
+                    to={v.path}
+                    className="nav-link text-info text-center mx-0"
+                  >
+                    {v.title}
+                  </Link>
+                </li>
+              );
+            })}
+          </ul>
+        </div>
+        <main className="sales-order-content">
+          <Outlet />
+        </main>
       </div>
-      <main className="sales-order-content">
-        <Outlet />
-      </main>
     </>
   );
 }

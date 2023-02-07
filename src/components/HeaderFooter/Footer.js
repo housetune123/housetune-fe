@@ -58,12 +58,13 @@ function Footer() {
 
   // 以下頁面不要顯示 FOOTER
   if (
-    location.pathname === '/checkout/information' ||
-    location.pathname === '/checkout/shipping' ||
-    location.pathname === '/checkout/payment' ||
-    location.pathname === '/checkout/thankyou' ||
+    location.pathname === '/cart/checkout/information' ||
+    location.pathname === '/cart/checkout/shipping' ||
+    location.pathname === '/cart/checkout/payment' ||
+    location.pathname === '/cart/checkout/thankyou' ||
     location.pathname === '/seller' ||
     location.pathname === '/seller/product' ||
+    location.pathname === '/seller/rating' ||
     location.pathname === '/seller/order' ||
     location.pathname === '/seller/order/unpaid' ||
     location.pathname === '/seller/order/toship' ||

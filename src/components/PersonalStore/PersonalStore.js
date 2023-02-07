@@ -1,87 +1,177 @@
-import { useEffect, useState } from 'react';
-import { useParams } from 'react-router-dom';
-import './PersonalStore.scss';
+import { Link, useNavigate, useParams } from 'react-router-dom';
+import { useEffect, useState, useRef } from 'react';
+import { useAuth } from '../Context/Authcontext';
 import axios from 'axios';
-import BreadCrumb from '../Layout/BreadCrumb';
 import moment from 'moment';
+import ReactStars from 'react-stars';
+import ReactPaginate from 'react-paginate';
+import BreadCrumb from '../Layout/BreadCrumb';
+import './PersonalStore.scss';
 
 function PersonalStore() {
+  const { userinfo, isLoggedIn } = useAuth();
   const { userAcct } = useParams();
-  const [products, setProducts] = useState([]);
-  const [rating, setRating] = useState([]);
+  let navigate = useNavigate();
 
-  // useEffect(() => {
-  //   console.log('render');
-  //   console.log(user[0].rating);
-  // }, [user]);
   // 儲存 select 狀態
   const [shape, setShape] = useState('');
   const [amount, setAmount] = useState('');
   // 抓取點擊購物車的資料
   const [cart, setCart] = useState([]);
 
+  // 抓商品、評價、分類
+  const [products, setProducts] = useState([]);
+  const [rating, setRating] = useState([]);
+  const [category, setCategory] = useState([]);
   useEffect(() => {
-    async function getProducts() {
-      let res = await axios.get(`http://localhost:3001/api/seller/${userAcct}`);
-      setProducts(res.data.data);
-      setRating(res.data.rating);
-      // console.log(res.data.user);
+    try {
+      async function getProducts() {
+        let res = await axios.get(
+          `http://localhost:3001/api/seller/${userAcct}`
+        );
+        setProducts(res.data.data);
+        setRating(res.data.rating);
+        setCategory(res.data.category);
+      }
+      getProducts();
+    } catch (e) {
+      console.error(e);
     }
-    getProducts();
   }, [userAcct]);
 
-  const productStar = {
-    1: (
-      <span>
-        <i className="fa-solid fa-star" />
-        <i className="fa-regular fa-star" />
-        <i className="fa-regular fa-star" />
-        <i className="fa-regular fa-star" />
-        <i className="fa-regular fa-star" />
-      </span>
-    ),
-    2: (
-      <span>
-        <i className="fa-solid fa-star" />
-        <i className="fa-solid fa-star" />
-        <i className="fa-regular fa-star" />
-        <i className="fa-regular fa-star" />
-        <i className="fa-regular fa-star" />
-      </span>
-    ),
-    3: (
-      <span>
-        <i className="fa-solid fa-star" />
-        <i className="fa-solid fa-star" />
-        <i className="fa-solid fa-star" />
-        <i className="fa-regular fa-star" />
-        <i className="fa-regular fa-star" />
-      </span>
-    ),
-    4: (
-      <span>
-        <i className="fa-solid fa-star" />
-        <i className="fa-solid fa-star" />
-        <i className="fa-solid fa-star" />
-        <i className="fa-solid fa-star" />
-        <i className="fa-regular fa-star" />
-      </span>
-    ),
-    5: (
-      <span>
-        <i className="fa-solid fa-star" />
-        <i className="fa-solid fa-star" />
-        <i className="fa-solid fa-star" />
-        <i className="fa-solid fa-star" />
-        <i className="fa-solid fa-star" />
-      </span>
-    ),
+  // 收藏
+  const [userId, setUserId] = useState(0);
+  const [like, setLike] = useState([]);
+  // 取得收藏資料
+  useEffect(() => {
+    try {
+      async function getLiked() {
+        let res = await axios.get('http://localhost:3001/api/products/liked');
+        if (res.data[0].liked) {
+          setLike(JSON.parse(res.data[0].liked));
+        }
+      }
+      getLiked();
+    } catch (e) {
+      console.error(e);
+    }
+  }, []);
+  // 加入收藏
+  useEffect(() => {
+    if (isLoggedIn) {
+      setUserId(userinfo.id);
+      try {
+        async function liked() {
+          let likeJson = JSON.stringify(like);
+          await axios.put('http://localhost:3001/api/products', {
+            likeJson,
+            userId,
+          });
+        }
+        liked();
+      } catch (e) {
+        console.error(e);
+      }
+    }
+  }, [isLoggedIn, userinfo.id, userId, like]);
+
+  // 分類篩選
+  const [productsFilter, setProductsFilter] = useState([]);
+  const [checkedState, setCheckedState] = useState();
+  useEffect(() => {
+    setProductsFilter(products);
+    setCheckedState(new Array(category.length).fill(false));
+  }, [products, category]);
+  const categoryTranslate = {
+    Sofa: '沙發',
+    Chair: '椅子',
+    Table: '桌子',
+    Storage: '儲櫃',
+    Bed: '床',
+    Lighting: '燈',
+    Textile: '紡織',
+    Decor: '裝飾',
+    Kitchenware: '廚具',
+    Bathroomset: '浴室',
   };
-  // 平均星星
+  const handleOnChange = (position) => {
+    const updatedCheckedState = checkedState.map((item, index) =>
+      index === position ? !item : item
+    );
+    setCheckedState(updatedCheckedState);
+
+    const newFilter = updatedCheckedState.reduce(
+      (sum, currentState, index) =>
+        currentState
+          ? [
+              ...sum,
+              ...products.filter((v) => {
+                return v.category_product === index + 1;
+              }),
+            ]
+          : sum,
+      []
+    );
+    setProductsFilter(newFilter);
+
+    if (newFilter.length === 0) {
+      setProductsFilter(products);
+    }
+  };
+
+  // 評價篩選
+  const [ratingFilter, setRatingFilter] = useState([]);
+  useEffect(() => {
+    setRatingFilter(rating);
+  }, [rating]);
+  const ratingOnClick = (count) => {
+    const newFilter = rating.filter((v) => {
+      return v.stars === count;
+    });
+    setRatingFilter(newFilter);
+    if (count === 0) {
+      setRatingFilter(rating);
+    }
+    RatingScroll.current.scrollIntoView();
+  };
+
+  // 平均星星數
   const averageStar =
     Math.round(
       (rating.reduce((acc, pilot) => acc + pilot.stars, 0) / rating.length) * 10
     ) / 10;
+
+  // 商品分頁
+  const [ProductOffset, setProductOffset] = useState(0);
+  const ProductPerPage = 8;
+  const ProductEndOffset = ProductOffset + ProductPerPage;
+  const ProductCurrentItems = productsFilter.slice(
+    ProductOffset,
+    ProductEndOffset
+  );
+  const ProductPageCount = Math.ceil(productsFilter.length / ProductPerPage);
+  const ProductPageClick = (event) => {
+    const newOffset = (event.selected * ProductPerPage) % productsFilter.length;
+    setProductOffset(newOffset);
+    window.scrollTo(0, 0);
+  };
+  // 評價分頁
+  const RatingScroll = useRef();
+  const [RatingOffset, setRatingOffset] = useState(0);
+  const RatingPerPage = 4;
+  const RatingEndOffset = RatingOffset + RatingPerPage;
+  const RatingCurrentItems = ratingFilter.slice(RatingOffset, RatingEndOffset);
+  const RatingPageCount = Math.ceil(ratingFilter.length / RatingPerPage);
+  const RatingPageClick = (event) => {
+    const newOffset = (event.selected * RatingPerPage) % ratingFilter.length;
+    setRatingOffset(newOffset);
+    RatingScroll.current.scrollIntoView();
+  };
+
+  // 傳訊息
+  const sendMessage = () => {
+    // userAcct
+  };
 
   return (
     <>
@@ -91,338 +181,79 @@ function PersonalStore() {
           <div className="d-flex justify-content-between border-0">
             {/* 左側條件設定 */}
             <div className="col-2 d-none d-lg-block ">
-              <h3 className="mb-5 text-info-dark">{userAcct} 的賣場</h3>
-              <h5 className="text-info">條件設定</h5>
+              <h3 className="mb-5 text-info-dark">
+                <p>
+                  <span className="fw-bold">{userAcct}</span> 的賣場
+                </p>
+                <button
+                  className="btn btn-primary-300 my-2"
+                  onClick={sendMessage}
+                >
+                  <i class="fa-solid fa-comment-dots me-2" />
+                  聊聊
+                </button>
+              </h3>
+              <h5 className="text-info">分類</h5>
               <hr className="simple" />
-              <div className="accordion accordion-flush">
-                {/* 分類 */}
-                <div className="accordion-item">
-                  <h2
-                    className="accordion-header"
-                    id="panelsStayOpen-headingThree"
-                  >
-                    <button
-                      className="accordion-button collapsed bg-orange ps-0"
-                      type="button"
-                      data-bs-toggle="collapse"
-                      data-bs-target="#panelsStayOpen-collapseThree"
-                      aria-expanded="false"
-                      aria-controls="panelsStayOpen-collapseThree"
-                    >
-                      分類
-                    </button>
-                  </h2>
-                  <div
-                    id="panelsStayOpen-collapseThree"
-                    className="accordion-collapse collapse"
-                    aria-labelledby="panelsStayOpen-headingThree"
-                  >
-                    <div className="accordion-body bg-orange ps-0">
-                      <div className="form-check">
-                        <input
-                          className="form-check-input"
-                          type="checkbox"
-                          value=""
-                          id="flexCheckDefault"
-                        />
-                        <label
-                          className="form-check-label text-info fs-sml"
-                          htmlFor="flexCheckDefault"
-                        >
-                          沙發(10)
-                        </label>
-                      </div>
-                      <div className="form-check">
-                        <input
-                          className="form-check-input"
-                          type="checkbox"
-                          value=""
-                          id="flexCheckDefault"
-                        />
-                        <label
-                          className="form-check-label text-info fs-sml"
-                          htmlFor="flexCheckDefault"
-                        >
-                          椅子(3)
-                        </label>
-                      </div>
-                      <div className="form-check">
-                        <input
-                          className="form-check-input"
-                          type="checkbox"
-                          value=""
-                          id="flexCheckDefault"
-                        />
-                        <label
-                          className="form-check-label text-info fs-sml"
-                          htmlFor="flexCheckDefault"
-                        >
-                          桌子(15)
-                        </label>
-                      </div>
-                      <div className="form-check">
-                        <input
-                          className="form-check-input"
-                          type="checkbox"
-                          value=""
-                          id="flexCheckDefault"
-                        />
-                        <label
-                          className="form-check-label text-info fs-sml"
-                          htmlFor="flexCheckDefault"
-                        >
-                          櫥櫃(8)
-                        </label>
-                      </div>
-                      <div className="form-check">
-                        <input
-                          className="form-check-input"
-                          type="checkbox"
-                          value=""
-                          id="flexCheckDefault"
-                        />
-                        <label
-                          className="form-check-label text-info fs-sml"
-                          htmlFor="flexCheckDefault"
-                        >
-                          床 (11)
-                        </label>
-                      </div>
-                      <div className="form-check">
-                        <input
-                          className="form-check-input"
-                          type="checkbox"
-                          value=""
-                          id="flexCheckDefault"
-                        />
-                        <label
-                          className="form-check-label text-info fs-sml"
-                          htmlFor="flexCheckDefault"
-                        >
-                          燈(2)
-                        </label>
-                      </div>
-                      <div className="form-check">
-                        <input
-                          className="form-check-input"
-                          type="checkbox"
-                          value=""
-                          id="flexCheckDefault"
-                        />
-                        <label
-                          className="form-check-label text-info fs-sml"
-                          htmlFor="flexCheckDefault"
-                        >
-                          紡織(6)
-                        </label>
-                      </div>
-                      <div className="form-check">
-                        <input
-                          className="form-check-input"
-                          type="checkbox"
-                          value=""
-                          id="flexCheckDefault"
-                        />
-                        <label
-                          className="form-check-label text-info fs-sml"
-                          htmlFor="flexCheckDefault"
-                        >
-                          裝飾(12)
-                        </label>
-                      </div>
-                      <div className="form-check">
-                        <input
-                          className="form-check-input"
-                          type="checkbox"
-                          value=""
-                          id="flexCheckDefault"
-                        />
-                        <label
-                          className="form-check-label text-info fs-sml"
-                          htmlFor="flexCheckDefault"
-                        >
-                          廚具(20)
-                        </label>
-                      </div>
-                      <div className="form-check">
-                        <input
-                          className="form-check-input"
-                          type="checkbox"
-                          value=""
-                          id="flexCheckDefault"
-                        />
-                        <label
-                          className="form-check-label text-info fs-sml"
-                          htmlFor="flexCheckDefault"
-                        >
-                          浴室(18)
-                        </label>
-                      </div>
-                    </div>
+
+              {/* 分類 */}
+              {category.map((v, i) => {
+                return (
+                  <div key={v.id} className="form-check">
+                    <input
+                      className="form-check-input"
+                      type="checkbox"
+                      value={v.id}
+                      checked={checkedState[i]}
+                      onChange={() => handleOnChange(i)}
+                    />
+                    <label className="form-check-label text-info fs-sml">
+                      {categoryTranslate[v.name]}(
+                      {
+                        products.filter((i) => {
+                          return i.category_product === v.id;
+                        }).length
+                      }
+                      )
+                    </label>
                   </div>
-                </div>
-                {/* 價格 */}
-                {/* <div className="accordion-item">
-                  <h2
-                    className="accordion-header"
-                    id="panelsStayOpen-headingTwo"
-                  >
-                    <button
-                      className="accordion-button collapsed bg-orange ps-0"
-                      type="button"
-                      data-bs-toggle="collapse"
-                      data-bs-target="#panelsStayOpen-collapseTwo"
-                      aria-expanded="false"
-                      aria-controls="panelsStayOpen-collapseTwo"
-                    >
-                      價格
-                    </button>
-                  </h2>
-                  <div
-                    id="panelsStayOpen-collapseTwo"
-                    className="accordion-collapse collapse"
-                    aria-labelledby="panelsStayOpen-headingTwo"
-                  >
-                    <div className="accordion-body bg-orange ps-0">
-                      <div className="d-flex pb-2 align-items-center">
-                        <h6 className="px-1 text-primary-200 mb-0 fs-sml">$</h6>
-                        <input
-                          type="number"
-                          name="points"
-                          min="0"
-                          max="10"
-                          value=""
-                          placeholder="From"
-                          className="w-100 fs-sml"
-                        />
-                      </div>
-                      <div className="d-flex align-items-center">
-                        <h6 className="px-1 text-primary-200 mb-0 fs-sml">$</h6>
-                        <input
-                          type="number"
-                          name="points"
-                          min="0"
-                          max="10"
-                          value=""
-                          placeholder="To"
-                          className="w-100 fs-sml"
-                        />
-                      </div>
-                    </div>
-                  </div>
-                </div> */}
-                {/* 使用情況 */}
-                {/* <div className="accordion-item">
-                  <h2
-                    className="accordion-header"
-                    id="panelsStayOpen-headingOne"
-                  >
-                    <button
-                      className="accordion-button bg-orange ps-0"
-                      type="button"
-                      data-bs-toggle="collapse"
-                      data-bs-target="#panelsStayOpen-collapseOne"
-                      aria-expanded="true"
-                      aria-controls="panelsStayOpen-collapseOne"
-                    >
-                      使用情況
-                    </button>
-                  </h2>
-                  <div
-                    id="panelsStayOpen-collapseOne"
-                    className="accordion-collapse collapse show"
-                    aria-labelledby="panelsStayOpen-headingOne"
-                  >
-                    <div className="accordion-body bg-orange ps-0">
-                      <div className="form-check">
-                        <input
-                          className="form-check-input"
-                          type="checkbox"
-                          value=""
-                          id="flexCheckDefault"
-                        />
-                        <label
-                          className="form-check-label fs-sml text-info"
-                          htmlFor="flexCheckDefault"
-                        >
-                          1年內 (10)
-                        </label>
-                      </div>
-                      <div className="form-check">
-                        <input
-                          className="form-check-input"
-                          type="checkbox"
-                          value=""
-                          id="flexCheckChecked"
-                        />
-                        <label
-                          className="form-check-label fs-sml text-info"
-                          htmlFor="flexCheckChecked"
-                        >
-                          1 - 3年 (3)
-                        </label>
-                      </div>
-                      <div className="form-check">
-                        <input
-                          className="form-check-input"
-                          type="checkbox"
-                          value=""
-                          id="flexCheckChecked"
-                        />
-                        <label
-                          className="form-check-label fs-sml text-info"
-                          htmlFor="flexCheckChecked"
-                        >
-                          3 - 5年 (15)
-                        </label>
-                      </div>
-                      <div className="form-check">
-                        <input
-                          className="form-check-input"
-                          type="checkbox"
-                          value=""
-                          id="flexCheckChecked"
-                        />
-                        <label
-                          className="form-check-label fs-sml text-info"
-                          htmlFor="flexCheckChecked"
-                        >
-                          5 - 10年 (8)
-                        </label>
-                      </div>
-                      <div className="form-check">
-                        <input
-                          className="form-check-input"
-                          type="checkbox"
-                          value=""
-                          id="flexCheckChecked"
-                        />
-                        <label
-                          className="form-check-label fs-sml text-info"
-                          htmlFor="flexCheckChecked"
-                        >
-                          10年以上(11)
-                        </label>
-                      </div>
-                    </div>
-                  </div>
-                </div> */}
-              </div>
+                );
+              })}
             </div>
 
             {/* 右側排序、商品列表 */}
             <div className="col-12 col-lg-9">
-              <h3 className="text-info-dark d-block d-md-none my-2">
-                {userAcct} 的賣場
+              <h3 className="text-info-dark d-block d-md-none my-3">
+                <span className="fw-bold">{userAcct}</span> 的賣場
+                <button
+                  className="btn btn-primary-300 mx-4"
+                  onClick={sendMessage}
+                >
+                  <i class="fa-solid fa-comment-dots me-2" />
+                  聊聊
+                </button>
               </h3>
-              <div className="bg-white p-4">
-                <p className="text-info-dark">{products.length}項商品</p>
+              <div className="bg-white p-4 shadow-sm">
+                <p className="text-info-dark pt-2">
+                  商品:
+                  <span className="m-2 text-primary-200 fw-bold">
+                    {products.length}
+                  </span>
+                </p>
                 <p className="text-info-dark">
-                  評價
-                  {isNaN(averageStar) ? 0 : averageStar} ({rating.length}個評價)
+                  評價:
+                  <span
+                    className="m-2 text-primary-200 fw-bold"
+                    role="button"
+                    onClick={() => {
+                      RatingScroll.current.scrollIntoView();
+                    }}
+                  >
+                    {isNaN(averageStar) ? 0 : averageStar} ({rating.length}
+                    個評價)
+                  </span>
                 </p>
               </div>
-              {/* 條件設定、排序依據 */}
               <div className="d-flex mt-3">
                 {/* 條件設定 */}
                 <div className="d-flex align-items-center d-md-none">
@@ -433,126 +264,189 @@ function PersonalStore() {
                       data-bs-target="#exampleModalFilter"
                     >
                       <span className="d-md-none d-inline">
-                        <i className="fa-solid fa-filter"></i>
+                        <i className="fa-solid fa-filter" />
                       </span>
-                      條件設定
+                      <span className="m-2">分類</span>
                     </button>
                   </div>
                 </div>
-                {/* 排序依據 */}
-                {/* <div className="d-flex align-items-center">
-                  <div className="pe-3 d-block d-md-none">
-                    <button
-                      className="text-info-dark ps-0 col border-0 bg-orange"
-                      data-bs-toggle="modal"
-                      data-bs-target="#exampleModalSort"
-                    >
-                      <span>
-                        <i className="fa-solid fa-sort"></i>{' '}
-                      </span>
-                      排序依據
-                    </button>
-                  </div>
-                  <div className="pe-3 d-none d-md-block">
-                    <h6 className="text-info-dark ps-0 col">排序依據</h6>
-                  </div>
-                  <div className="d-none d-md-block">
-                    <select
-                      className="form-select-xl mb-2 text-gray-300 fs-sml"
-                      aria-label="Default select example"
-                    >
-                      <option disabled>精選</option>
-                      <option value="1">暢銷度</option>
-                      <option value="2">依字母順序Ａ到Ｚ</option>
-                      <option value="3">依字母順序Ｚ到Ａ</option>
-                      <option value="4">價格（從低到高）</option>
-                      <option value="5">價格（從高到低）</option>
-                      <option value="6">日期（從舊到新）</option>
-                      <option value="7">日期（從新到舊）</option>
-                    </select>
-                  </div>
-                </div> */}
               </div>
               {/* 商品列表 */}
               <div className="row">
-                {products.map((v, i) => {
+                {ProductCurrentItems.map((v, i) => {
                   const img = v.img.split(',');
                   return (
-                    <div
-                      className="col-6 col-md-3 d-flex justify-content-center p-md-3 p-2"
-                      key={i}
-                    >
-                      <div className="card border border-0 card-shadow position-relative">
-                        <img
-                          src={`${process.env.REACT_APP_IMAGE_URL}/images/used/${img[0]}`}
-                          className="card-img-top bg-gray-200"
-                          alt="..."
-                        />
-                        <div className="card-body text-left">
-                          <div className="d-flex justify-content-between">
-                            <h5 className="card-title text-info">
-                              NT $ {v.price}
-                            </h5>
-                            <p>
-                              <i className="fa-regular fa-heart text-info"></i>
-                            </p>
-                          </div>
-                          <h6 className="card-title text-gray-300">{v.name}</h6>
-
-                          {v.amount === 0 ? (
-                            <p className="card-text text-danger">已售完</p>
-                          ) : (
-                            <p className="card-text text-primary-200">
-                              僅剩 {v.amount} 件 !
-                            </p>
-                          )}
-                          <button className="btn btn-primary-300 fs-sml w-100 d-block d-md-none">
-                            加入購物車
-                          </button>
-                        </div>
-                        <div className="card-body pt-0 card-btn card-shadow bg-white d-none d-md-block">
-                          <button
-                            className="btn btn-primary-300 fs-sml w-100"
-                            data-bs-toggle="modal"
-                            data-bs-target="#exampleModal"
+                    <>
+                      <div
+                        className="col-6 col-md-3 d-flex justify-content-center p-md-3 p-2"
+                        key={i}
+                      >
+                        <div className="card border border-0 card-shadow position-relative">
+                          <img
+                            role="button"
+                            src={`${process.env.REACT_APP_IMAGE_URL}/images/used/${img[0]}`}
+                            className="card-img-top bg-gray-200"
+                            alt={v.name}
                             onClick={() => {
-                              setCart(v);
+                              navigate(`/usedproducts/${v.useP_id}`);
                             }}
-                          >
-                            加入購物車
-                          </button>
+                          />
+                          <div className="card-body text-left">
+                            <div className="d-flex justify-content-between">
+                              <h5 className="card-title text-info">
+                                NT $ {v.price}
+                              </h5>
+                              <p>
+                                {/* 沒有登入的愛心 */}
+                                {!isLoggedIn && (
+                                  <Link to={'/login'}>
+                                    <i
+                                      style={{ cursor: 'pointer' }}
+                                      className="fa-regular fa-heart text-info"
+                                    ></i>
+                                  </Link>
+                                )}
+                                {/* 登入後的愛心 */}
+                                {isLoggedIn && like.includes(v.useP_id) && (
+                                  <i
+                                    className="fa-solid fa-heart text-danger"
+                                    onClick={() => {
+                                      const newLike = like.filter((v2) => {
+                                        return v2 !== v.useP_id;
+                                      });
+                                      setLike(newLike);
+                                    }}
+                                    style={{ cursor: 'pointer' }}
+                                  ></i>
+                                )}
+                                {isLoggedIn && !like.includes(v.useP_id) && (
+                                  <i
+                                    onClick={() => {
+                                      const newLike = [...like, v.useP_id];
+                                      setLike(newLike);
+                                    }}
+                                    style={{ cursor: 'pointer' }}
+                                    className="fa-regular fa-heart text-info"
+                                  ></i>
+                                )}
+                              </p>
+                            </div>
+                            <h6 className="card-title text-gray-300">
+                              {v.name}
+                            </h6>
+
+                            {v.amount === 0 ? (
+                              <p className="card-text text-danger">已售完</p>
+                            ) : (
+                              <p className="card-text text-primary-200">
+                                僅剩 {v.amount} 件 !
+                              </p>
+                            )}
+                            <button className="btn btn-primary-300 fs-sml w-100 d-block d-md-none">
+                              加入購物車
+                            </button>
+                          </div>
+                          <div className="card-body pt-0 card-btn card-shadow bg-white d-none d-md-block">
+                            <button
+                              className="btn btn-primary-300 fs-sml w-100"
+                              data-bs-toggle="modal"
+                              data-bs-target="#exampleModal"
+                              onClick={() => {
+                                setCart(v);
+                              }}
+                            >
+                              加入購物車
+                            </button>
+                          </div>
                         </div>
                       </div>
-                    </div>
+                    </>
                   );
                 })}
+                <ReactPaginate
+                  breakLabel="..."
+                  nextLabel=">"
+                  onPageChange={ProductPageClick}
+                  pageRangeDisplayed={5}
+                  pageCount={ProductPageCount}
+                  previousLabel="<"
+                  renderOnZeroPageCount={null}
+                  containerClassName="pagination"
+                  pageLinkClassName="page-num"
+                  previousLinkClassName="page-btn"
+                  nextLinkClassName="page-btn"
+                  activeLinkClassName="active"
+                />
               </div>
               {/* 賣場評價 */}
-              <section className="container pb-md-5 pb-3 px-0">
+              <section
+                className="container pb-md-5 pb-3 px-0 my-5"
+                ref={RatingScroll}
+              >
                 <div className="bg-gray p-md-5 p-3">
-                  <p className="text-info-dark">賣場評價</p>
-                  <div className="bg-white p-3">
-                    <div>
+                  <h5 className="text-info-dark mb-4">賣場評價</h5>
+                  <div className="bg-white p-3 d-lg-flex align-items-center justify-content-between">
+                    <div className="m-3">
                       <p className="h3 text-info-dark">
                         <span className="fw-bold">
                           {isNaN(averageStar) ? 0 : averageStar}
                         </span>
                         /<span className="fs-5">5</span>
                       </p>
+
+                      {/* 星星 */}
+                      <ReactStars
+                        count={5}
+                        size={24}
+                        color1={'#ced4da'}
+                        color2={'#da5260'}
+                        char={<i className="fa-solid fa-star" />}
+                        value={averageStar}
+                        edit={false}
+                      />
                     </div>
-                    {/* 星星 */}
-                    <div>
-                      <span className="text-danger mb-0 bg-danger">
-                        <i className="fa-regular fa-star"></i>
-                        <i className="fa-regular fa-star"></i>
-                        <i className="fa-regular fa-star"></i>
-                        <i className="fa-regular fa-star"></i>
-                        <i className="fa-regular fa-star"></i>
-                      </span>
+                    <div className="m-3">
+                      <button
+                        className="btn btn-outline-primary-300 m-2"
+                        onClick={() => ratingOnClick(0)}
+                      >
+                        全部
+                      </button>
+                      <button
+                        className="btn btn-outline-primary-300 m-2"
+                        onClick={() => ratingOnClick(5)}
+                      >
+                        5 星 ({rating.filter((v) => v.stars === 5).length})
+                      </button>
+                      <button
+                        className="btn btn-outline-primary-300 m-2"
+                        onClick={() => ratingOnClick(4)}
+                      >
+                        4 星 ({rating.filter((v) => v.stars === 4).length})
+                      </button>
+                      <button
+                        className="btn btn-outline-primary-300 m-2"
+                        onClick={() => ratingOnClick(3)}
+                      >
+                        3 星 ({rating.filter((v) => v.stars === 3).length})
+                      </button>
+                      <button
+                        className="btn btn-outline-primary-300 m-2"
+                        onClick={() => ratingOnClick(2)}
+                      >
+                        2 星 ({rating.filter((v) => v.stars === 2).length})
+                      </button>
+
+                      <button
+                        className="btn btn-outline-primary-300 m-2"
+                        onClick={() => ratingOnClick(1)}
+                      >
+                        1 星 ({rating.filter((v) => v.stars === 1).length})
+                      </button>
                     </div>
                   </div>
 
-                  {rating.map((v, i) => {
+                  {RatingCurrentItems.map((v, i) => {
                     const img = v.img.split(',');
                     return (
                       <div
@@ -561,27 +455,53 @@ function PersonalStore() {
                       >
                         <div className="d-md-flex justify-content-between">
                           <p className="mb-2">Ariel Shao</p>
-                          <p className="text-gray-200 mb-2">
-                            {moment(`${v.posted_at}`, 'YYYYMMDD').fromNow()}
-                            {productStar[v.stars]}
-                          </p>
+                          <div className="text-gray-200 mb-2 d-flex align-items-start">
+                            <p className="me-3">
+                              {moment(`${v.posted_at}`, 'YYYYMMDD').fromNow()}
+                            </p>
+                            <ReactStars
+                              count={5}
+                              size={20}
+                              color1={'#ced4da'}
+                              color2={'#da5260'}
+                              char={<i className="fa-solid fa-star" />}
+                              value={v.stars}
+                              edit={false}
+                            />
+                          </div>
                         </div>
-                        <div className="d-md-flex align-items-center">
+                        <div className="d-md-flex align-items-center justify-content-between">
                           <div className="col-3 col-md-2">
                             <img
                               src={`${process.env.REACT_APP_IMAGE_URL}/images/products/used/${img[0]}`}
                               alt=""
-                              className="object-cover"
+                              className="object-cover pb-3 pe-4"
                             />
                           </div>
-                          <p className="col-md-6 text-gray-300">{v.name}</p>
-                          <p className="text-gray-400 mb-2 col-md-4 text-md-end">
+                          <p className="col-md-6 text-gray-400 fw-bold">
+                            {v.name}
+                          </p>
+                          <p className="col-md-3 text-gray-400 fs-7">
                             {v.comment}
                           </p>
                         </div>
                       </div>
                     );
                   })}
+                  <ReactPaginate
+                    breakLabel="..."
+                    nextLabel=">"
+                    onPageChange={RatingPageClick}
+                    pageRangeDisplayed={5}
+                    pageCount={RatingPageCount}
+                    previousLabel="<"
+                    renderOnZeroPageCount={null}
+                    containerClassName="pagination"
+                    pageLinkClassName="page-num"
+                    previousLinkClassName="page-btn"
+                    nextLinkClassName="page-btn"
+                    activeLinkClassName="active"
+                  />
                 </div>
               </section>
             </div>
@@ -597,14 +517,9 @@ function PersonalStore() {
           aria-hidden="true"
         >
           <div className="modal-dialog modal-dialog-centered">
-            <div className="modal-content rounded-0">
+            <div className="modal-content rounded-0 border-none">
               <div className="modal-header">
-                <h1
-                  className="modal-title fs-5 text-info"
-                  id="exampleModalLabel"
-                >
-                  條件設定
-                </h1>
+                <h1 className="modal-title fs-5 text-info px-2">分類</h1>
                 <button
                   type="button"
                   className="btn-close fs-sml"
@@ -612,336 +527,30 @@ function PersonalStore() {
                   aria-label="Close"
                 ></button>
               </div>
-              <div className="modal-body">
-                <div className="accordion accordion-flush">
-                  {/* 供貨情況 */}
-                  <div className="accordion-item border-bottom-1">
-                    <h2
-                      className="accordion-header border-0"
-                      id="panelsStayOpen-headingOne"
-                    >
-                      <button
-                        className="accordion-button bg-white ps-0 text-info-dark border-0"
-                        type="button"
-                        data-bs-toggle="collapse"
-                        data-bs-target="#panelsStayOpen-collapseOne"
-                        aria-expanded="true"
-                        aria-controls="panelsStayOpen-collapseOne"
-                      >
-                        供貨情況
-                      </button>
-                    </h2>
-                    <div
-                      id="panelsStayOpen-collapseOne"
-                      className="accordion-collapse collapse show"
-                      aria-labelledby="panelsStayOpen-headingOne"
-                    >
-                      <div className="accordion-body bg-white ps-0 bord">
-                        <div className="form-check">
-                          <input
-                            className="form-check-input"
-                            type="checkbox"
-                            value=""
-                            id="flexCheckDefault"
-                          />
-                          <label
-                            className="form-check-label fs-sml text-info"
-                            htmlFor="flexCheckDefault"
-                          >
-                            有庫存(180)
-                          </label>
-                        </div>
-                        <div className="form-check">
-                          <input
-                            className="form-check-input"
-                            type="checkbox"
-                            value=""
-                            id="flexCheckChecked"
-                          />
-                          <label
-                            className="form-check-label fs-sml text-info"
-                            htmlFor="flexCheckChecked"
-                          >
-                            無庫存(3)
-                          </label>
-                        </div>
-                      </div>
+              <div className="modal-body p-4">
+                {/* 分類 */}
+                {category.map((v, i) => {
+                  return (
+                    <div key={v.id} className="form-check">
+                      <input
+                        className="form-check-input"
+                        type="checkbox"
+                        value={v.id}
+                        checked={checkedState[i]}
+                        onChange={() => handleOnChange(i)}
+                      />
+                      <label className="form-check-label text-info fs-sml">
+                        {categoryTranslate[v.name]}(
+                        {
+                          products.filter((i) => {
+                            return i.category_product === v.id;
+                          }).length
+                        }
+                        )
+                      </label>
                     </div>
-                  </div>
-                  {/* 價格 */}
-                  <div className="accordion-item border-0">
-                    <h2
-                      className="accordion-header border-0"
-                      id="panelsStayOpen-headingTwo"
-                    >
-                      <button
-                        className="accordion-button collapsed bg-white ps-0 text-info-dark border-0"
-                        type="button"
-                        data-bs-toggle="collapse"
-                        data-bs-target="#panelsStayOpen-collapseTwo"
-                        aria-expanded="false"
-                        aria-controls="panelsStayOpen-collapseTwo"
-                      >
-                        價格
-                      </button>
-                    </h2>
-                    <div
-                      id="panelsStayOpen-collapseTwo"
-                      className="accordion-collapse collapse"
-                      aria-labelledby="panelsStayOpen-headingTwo"
-                    >
-                      <div className="accordion-body bg-white ps-0">
-                        <div className="d-flex pb-2 align-items-center">
-                          <h6 className="px-1 text-primary-200 mb-0 fs-sml">
-                            $
-                          </h6>
-                          <input
-                            type="number"
-                            name="points"
-                            min="0"
-                            max="10"
-                            value=""
-                            placeholder="From"
-                            className="w-100 fs-sml"
-                          />
-                        </div>
-                        <div className="d-flex align-items-center">
-                          <h6 className="px-1 text-primary-200 mb-0 fs-sml">
-                            $
-                          </h6>
-                          <input
-                            type="number"
-                            name="points"
-                            min="0"
-                            max="10"
-                            value=""
-                            placeholder="To"
-                            className="w-100 fs-sml"
-                          />
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                  {/* 分類 */}
-                  <div className="accordion-item border-0">
-                    <h2
-                      className="accordion-header border-0"
-                      id="panelsStayOpen-headingThree"
-                    >
-                      <button
-                        className="accordion-button collapsed bg-white ps-0 text-info-dark border-0"
-                        type="button"
-                        data-bs-toggle="collapse"
-                        data-bs-target="#panelsStayOpen-collapseThree"
-                        aria-expanded="false"
-                        aria-controls="panelsStayOpen-collapseThree"
-                      >
-                        分類
-                      </button>
-                    </h2>
-                    <div
-                      id="panelsStayOpen-collapseThree"
-                      className="accordion-collapse collapse"
-                      aria-labelledby="panelsStayOpen-headingThree"
-                    >
-                      <div className="accordion-body bg-white ps-0">
-                        <div className="form-check">
-                          <input
-                            className="form-check-input"
-                            type="checkbox"
-                            value=""
-                            id="flexCheckDefault"
-                          />
-                          <label
-                            className="form-check-label text-info fs-sml"
-                            htmlFor="flexCheckDefault"
-                          >
-                            沙發(10)
-                          </label>
-                        </div>
-                        <div className="form-check">
-                          <input
-                            className="form-check-input"
-                            type="checkbox"
-                            value=""
-                            id="flexCheckDefault"
-                          />
-                          <label
-                            className="form-check-label text-info fs-sml"
-                            htmlFor="flexCheckDefault"
-                          >
-                            椅子(3)
-                          </label>
-                        </div>
-                        <div className="form-check">
-                          <input
-                            className="form-check-input"
-                            type="checkbox"
-                            value=""
-                            id="flexCheckDefault"
-                          />
-                          <label
-                            className="form-check-label text-info fs-sml"
-                            htmlFor="flexCheckDefault"
-                          >
-                            桌子(15)
-                          </label>
-                        </div>
-                        <div className="form-check">
-                          <input
-                            className="form-check-input"
-                            type="checkbox"
-                            value=""
-                            id="flexCheckDefault"
-                          />
-                          <label
-                            className="form-check-label text-info fs-sml"
-                            htmlFor="flexCheckDefault"
-                          >
-                            櫥櫃(8)
-                          </label>
-                        </div>
-                        <div className="form-check">
-                          <input
-                            className="form-check-input"
-                            type="checkbox"
-                            value=""
-                            id="flexCheckDefault"
-                          />
-                          <label
-                            className="form-check-label text-info fs-sml"
-                            htmlFor="flexCheckDefault"
-                          >
-                            床 (11)
-                          </label>
-                        </div>
-                        <div className="form-check">
-                          <input
-                            className="form-check-input"
-                            type="checkbox"
-                            value=""
-                            id="flexCheckDefault"
-                          />
-                          <label
-                            className="form-check-label text-info fs-sml"
-                            htmlFor="flexCheckDefault"
-                          >
-                            燈(2)
-                          </label>
-                        </div>
-                        <div className="form-check">
-                          <input
-                            className="form-check-input"
-                            type="checkbox"
-                            value=""
-                            id="flexCheckDefault"
-                          />
-                          <label
-                            className="form-check-label text-info fs-sml"
-                            htmlFor="flexCheckDefault"
-                          >
-                            紡織(6)
-                          </label>
-                        </div>
-                        <div className="form-check">
-                          <input
-                            className="form-check-input"
-                            type="checkbox"
-                            value=""
-                            id="flexCheckDefault"
-                          />
-                          <label
-                            className="form-check-label text-info fs-sml"
-                            htmlFor="flexCheckDefault"
-                          >
-                            裝飾(12)
-                          </label>
-                        </div>
-                        <div className="form-check">
-                          <input
-                            className="form-check-input"
-                            type="checkbox"
-                            value=""
-                            id="flexCheckDefault"
-                          />
-                          <label
-                            className="form-check-label text-info fs-sml"
-                            htmlFor="flexCheckDefault"
-                          >
-                            廚具(20)
-                          </label>
-                        </div>
-                        <div className="form-check">
-                          <input
-                            className="form-check-input"
-                            type="checkbox"
-                            value=""
-                            id="flexCheckDefault"
-                          />
-                          <label
-                            className="form-check-label text-info fs-sml"
-                            htmlFor="flexCheckDefault"
-                          >
-                            浴室(18)
-                          </label>
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-        {/* modal Sort 彈跳視窗 */}
-        <div
-          className="modal fade"
-          id="exampleModalSort"
-          tabIndex="-1"
-          aria-labelledby="exampleModalSort"
-          aria-hidden="true"
-        >
-          <div className="modal-dialog modal-dialog-centered">
-            <div className="modal-content rounded-0">
-              <div className="modal-header">
-                <h1
-                  className="modal-title fs-5 text-info"
-                  id="exampleModalLabel"
-                >
-                  排序依據
-                </h1>
-                <button
-                  type="button"
-                  className="btn-close fs-sml"
-                  data-bs-dismiss="modal"
-                  aria-label="Close"
-                ></button>
-              </div>
-              <div className="modal-body">
-                <button className="btn bg-white border-1 border-primary-300 text-primary-300 w-100 fs-sml my-1">
-                  精選
-                </button>
-                <button className="btn bg-white border-1 border-primary-300 text-primary-300 w-100 fs-sml my-1">
-                  暢銷度
-                </button>
-                <button className="btn bg-white border-1 border-primary-300 text-primary-300 w-100 fs-sml my-1">
-                  依字母順序 A 到 Z
-                </button>
-                <button className="btn bg-white border-1 border-primary-300 text-primary-300 w-100 fs-sml my-1">
-                  依字母順序 Z 到 A
-                </button>
-                <button className="btn bg-white border-1 border-primary-300 text-primary-300 w-100 fs-sml my-1">
-                  價格 (從低到高)
-                </button>
-                <button className="btn bg-white border-1 border-primary-300 text-primary-300 w-100 fs-sml my-1">
-                  價格 (從高到低)
-                </button>
-                <button className="btn bg-white border-1 border-primary-300 text-primary-300 w-100 fs-sml my-1">
-                  日期 (從舊到新)
-                </button>
-                <button className="btn bg-white border-1 border-primary-300 text-primary-300 w-100 fs-sml my-1">
-                  日期 (從新到舊)
-                </button>
+                  );
+                })}
               </div>
             </div>
           </div>
@@ -1059,7 +668,6 @@ function PersonalStore() {
                   <p className="fs-6 text-gray-400 fs-sml mb-0">
                     庫存狀態 :
                     <span className="text-danger">
-                      {' '}
                       {cart.amount === 0
                         ? '已售完'
                         : `僅剩 ${cart.amount} 件 !`}
