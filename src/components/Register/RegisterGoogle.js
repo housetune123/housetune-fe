@@ -143,7 +143,7 @@ function RegisterGoogle() {
     {
       title: '銀行代碼（二手商品收款用，非必填）',
       type: 'text',
-      preset: '',
+      preset: '請輸入銀行代碼（非必填）',
       name: 'bankcode',
       max: '',
       min: '',
@@ -153,7 +153,7 @@ function RegisterGoogle() {
     {
       title: '銀行帳號（二手商品收款用，非必填）',
       type: 'text',
-      preset: '',
+      preset: '請輸入銀行帳號（非必填）',
       name: 'bankaccount',
       max: '',
       min: '',
