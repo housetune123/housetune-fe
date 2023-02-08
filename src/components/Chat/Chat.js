@@ -235,13 +235,13 @@ function Chat({ socket }) {
     <>
       <div
         className={
-          'position-relative chat justify-content-between d-flex flex-column position-fixed bg-white border ' +
+          'position-relative chat justify-content-between d-flex flex-column position-fixed bg-white shadow ' +
           (chat && isLoggedIn ? '' : 'd-none')
         }
       >
         <div
           className={
-            'notification position-absolute text-white bg-primary-200 border ' +
+            'notification position-absolute text-white bg-primary-200 shadow ' +
             (newMessage.length === 0 ? 'd-none' : '')
           }
         >
@@ -249,7 +249,7 @@ function Chat({ socket }) {
           {newMessage.map((v, i) => {
             return (
               <p
-                className="m-0 text-center bg-white text-black border noti"
+                className="m-0 text-center bg-white text-black shadow-lg noti"
                 key={i}
                 onClick={() => {
                   setReciever(v.sender);
@@ -267,7 +267,7 @@ function Chat({ socket }) {
         </div>
         <div
           className={
-            'chatlist position-absolute text-white bg-primary-200 border ' +
+            'chatlist position-absolute text-white bg-primary-200 shadow ' +
             (begin === false || chatListAccount.length === 0 ? 'd-none' : '')
           }
         >
@@ -275,7 +275,7 @@ function Chat({ socket }) {
           {chatListAccount.map((v, i) => {
             return (
               <p
-                className="m-0 text-center bg-white text-black border list"
+                className="m-0 text-center bg-white text-black shadow-lg list"
                 key={i}
                 onClick={() => {
                   setReciever(v.name);
@@ -357,7 +357,7 @@ function Chat({ socket }) {
           <input
             disabled={begin ? '' : 'disabled'}
             type="text"
-            className="w-90 border-0 bg-gray text me-2"
+            className="w-90 border-0 bg-gray text me-2 ms-2"
             placeholder="請輸入訊息"
             value={message}
             onChange={(e) => {
