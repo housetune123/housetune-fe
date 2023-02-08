@@ -37,7 +37,7 @@ function Chat({ socket }) {
   async function handleBegin() {
     setBegin(true);
     // console.log(userinfo.name);
-      socket.emit('join_room', userinfo.account);
+    socket.emit('join_room', userinfo.account);
     try {
       let response = await axios.post('http://localhost:3001/api/chat/get', {
         userId: userinfo.id,
@@ -268,7 +268,7 @@ function Chat({ socket }) {
         <div
           className={
             'chatlist position-absolute text-white bg-primary-200 border ' +
-            (chatListAccount.length === 0 ? 'd-none' : '')
+            (begin === false || chatListAccount.length === 0 ? 'd-none' : '')
           }
         >
           <p className="m-0 text-center">對話列表</p>
