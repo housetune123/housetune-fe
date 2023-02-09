@@ -143,7 +143,7 @@ function UsedProductsDetail() {
               {usedProduct.map((v, i) => {
                 return (
                   <div className="col-md-6" key={v.useP_id}>
-                    <h3 className="text-info-dark">{v.name}</h3>
+                    <h3 className="text-info-dark">{v.product_name}</h3>
                     <h6 className="text-info">NT$ {v.price}</h6>
                     <div className="pt-2"></div>
                     {/* 數量、加入購物車 */}

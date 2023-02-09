@@ -1,29 +1,90 @@
 import axios from 'axios';
 import { useEffect, useState } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate, useParams } from 'react-router-dom';
 import UsedProductsList from './UsedProductsList';
 // import ReactPaginate from 'react-paginate';
 import _ from 'lodash';
 import './UsedProductsDetail.scss';
 import ProductsBrowse from '../Products/ProductsBrowse';
+import { useAuth } from '../Context/Authcontext';
+import { option } from 'lightbox2';
 
 function UsedProducts() {
   const [usedProducts, setUsedProducts] = useState([]);
+  const { userinfo, isLoggedIn } = useAuth();
 
+  //排序
+  const [sort, setSort] = useState('');
+  const [liked, setLiked] = useState([]);
+  //取得收藏
+  useEffect(() => {
+    if (isLoggedIn) {
+      async function getLiked() {
+        try {
+          let res = await axios.get(`http://localhost:3001/usedproducts/liked`);
+          if (res) {
+            setLiked(JSON.parse(res.data[0].liked));
+          }
+        } catch (e) {
+          console.error(e);
+        }
+      }
+      getLiked();
+    }
+  }, []);
+
+  // 加入收藏
+  useEffect(() => {
+    if (isLoggedIn) {
+      try {
+        async function addLiked() {
+          let likeJson = JSON.stringify(liked);
+          const userId = userinfo.id;
+          let res = await axios.put(
+            'http://localhost:3001/usedproducts/addliked',
+            {
+              likeJson,
+              userId,
+            }
+          );
+          // console.log(res.data);
+        }
+        addLiked();
+      } catch (e) {
+        console.error(e);
+      }
+    }
+  }, [liked]);
+
+  //列出所有二手商品
   useEffect(() => {
     async function getUsedProducts() {
       try {
         let res = await axios.get(`http://localhost:3001/usedproducts/`);
         setUsedProducts(res.data);
-        setLiked(JSON.parse(res.data.liked));
-        // console.log(res);
       } catch (e) {
         console.error(e);
       }
     }
     getUsedProducts();
   }, []);
-  // 呈現products
+
+  //列出排序二手產品
+  // useEffect(() => {
+  //   async function getUsedProducts() {
+  //     try {
+  //       let res = await axios.get(
+  //         `http://localhost:3001/usedproducts/?sort=${sort}`
+  //       );
+  //       setUsedProducts(res.data);
+  //     } catch (e) {
+  //       console.error(e);
+  //     }
+  //   }
+  //   getUsedProducts();
+  // }, [sort]);
+
+  // // 呈現products
   const [usedProductsDisplay, setUsedProductsDisplay] = useState([]);
 
   // 分類
@@ -61,13 +122,10 @@ function UsedProducts() {
     '4 - 5分',
     '3 - 4分',
     '2 - 3分',
-    '2 - 1分',
-    '1 - 0分',
+    '1 - 2分',
+    '0 - 1分',
   ];
 
-  //TODO:加入喜愛清單
-  const [liked, setLiked] = useState([]);
-  console.log(liked);
   //分頁
   const [pageNow, setPageNow] = useState(1); // 預設為第1頁
   const [perPage, setPerPage] = useState(4); // 預設為每頁有2筆
@@ -121,23 +179,46 @@ function UsedProducts() {
     });
   };
 
-  //TODO:加入喜愛清單action
-  // const addLike = (likedArray, productId) => {
-  //   if (likedArray.includes(productId)) {
-  //     return likedArray !== likedArray;
-  //   } else {
-  //     likedArray.push(productId);
-  //     // usedProductsArray.push(productId);
-  //   }
-  // };
+  //排序
+  const handleSort = (usedProductsArray, sortBy) => {
+    let newProducts = [...usedProductsArray];
+
+    // 以價格排序-由少至多
+    if (sortBy == '1') {
+      newProducts = [...usedProductsArray].sort((a, b) => a.price - b.price);
+    }
+
+    if (sortBy == '2') {
+      newProducts = [...usedProductsArray].sort((a, b) => b.price - a.price);
+    }
+    //舊＝>新
+    if (sortBy == '3') {
+      newProducts = [...usedProductsArray].sort(
+        (a, b) => a.bought_in - b.bought_in
+      );
+    }
+    if (sortBy == '4') {
+      newProducts = [...usedProductsArray].sort(
+        (a, b) => b.bought_in - a.bought_in
+      );
+    }
+    // 預設用id 小至大
+    if (sortBy === '' && usedProductsArray.length > 0) {
+      newProducts = [...usedProductsArray].sort((a, b) => a.id - b.id);
+    }
+
+    return newProducts;
+  };
 
   useEffect(() => {
     let newUsedProductsArray = [...usedProducts];
 
     if (cats.length > 0) {
+      console.log('bbb', cats);
       newUsedProductsArray = getCatUsedProducts(newUsedProductsArray, cats);
     }
     if (from !== '' || to !== '') {
+      console.log('bbb', cats);
       newUsedProductsArray = getUsedProductsPriceRange(
         newUsedProductsArray,
         from,
@@ -150,14 +231,17 @@ function UsedProducts() {
         years
       );
     }
+
     if (ratings.length !== 0) {
       newUsedProductsArray = getSellerRatings(newUsedProductsArray, ratings);
+    }
+    if (sort !== '') {
+      newUsedProductsArray = handleSort(newUsedProductsArray, sort);
     }
 
     // 拆分頁
     //  _.chunk([1,2,3,4], 2) => [[1,2],[3,4]]
     const pageArray = _.chunk(newUsedProductsArray, perPage);
-
     if (pageArray.length > 0) {
       setUsedProductsDisplay(pageArray);
       setPageTotal(pageArray.length);
@@ -165,7 +249,7 @@ function UsedProducts() {
       setUsedProductsDisplay([]);
       setPageTotal(0);
     }
-  }, [usedProducts, cats, from, to, years, ratings]);
+  }, [usedProducts, cats, from, to, years, ratings, sort]);
   return (
     <>
       <div className="bg-orange text-info">
@@ -426,30 +510,29 @@ function UsedProducts() {
                     <select
                       className="form-select-xl mb-2 text-info"
                       aria-label="Default select example"
+                      onChange={(e) => {
+                        setSort(Number(e.target.value));
+                        console.log('sort:', sort);
+                      }}
                     >
-                      <option selected className="text-info">
-                        精選
-                      </option>
-                      <option value="1">暢銷度</option>
-                      <option value="2">依字母順序Ａ到Ｚ</option>
-                      <option value="3">依字母順序Ｚ到Ａ</option>
-                      <option value="4">價格（從低到高）</option>
-                      <option value="5">價格（從高到低）</option>
-                      <option value="6">日期（從舊到新）</option>
-                      <option value="7">日期（從新到舊）</option>
+                      <option value="">精選</option>
+                      <option value="1">價格（從低到高）</option>
+                      <option value="2">價格（從高到低）</option>
+                      <option value="3">購買年份（從舊到新）</option>
+                      <option value="4">購買年份（從新到舊）</option>
                     </select>
                   </div>
                 </div>
                 {/* usedProducts 改為usedProductsDisplay */}
                 <UsedProductsList
                   usedProducts={
-                    //TODO: 不懂為啥要加判斷
                     pageTotal > 0 ? usedProductsDisplay[pageNow - 1] : []
                   }
                   getCatUsedProducts={getCatUsedProducts}
                   getUsedProductsPriceRange={getUsedProductsPriceRange}
                   getUsedProductsYearRange={getUsedProductsYearRange}
-                  // addLike={addLike}
+                  liked={liked}
+                  setLiked={setLiked}
                 />
               </div>
             </div>

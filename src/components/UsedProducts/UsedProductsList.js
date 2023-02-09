@@ -1,10 +1,11 @@
-import React, { useEffect } from 'react';
+import React from 'react';
 import { Link } from 'react-router-dom';
 import './UsedProductsDetail.scss';
-import UsedProductsDetail from './UsedProductsDetail';
+// import UsedProductsDetail from './UsedProductsDetail';
 import { useState } from 'react';
 import { useCart } from '../../utils/useCart';
 import { Modal, Button } from 'react-bootstrap';
+import { useAuth } from '../Context/Authcontext';
 
 function UsedProductsList({
   usedProducts,
@@ -15,7 +16,11 @@ function UsedProductsList({
   getUsedProductsYearRange,
   getSellerRatings,
   // addLike,
+  navigate,
 }) {
+  console.log('liked', liked);
+  const { isLoggedIn } = useAuth();
+  console.log('login:' + isLoggedIn);
   // 加入購物車彈跳視窗及訊息
   const [show, setShow] = useState(false);
   const [resultMsg, setResultMsg] = useState({});
@@ -85,30 +90,44 @@ function UsedProductsList({
               <div className="card-body">
                 <div className="d-flex justify-content-between">
                   <h5 className="card-title text-info">NT${v.price}</h5>
-                  <i
-                    className={
-                      liked && liked.includes(v.useP_id)
-                        ? 'fa-solid fa-heart text-danger'
-                        : 'fa-regular fa-heart text-info pt-1 ps-2'
-                    }
-                    onClick={() => {
-                      if (liked.includes(v.useP_id)) {
+                  {/* 沒有登入的愛心 */}
+                  {!isLoggedIn && (
+                    <Link to={'/login'}>
+                      <i
+                        style={{ cursor: 'pointer' }}
+                        className="fa-regular fa-heart text-info"
+                      ></i>
+                    </Link>
+                  )}
+                  {/* 登入後的愛心 */}
+                  {isLoggedIn && liked.includes(v.useP_id) && (
+                    <i
+                      className="fa-solid fa-heart text-danger"
+                      onClick={() => {
                         setLiked(
-                          v.liked.filter((v2, i2) => {
-                            return v.liked !== v.useP_id;
+                          liked.filter((v2, i2) => {
+                            return v2 !== v.useP_id;
                           })
                         );
-                      } else {
-                        setLiked([...v.like, v.useP_id]);
-                      }
-                    }}
-                  ></i>
+                      }}
+                      style={{ cursor: 'pointer' }}
+                    ></i>
+                  )}
+                  {isLoggedIn && !liked.includes(v.useP_id) && (
+                    <i
+                      onClick={() => {
+                        setLiked([...liked, v.useP_id]);
+                      }}
+                      style={{ cursor: 'pointer' }}
+                      className="fa-regular fa-heart text-info"
+                    ></i>
+                  )}
                 </div>
                 <h6 className="card-title text-gray-300">{v.name}</h6>
                 <p className="card-text text-gray-300">賣家：{v.seller_name}</p>
                 <div className="d-flex justify-content-around buttons">
                   <Link
-                    to={`./${v.useP_id}`} //網址要和Route裡想去的頁面一樣
+                    to={`./${v.useP_id}`}
                     className="btn btn-sm btn-white btn-rect border "
                   >
                     顯示更多
