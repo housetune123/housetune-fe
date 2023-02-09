@@ -100,6 +100,7 @@ function App() {
   const [otherReciever, setOtherReciever] = useState('');
   const [switchZone, setSwitchZone] = useState(false);
   const [newMessage, setNewMessage] = useState([]);
+  const [chatListAccount, setChatListAccount] = useState([]);
   // 商品
   const [categoryProduct, setCategoryProduct] = useState('');
   const [searchProduct, setSearchProduct] = useState('');
@@ -142,6 +143,8 @@ function App() {
           setSwitchZone,
           newMessage,
           setNewMessage,
+          chatListAccount,
+          setChatListAccount,
         }}
       >
         <CartProvider>
@@ -218,7 +221,10 @@ function App() {
                     />
 
                     {/* personal-store */}
-                    <Route path=":userAcct" element={<PersonalStore />} />
+                    <Route
+                      path=":userAcct"
+                      element={<PersonalStore socket={socket} />}
+                    />
                     <Route path="seller" element={<SellerCenter />}>
                       <Route index element={<SellerMain />} />
                       <Route path="product" element={<SalesProduct />} />

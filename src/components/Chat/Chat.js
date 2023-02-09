@@ -31,9 +31,10 @@ function Chat({ socket }) {
     setSwitchZone,
     newMessage,
     setNewMessage,
+    chatListAccount,
+    setChatListAccount,
   } = useChat();
   const { userinfo, setUserInfo, isLoggedIn, setIsLoggedIn } = useAuth();
-  const [chatListAccount, setChatListAccount] = useState([]);
   async function handleBegin() {
     setBegin(true);
     // console.log(userinfo.name);

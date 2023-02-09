@@ -61,14 +61,21 @@ function PersonalStore({ socket }) {
     setSwitchZone,
     newMessage,
     setNewMessage,
+    chatListAccount,
+    setChatListAccount,
   } = useChat();
   axios.defaults.withCredentials = true;
   async function handleMessage() {
     setChat(true);
     setBegin(true);
     socket.emit('join_room', userinfo.account);
-    console.log(userAcct);
-    setReciever(userAcct);
+    // console.log(userAcct);
+    // setReciever(userAcct);
+    let response1 = await axios.post('http://localhost:3001/api/chat/getlist', {
+      userId: userinfo.id,
+    });
+    console.log(response1.data);
+    setChatListAccount(response1.data);
     let response = await axios.post('http://localhost:3001/api/chat/switch', {
       otherReciever: userAcct,
     });
