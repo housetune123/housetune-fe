@@ -35,11 +35,7 @@ function AllOrder() {
   }
 
   // 搜尋
-  const SelectInfo = [
-    { inputWord: '請輸入訂單編號', item: 'ordL_id' },
-    { inputWord: '請輸入買家帳號', item: 'account' },
-    { inputWord: '請輸入商品名稱', item: 'ordL_id' },
-  ];
+  const SelectInfo = ['請輸入訂單編號', '請輸入買家帳號', '請輸入商品名稱'];
   const [SelectItem, setSelectItem] = useState(0);
   const [SearchWord, setSearchWord] = useState('');
   const [SearchList, setSearchList] = useState([]);
@@ -47,44 +43,37 @@ function AllOrder() {
     setSearchList(OrderList);
   }, [OrderList]);
   const selectValue = (e) => {
-    setSelectItem(e.target.value);
+    setSelectItem(Number(e.target.value));
   };
   const handleFilter = (e) => {
     setSearchWord(e.target.value);
   };
   const searchClick = (e) => {
     e.preventDefault();
-    if (SelectItem == 0) {
+    if (SelectItem === 0) {
       const newFilter = OrderList?.filter((v) => {
-        return String(v.ordL_id).match(SearchWord);
+        return String(v.ordL_id).includes(SearchWord);
       });
       setSearchList(newFilter);
-    } else if (SelectItem == 1) {
+    } else if (SelectItem === 1) {
       const newFilter = OrderList?.filter((v) => {
-        return v.account.match(SearchWord);
+        return v.account.includes(SearchWord);
       });
       setSearchList(newFilter);
-    } else if (SelectItem == 2) {
-      const newFilter = OrderList?.map((v) => {
-        return v.product_id.filter((v) => {
-          return v.name.includes(SearchWord);
-        });
+    } else if (SelectItem === 2) {
+      const newFilter = OrderList?.filter((v) => {
+        return Object.values(JSON.parse(v.product_id))
+          .map((i) => {
+            return i.name;
+          })
+          .includes(SearchWord);
       });
-      console.log(newFilter);
       setSearchList(newFilter);
     }
     if (SearchWord.length === 0) {
       setSearchList(OrderList);
     }
   };
-
-  // const searchClick = (e) => {
-  //   const newFilter = OrderList?.filter((v) => {
-  //     return String(v.SelectInfo[SelectItem].item).match(SearchWord);
-  //   });
-  //   setSearchList(newFilter);
-  // };
-
   const resetClick = () => {
     setSearchWord('');
     setSearchList(OrderList);
@@ -139,7 +128,7 @@ function AllOrder() {
             className="form-control"
             value={SearchWord}
             onChange={handleFilter}
-            placeholder={SelectInfo[SelectItem].inputWord}
+            placeholder={SelectInfo[SelectItem]}
           />
           <button
             className="btn btn-primary-300 col-auto me-2"
@@ -167,7 +156,7 @@ function AllOrder() {
           const Date = list.order_date.slice(0, 10);
           const CouponDiscount = JSON.parse(list.couponInfo);
           const DetailTotal = OrderDetail.reduce(
-            (acc, pilot) => acc + pilot.total,
+            (acc, num) => acc + num.total,
             0
           );
 

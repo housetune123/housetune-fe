@@ -1,6 +1,7 @@
 import { Link, useNavigate, useParams } from 'react-router-dom';
 import { useEffect, useState, useRef } from 'react';
 import { useAuth } from '../Context/Authcontext';
+import { useChat } from '../Context/Chatcontext';
 import axios from 'axios';
 import moment from 'moment';
 import ReactStars from 'react-stars';
@@ -8,7 +9,7 @@ import ReactPaginate from 'react-paginate';
 import BreadCrumb from '../Layout/BreadCrumb';
 import './PersonalStore.scss';
 
-function PersonalStore() {
+function PersonalStore({ socket }) {
   const { userinfo, isLoggedIn } = useAuth();
   const { userAcct } = useParams();
   let navigate = useNavigate();
@@ -38,6 +39,53 @@ function PersonalStore() {
       console.error(e);
     }
   }, [userAcct]);
+
+  const {
+    chat,
+    setChat,
+    reciever,
+    setReciever,
+    recieverId,
+    setRecieverId,
+    message,
+    setMessage,
+    begin,
+    setBegin,
+    messageList,
+    setMessageList,
+    room,
+    setRoom,
+    otherReciever,
+    setOtherReciever,
+    switchZone,
+    setSwitchZone,
+    newMessage,
+    setNewMessage,
+  } = useChat();
+  axios.defaults.withCredentials = true;
+  async function handleMessage() {
+    setChat(true);
+    setBegin(true);
+    socket.emit('join_room', userinfo.account);
+    console.log(userAcct);
+    setReciever(userAcct);
+    let response = await axios.post('http://localhost:3001/api/chat/switch', {
+      otherReciever: userAcct,
+    });
+    if (response.data.length === 0) {
+      alert('無此用戶');
+    } else if (response.data[0].account === userinfo.account) {
+      alert('寄件者與收件者為同一用戶');
+    } else if (response.data[0].name === reciever) {
+      alert('已在與此用戶通訊中');
+    } else {
+      setMessageList([]);
+      setReciever(response.data[0].name);
+      setRecieverId(response.data[0].user_id);
+      setBegin(!begin);
+      setRoom(userAcct);
+    }
+  }
 
   // 收藏
   const [userId, setUserId] = useState(0);
@@ -168,11 +216,6 @@ function PersonalStore() {
     RatingScroll.current.scrollIntoView();
   };
 
-  // 傳訊息
-  const sendMessage = () => {
-    // userAcct
-  };
-
   return (
     <>
       <main className="bg-orange personal-store">
@@ -180,19 +223,19 @@ function PersonalStore() {
           <BreadCrumb />
           <div className="d-flex justify-content-between border-0">
             {/* 左側條件設定 */}
-            <div className="col-2 d-none d-lg-block ">
-              <h3 className="mb-5 text-info-dark">
+            <div className="col-2 d-none d-lg-block">
+              <h4 className="mb-5 text-info-dark">
                 <p>
                   <span className="fw-bold">{userAcct}</span> 的賣場
                 </p>
                 <button
-                  className="btn btn-primary-300 my-2"
-                  onClick={sendMessage}
+                  className={isLoggedIn ? 'btn btn-primary-300 my-2' : 'd-none'}
+                  onClick={handleMessage}
                 >
                   <i class="fa-solid fa-comment-dots me-2" />
                   聊聊
                 </button>
-              </h3>
+              </h4>
               <h5 className="text-info">分類</h5>
               <hr className="simple" />
 
@@ -226,8 +269,8 @@ function PersonalStore() {
               <h3 className="text-info-dark d-block d-md-none my-3">
                 <span className="fw-bold">{userAcct}</span> 的賣場
                 <button
-                  className="btn btn-primary-300 mx-4"
-                  onClick={sendMessage}
+                  className={isLoggedIn ? 'btn btn-primary-300 mx-4' : 'd-none'}
+                  onClick={handleMessage}
                 >
                   <i class="fa-solid fa-comment-dots me-2" />
                   聊聊
