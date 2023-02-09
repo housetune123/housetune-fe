@@ -267,7 +267,7 @@ function Chat({ socket }) {
         </div>
         <div
           className={
-            'chatlist position-absolute text-white bg-primary-200 shadow ' +
+            'chatlist position-absolute text-white bg-primary-200 shadow dialogue-list ' +
             (begin === false || chatListAccount.length === 0 ? 'd-none' : '')
           }
         >
@@ -293,18 +293,20 @@ function Chat({ socket }) {
             );
           })}
         </div>
-        <h4 className="bg-primary-300 text-center text-white py-2 position-relative">
-          和{reciever}的對話
-          <i
-            className="fa-solid fa-xmark position-absolute"
-            onClick={() => {
-              setChat(false);
-            }}
-          ></i>
-        </h4>
+        <div>
+          <h4 className="bg-primary-300 text-center text-white py-2 position-relative rounded-top">
+            {reciever}
+            <i
+              className="fa-solid fa-xmark position-absolute my-2 fs-5"
+              onClick={() => {
+                setChat(false);
+              }}
+            ></i>
+          </h4>
+        </div>
         <button
           className={
-            'bg-primary-300 text-white w-50 align-self-center ' +
+            'btn btn-primary-300 text-white w-50 align-self-center ' +
             (begin === false && switchZone === false ? '' : 'd-none')
           }
           onClick={handleBegin}
@@ -357,7 +359,7 @@ function Chat({ socket }) {
           <input
             disabled={begin ? '' : 'disabled'}
             type="text"
-            className="w-90 border-0 bg-gray text me-2 ms-2"
+            className="w-90 border-0 bg-gray text px-2 py-4 me-2 input-style"
             placeholder="請輸入訊息"
             value={message}
             onChange={(e) => {
@@ -370,22 +372,24 @@ function Chat({ socket }) {
               (switchZone ? '' : 'd-none')
             }
           >
-            <p className="my-auto">傳送訊息給</p>
-            <input
-              className="mw-191"
-              type="text"
-              placeholder="請輸入收件者帳號"
-              value={otherReciever}
-              onChange={(e) => {
-                setOtherReciever(e.target.value);
-              }}
-            />
-            <button
-              className="bg-primary-300 text-white"
-              onClick={handleSwitch}
-            >
-              送出
-            </button>
+            <div className="input-group mx-2">
+              <p className="my-auto me-2">傳送訊息給</p>
+              <input
+                className="mw-191 form-control"
+                type="text"
+                placeholder="請輸入收件者帳號"
+                value={otherReciever}
+                onChange={(e) => {
+                  setOtherReciever(e.target.value);
+                }}
+              />
+              <button
+                className="btn btn-primary-300 text-white"
+                onClick={handleSwitch}
+              >
+                送出
+              </button>
+            </div>
           </div>
           <i
             className="text-primary-300 fa-solid fa-paper-plane bg-gray w-10 d-flex align-items-center"
