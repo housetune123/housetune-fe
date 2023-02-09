@@ -1,11 +1,11 @@
 import React from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import './UsedProductsDetail.scss';
-// import UsedProductsDetail from './UsedProductsDetail';
 import { useState } from 'react';
 import { useCart } from '../../utils/useCart';
 import { Modal, Button } from 'react-bootstrap';
 import { useAuth } from '../Context/Authcontext';
+import ReactPaginate from 'react-paginate';
 
 function UsedProductsList({
   usedProducts,
@@ -15,10 +15,8 @@ function UsedProductsList({
   getUsedProductsPriceRange,
   getUsedProductsYearRange,
   getSellerRatings,
-  // addLike,
-  navigate,
 }) {
-  console.log('liked', liked);
+  let navigate = useNavigate();
   const { isLoggedIn } = useAuth();
   console.log('login:' + isLoggedIn);
   // 加入購物車彈跳視窗及訊息
@@ -75,77 +73,112 @@ function UsedProductsList({
     }
     setShow(true);
   }
+  // 商品分頁
+  const [ProductOffset, setProductOffset] = useState(0);
+  const ProductPerPage = 12;
+  const ProductEndOffset = ProductOffset + ProductPerPage;
+  const ProductCurrentItems = usedProducts.slice(
+    ProductOffset,
+    ProductEndOffset
+  );
+  const ProductPageCount = Math.ceil(usedProducts.length / ProductPerPage);
+  const ProductPageClick = (event) => {
+    const newOffset = (event.selected * ProductPerPage) % usedProducts.length;
+    setProductOffset(newOffset);
+    window.scrollTo(0, 0);
+  };
 
   return (
-    <div className="usedProduts-body row overflow-hidden p-1 m-1 text-info">
-      {usedProducts.map((v, i) => {
+    <div className="usedProduts-body row g-1">
+      {ProductCurrentItems.map((v, i) => {
         return (
-          <div className="col-3 p-0 " key={v.useP_id}>
-            <div className="card btn-shadow me-3 mb-3">
-              <img
-                src={`${process.env.REACT_APP_IMAGE_URL}/images/used/${v.img}`}
-                className="card-img-top"
-                alt={v.product_name}
-              />
-              <div className="card-body">
+          <div
+            className="col-6 col-md-3 d-flex justify-content-center p-md-3 p-2"
+            key={v.useP_id}
+          >
+            <div className="card border border-0 card-shadow position-relative">
+              <div className="product-img">
+                <img
+                  style={{ cursor: 'pointer' }}
+                  src={`${process.env.REACT_APP_IMAGE_URL}/images/used/${v.img}`}
+                  className="card-img-top bg-gray-200 object-cover"
+                  alt={v.product_name}
+                  onClick={() => {
+                    navigate(`/usedproducts/${v.useP_id}`);
+                  }}
+                />
+              </div>
+              <div className="card-body text-left py-4">
                 <div className="d-flex justify-content-between">
-                  <h5 className="card-title text-info">NT${v.price}</h5>
-                  {/* 沒有登入的愛心 */}
-                  {!isLoggedIn && (
-                    <Link to={'/login'}>
+                  <h5 className="card-title text-info">NT $ {v.price}</h5>
+                  <p>
+                    {/* 沒有登入的愛心 */}
+                    {!isLoggedIn && (
+                      <Link to={'/login'}>
+                        <i
+                          style={{ cursor: 'pointer' }}
+                          className="fa-regular fa-heart text-info"
+                        ></i>
+                      </Link>
+                    )}
+                    {/* 登入後的愛心 */}
+                    {isLoggedIn && liked.includes(v.useP_id) && (
                       <i
+                        className="fa-solid fa-heart text-danger"
+                        onClick={() => {
+                          setLiked(
+                            liked.filter((v2, i2) => {
+                              return v2 !== v.useP_id;
+                            })
+                          );
+                        }}
+                        style={{ cursor: 'pointer' }}
+                      ></i>
+                    )}
+                    {isLoggedIn && !liked.includes(v.useP_id) && (
+                      <i
+                        onClick={() => {
+                          setLiked([...liked, v.useP_id]);
+                        }}
                         style={{ cursor: 'pointer' }}
                         className="fa-regular fa-heart text-info"
                       ></i>
-                    </Link>
-                  )}
-                  {/* 登入後的愛心 */}
-                  {isLoggedIn && liked.includes(v.useP_id) && (
-                    <i
-                      className="fa-solid fa-heart text-danger"
-                      onClick={() => {
-                        setLiked(
-                          liked.filter((v2, i2) => {
-                            return v2 !== v.useP_id;
-                          })
-                        );
-                      }}
-                      style={{ cursor: 'pointer' }}
-                    ></i>
-                  )}
-                  {isLoggedIn && !liked.includes(v.useP_id) && (
-                    <i
-                      onClick={() => {
-                        setLiked([...liked, v.useP_id]);
-                      }}
-                      style={{ cursor: 'pointer' }}
-                      className="fa-regular fa-heart text-info"
-                    ></i>
-                  )}
+                    )}
+                  </p>
                 </div>
                 <h6 className="card-title text-gray-300">{v.name}</h6>
                 <p className="card-text text-gray-300">賣家：{v.seller_name}</p>
-                <div className="d-flex justify-content-around buttons">
-                  <Link
-                    to={`./${v.useP_id}`}
-                    className="btn btn-sm btn-white btn-rect border "
-                  >
-                    顯示更多
-                  </Link>
-                  <button
-                    className="btn btn-sm btn-primary-300 btn-rect"
-                    onClick={() => {
-                      addToCart(v);
-                    }}
-                  >
-                    加入購物車
-                  </button>
-                </div>
+              </div>
+              <div className="card-body pt-0 card-btn card-shadow bg-white d-none d-md-block">
+                <button
+                  className="btn btn-primary-300 fs-sml w-100"
+                  data-bs-toggle="modal"
+                  data-bs-target="#exampleModal"
+                  onClick={() => {
+                    addToCart(v);
+                  }}
+                >
+                  加入購物車
+                </button>
               </div>
             </div>
           </div>
         );
       })}
+      <ReactPaginate
+        breakLabel="..."
+        nextLabel="下一頁>"
+        onPageChange={ProductPageClick}
+        pageRangeDisplayed={5}
+        pageCount={ProductPageCount}
+        previousLabel="<上一頁"
+        renderOnZeroPageCount={null}
+        containerClassName="pagination"
+        pageLinkClassName="page-num"
+        previousLinkClassName="page-btn"
+        nextLinkClassName="page-btn"
+        activeLinkClassName="active"
+      />
       {/* 彈出視窗 */}
       <Modal
         show={show}

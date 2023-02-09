@@ -1,13 +1,10 @@
 import axios from 'axios';
 import { useEffect, useState } from 'react';
-import { Link, useNavigate, useParams } from 'react-router-dom';
+import BreadCrumb from '../Layout/BreadCrumb';
 import UsedProductsList from './UsedProductsList';
-// import ReactPaginate from 'react-paginate';
 import _ from 'lodash';
 import './UsedProductsDetail.scss';
-import ProductsBrowse from '../Products/ProductsBrowse';
 import { useAuth } from '../Context/Authcontext';
-import { option } from 'lightbox2';
 
 function UsedProducts() {
   const [usedProducts, setUsedProducts] = useState([]);
@@ -18,18 +15,16 @@ function UsedProducts() {
   const [liked, setLiked] = useState([]);
   //取得收藏
   useEffect(() => {
-    if (isLoggedIn) {
+    try {
       async function getLiked() {
-        try {
-          let res = await axios.get(`http://localhost:3001/usedproducts/liked`);
-          if (res) {
-            setLiked(JSON.parse(res.data[0].liked));
-          }
-        } catch (e) {
-          console.error(e);
+        let res = await axios.get('http://localhost:3001/api/products/liked');
+        if (res.data[0].liked) {
+          setLiked(JSON.parse(res.data[0].liked));
         }
       }
       getLiked();
+    } catch (e) {
+      console.error(e);
     }
   }, []);
 
@@ -40,13 +35,10 @@ function UsedProducts() {
         async function addLiked() {
           let likeJson = JSON.stringify(liked);
           const userId = userinfo.id;
-          let res = await axios.put(
-            'http://localhost:3001/usedproducts/addliked',
-            {
-              likeJson,
-              userId,
-            }
-          );
+          let res = await axios.put('http://localhost:3001/api/products', {
+            likeJson,
+            userId,
+          });
           // console.log(res.data);
         }
         addLiked();
@@ -55,6 +47,7 @@ function UsedProducts() {
       }
     }
   }, [liked]);
+  console.log(liked);
 
   //列出所有二手商品
   useEffect(() => {
@@ -128,7 +121,7 @@ function UsedProducts() {
 
   //分頁
   const [pageNow, setPageNow] = useState(1); // 預設為第1頁
-  const [perPage, setPerPage] = useState(4); // 預設為每頁有2筆
+  const [perPage, setPerPage] = useState(99999); // 預設為每頁有2筆
   const [pageTotal, setPageTotal] = useState(0); // 預設總頁數為0
 
   // 分類篩選條件categoryArray : array
@@ -252,263 +245,254 @@ function UsedProducts() {
   }, [usedProducts, cats, from, to, years, ratings, sort]);
   return (
     <>
-      <div className="bg-orange text-info">
+      <div className="bg-orange used-product pb-4">
         <div className="container">
-          <nav aria-label="breadcrumb">
-            <ol className="breadcrumb">
-              <li className="breadcrumb-item">
-                <Link to="/">首頁</Link>
-              </li>
-              <li className="breadcrumb-item active" aria-current="page">
-                二手專區
-              </li>
-            </ol>
-          </nav>
-          <div className="container">
-            <h3 className="mb-5">二手專區/Used Things</h3>
-            <div className="d-flex justify-content-between border-0">
-              <div className="col-2 d-none d-lg-block text-info ">
-                <h5>條件設定</h5>
-                <hr className="simple" />
-                <div
-                  className="accordion accordion-flush text-info"
-                  id="accordionPanelsStayOpenExample"
-                >
-                  <div className="accordion-item text-info">
-                    <h2
-                      className="accordion-header"
-                      id="panelsStayOpen-headingOne"
+          <BreadCrumb />
+          <h3 className="mb-md-5 mb-2 mt-md-0 mt-2 text-info-dark">二手專區</h3>
+          <div className="d-flex justify-content-between border-0">
+            <div className="col-2 d-none d-lg-block text-info">
+              <h5 className="text-info">條件設定</h5>
+              <hr className="simple" />
+              <div
+                className="accordion accordion-flush text-info"
+                id="accordionPanelsStayOpenExample"
+              >
+                <div className="accordion-item text-info">
+                  <h2
+                    className="accordion-header"
+                    id="panelsStayOpen-headingOne"
+                  >
+                    <button
+                      className="accordion-button collapsed bg-orange ps-0"
+                      type="button"
+                      data-bs-toggle="collapse"
+                      data-bs-target="#panelsStayOpen-collapseOne"
+                      aria-expanded="false"
+                      aria-controls="panelsStayOpen-collapseOne"
                     >
-                      <button
-                        className="accordion-button collapsed bg-orange text-info"
-                        type="button"
-                        data-bs-toggle="collapse"
-                        data-bs-target="#panelsStayOpen-collapseOne"
-                        aria-expanded="false"
-                        aria-controls="panelsStayOpen-collapseOne"
-                      >
-                        分類
-                      </button>
-                    </h2>
-                    <div
-                      id="panelsStayOpen-collapseOne"
-                      className="accordion-collapse collapse text-info"
-                      aria-labelledby="panelsStayOpen-headingOne"
-                    >
-                      <div className="accordion-body">
-                        {catOptions.map((v, i) => {
-                          return (
-                            <div className="form-check text-info" key={i}>
-                              <input
-                                className="form-check-input"
-                                type="checkbox"
-                                value={v}
-                                id="flexCheckDefault"
-                                checked={cats.includes(v)}
-                                onChange={(e) => {
-                                  const value = Number(e.target.value);
-                                  if (cats.includes(value)) {
-                                    setCats(
-                                      cats.filter((v2, i2) => {
-                                        return v2 !== value;
-                                      })
-                                    );
-                                  } else {
-                                    setCats([...cats, value]);
-                                  }
-                                }}
-                              />
+                      分類
+                    </button>
+                  </h2>
+                  <div
+                    id="panelsStayOpen-collapseOne"
+                    className="accordion-collapse collapse text-info"
+                    aria-labelledby="panelsStayOpen-headingOne"
+                  >
+                    <div className="accordion-body bg-orange ps-0">
+                      {catOptions.map((v, i) => {
+                        return (
+                          <div className="form-check text-info" key={i}>
+                            <input
+                              className="form-check-input"
+                              type="checkbox"
+                              value={v}
+                              id="flexCheckDefault"
+                              checked={cats.includes(v)}
+                              onChange={(e) => {
+                                const value = Number(e.target.value);
+                                if (cats.includes(value)) {
+                                  setCats(
+                                    cats.filter((v2, i2) => {
+                                      return v2 !== value;
+                                    })
+                                  );
+                                } else {
+                                  setCats([...cats, value]);
+                                }
+                              }}
+                            />
 
-                              <label
-                                className="form-check-label"
-                                htmlFor="flexCheckDefault"
-                              >
-                                {catText[v - 1]}
-                                {/* （ {v.category_product=} ） */}
-                              </label>
-                            </div>
-                          );
-                        })}
-                      </div>
+                            <label
+                              className="form-check-label fs-sml"
+                              htmlFor="flexCheckDefault"
+                            >
+                              {catText[v - 1]}
+                              {/* （ {v.category_product=} ） */}
+                            </label>
+                          </div>
+                        );
+                      })}
                     </div>
                   </div>
-                  <div className="accordion-item text-info">
-                    <h2
-                      className="accordion-header"
-                      id="panelsStayOpen-headingTwo"
+                </div>
+                <div className="accordion-item text-info">
+                  <h2
+                    className="accordion-header"
+                    id="panelsStayOpen-headingTwo"
+                  >
+                    <button
+                      className="accordion-button collapsed bg-orange ps-0"
+                      type="button"
+                      data-bs-toggle="collapse"
+                      data-bs-target="#panelsStayOpen-collapseTwo"
+                      aria-expanded="false"
+                      aria-controls="panelsStayOpen-collapseTwo"
                     >
-                      <button
-                        className="accordion-button collapsed bg-orange text-info"
-                        type="button"
-                        data-bs-toggle="collapse"
-                        data-bs-target="#panelsStayOpen-collapseTwo"
-                        aria-expanded="false"
-                        aria-controls="panelsStayOpen-collapseTwo"
-                      >
-                        價格
-                      </button>
-                    </h2>
-                    <div
-                      id="panelsStayOpen-collapseTwo"
-                      className="accordion-collapse collapse text-info"
-                      aria-labelledby="panelsStayOpen-headingTwo"
-                    >
-                      <div className="accordion-body text-info">
-                        <div className="d-flex pb-2">
-                          <h6 className="px-1">$</h6>
-                          <input
-                            style={{ width: 100 }}
-                            type="number"
-                            name="points"
-                            min="0"
-                            max="10"
-                            value={from}
-                            placeholder="From"
-                            onChange={(e) => {
-                              setFrom(e.target.value);
-                            }}
-                          />
-                        </div>
-                        <div className="d-flex">
-                          <h6 className="px-1">$</h6>
-                          <input
-                            style={{ width: 100 }}
-                            type="number"
-                            name="points"
-                            min="0"
-                            max="10"
-                            value={to}
-                            placeholder="To"
-                            onChange={(e) => {
-                              setTo(e.target.value);
-                            }}
-                          />
-                        </div>
+                      價格
+                    </button>
+                  </h2>
+                  <div
+                    id="panelsStayOpen-collapseTwo"
+                    className="accordion-collapse collapse text-info"
+                    aria-labelledby="panelsStayOpen-headingTwo"
+                  >
+                    <div className="accordion-body bg-orange ps-0">
+                      <div className="d-flex pb-2 align-items-center">
+                        <h6 className="px-1 text-primary-200 mb-0 fs-sml">$</h6>
+                        <input
+                          className="w-100 fs-sml"
+                          type="number"
+                          name="points"
+                          min="0"
+                          max="10"
+                          value={from}
+                          placeholder="From"
+                          onChange={(e) => {
+                            setFrom(e.target.value);
+                          }}
+                        />
                       </div>
-                    </div>
-                  </div>
-                  <div className="accordion-item text-info">
-                    <h2
-                      className="accordion-header"
-                      id="panelsStayOpen-headingThree"
-                    >
-                      <button
-                        className="accordion-button collapsed bg-orange text-info"
-                        type="button"
-                        data-bs-toggle="collapse"
-                        data-bs-target="#panelsStayOpen-collapseThree"
-                        aria-expanded="false"
-                        aria-controls="panelsStayOpen-collapseThree"
-                      >
-                        使用年份
-                      </button>
-                    </h2>
-                    <div
-                      id="panelsStayOpen-collapseThree"
-                      className="accordion-collapse collapse text-info"
-                      aria-labelledby="panelsStayOpen-headingThree"
-                    >
-                      <div className="accordion-body text-info">
-                        {yearOptions.map((v, i) => {
-                          return (
-                            <div className="form-check" key={i}>
-                              <input
-                                className="form-check-input"
-                                type="checkbox"
-                                value={v}
-                                id="flexCheckDefault"
-                                checked={years.includes(v)}
-                                onChange={(e) => {
-                                  const value = Number(e.target.value);
-                                  if (years.includes(value)) {
-                                    setYears(
-                                      years.filter((v2, i2) => {
-                                        return v2 !== value;
-                                      })
-                                    );
-                                  } else {
-                                    setYears([...years, value]);
-                                  }
-                                }}
-                              />
-                              <label
-                                className="form-check-label"
-                                htmlFor="flexCheckDefault"
-                              >
-                                {yearText[v - 1]}
-                              </label>
-                            </div>
-                          );
-                        })}
-                      </div>
-                    </div>
-                  </div>
-                  <div className="accordion-item text-info">
-                    <h2
-                      className="accordion-header"
-                      id="panelsStayOpen-headingFour"
-                    >
-                      <button
-                        className="accordion-button collapsed bg-orange text-info"
-                        type="button"
-                        data-bs-toggle="collapse"
-                        data-bs-target="#panelsStayOpen-collapseFour"
-                        aria-expanded="false"
-                        aria-controls="panelsStayOpen-collapseFour"
-                      >
-                        賣家評價
-                      </button>
-                    </h2>
-                    <div
-                      id="panelsStayOpen-collapseFour"
-                      className="accordion-collapse collapse text-info"
-                      aria-labelledby="panelsStayOpen-headingFour"
-                    >
-                      <div className="accordion-body">
-                        {ratingsOptions.map((v, i) => {
-                          return (
-                            <div className="form-check" key={i}>
-                              <input
-                                className="form-check-input"
-                                type="checkbox"
-                                value={v}
-                                id="flexCheckDefault"
-                                checked={ratings.includes(v)}
-                                onChange={(e) => {
-                                  const value = Number(e.target.value);
-                                  if (ratings.includes(value)) {
-                                    setRatings(
-                                      ratings.filter((v2, i2) => {
-                                        return v2 !== value;
-                                      })
-                                    );
-                                  } else {
-                                    setRatings([...ratings, value]);
-                                  }
-                                }}
-                              />
-                              <label
-                                className="form-check-label"
-                                htmlFor="flexCheckDefault"
-                              >
-                                {ratingsText[i]}
-                              </label>
-                            </div>
-                          );
-                        })}
+                      <div className="d-flex pb-2 align-items-center">
+                        <h6 className="px-1 text-primary-200 mb-0 fs-sml">$</h6>
+                        <input
+                          className="w-100 fs-sml"
+                          type="number"
+                          name="points"
+                          min="0"
+                          max="10"
+                          value={to}
+                          placeholder="To"
+                          onChange={(e) => {
+                            setTo(e.target.value);
+                          }}
+                        />
                       </div>
                     </div>
                   </div>
                 </div>
+                <div className="accordion-item text-info">
+                  <h2
+                    className="accordion-header"
+                    id="panelsStayOpen-headingThree"
+                  >
+                    <button
+                      className="accordion-button collapsed bg-orange ps-0"
+                      type="button"
+                      data-bs-toggle="collapse"
+                      data-bs-target="#panelsStayOpen-collapseThree"
+                      aria-expanded="false"
+                      aria-controls="panelsStayOpen-collapseThree"
+                    >
+                      使用年份
+                    </button>
+                  </h2>
+                  <div
+                    id="panelsStayOpen-collapseThree"
+                    className="accordion-collapse collapse text-info"
+                    aria-labelledby="panelsStayOpen-headingThree"
+                  >
+                    <div className="accordion-body bg-orange ps-0">
+                      {yearOptions.map((v, i) => {
+                        return (
+                          <div className="form-check" key={i}>
+                            <input
+                              className="form-check-input"
+                              type="checkbox"
+                              value={v}
+                              id="flexCheckDefault"
+                              checked={years.includes(v)}
+                              onChange={(e) => {
+                                const value = Number(e.target.value);
+                                if (years.includes(value)) {
+                                  setYears(
+                                    years.filter((v2, i2) => {
+                                      return v2 !== value;
+                                    })
+                                  );
+                                } else {
+                                  setYears([...years, value]);
+                                }
+                              }}
+                            />
+                            <label
+                              className="form-check-label fs-sml"
+                              htmlFor="flexCheckDefault"
+                            >
+                              {yearText[v - 1]}
+                            </label>
+                          </div>
+                        );
+                      })}
+                    </div>
+                  </div>
+                </div>
+                <div className="accordion-item text-info">
+                  <h2
+                    className="accordion-header"
+                    id="panelsStayOpen-headingFour"
+                  >
+                    <button
+                      className="accordion-button collapsed bg-orange ps-0"
+                      type="button"
+                      data-bs-toggle="collapse"
+                      data-bs-target="#panelsStayOpen-collapseFour"
+                      aria-expanded="false"
+                      aria-controls="panelsStayOpen-collapseFour"
+                    >
+                      賣家評價
+                    </button>
+                  </h2>
+                  <div
+                    id="panelsStayOpen-collapseFour"
+                    className="accordion-collapse collapse text-info"
+                    aria-labelledby="panelsStayOpen-headingFour"
+                  >
+                    <div className="accordion-body bg-orange ps-0">
+                      {ratingsOptions.map((v, i) => {
+                        return (
+                          <div className="form-check" key={i}>
+                            <input
+                              className="form-check-input"
+                              type="checkbox"
+                              value={v}
+                              id="flexCheckDefault"
+                              checked={ratings.includes(v)}
+                              onChange={(e) => {
+                                const value = Number(e.target.value);
+                                if (ratings.includes(value)) {
+                                  setRatings(
+                                    ratings.filter((v2, i2) => {
+                                      return v2 !== value;
+                                    })
+                                  );
+                                } else {
+                                  setRatings([...ratings, value]);
+                                }
+                              }}
+                            />
+                            <label
+                              className="form-check-label fs-sml"
+                              htmlFor="flexCheckDefault"
+                            >
+                              {ratingsText[i]}
+                            </label>
+                          </div>
+                        );
+                      })}
+                    </div>
+                  </div>
+                </div>
               </div>
-              <div className="col-10 col-lg-10 ">
-                <div className="d-flex">
-                  <div>
-                    <h6 className="px-3">排序依據</h6>
+            </div>
+            <div className="col-12 col-lg-9">
+              <div className="d-flex mb-1 mb-md-0">
+                <div className="d-flex align-items-center">
+                  <div className="pe-3 d-none d-md-block">
+                    <h6 className="text-info-dark ps-0 col">排序依據</h6>
                   </div>
                   <div>
                     <select
-                      className="form-select-xl mb-2 text-info"
+                      className="form-select-xl mb-2 text-gray-300 fs-sml"
                       aria-label="Default select example"
                       onChange={(e) => {
                         setSort(Number(e.target.value));
@@ -523,37 +507,37 @@ function UsedProducts() {
                     </select>
                   </div>
                 </div>
-                {/* usedProducts 改為usedProductsDisplay */}
-                <UsedProductsList
-                  usedProducts={
-                    pageTotal > 0 ? usedProductsDisplay[pageNow - 1] : []
-                  }
-                  getCatUsedProducts={getCatUsedProducts}
-                  getUsedProductsPriceRange={getUsedProductsPriceRange}
-                  getUsedProductsYearRange={getUsedProductsYearRange}
-                  liked={liked}
-                  setLiked={setLiked}
-                />
               </div>
-            </div>
-            <div className="pagination">
-              {Array(pageTotal)
-                .fill(1)
-                .map((v, i) => {
-                  return (
-                    <a
-                      key={i}
-                      href="#/"
-                      onClick={() => {
-                        setPageNow(i + 1);
-                      }}
-                    >
-                      {i + 1}
-                    </a>
-                  );
-                })}
+              {/* usedProducts 改為usedProductsDisplay */}
+              <UsedProductsList
+                usedProducts={
+                  pageTotal > 0 ? usedProductsDisplay[pageNow - 1] : []
+                }
+                getCatUsedProducts={getCatUsedProducts}
+                getUsedProductsPriceRange={getUsedProductsPriceRange}
+                getUsedProductsYearRange={getUsedProductsYearRange}
+                liked={liked}
+                setLiked={setLiked}
+              />
             </div>
           </div>
+          {/* <div className="pagination">
+            {Array(pageTotal)
+              .fill(1)
+              .map((v, i) => {
+                return (
+                  <a
+                    key={i}
+                    href="#/"
+                    onClick={() => {
+                      setPageNow(i + 1);
+                    }}
+                  >
+                    {i + 1}
+                  </a>
+                );
+              })}
+          </div> */}
         </div>
       </div>
     </>

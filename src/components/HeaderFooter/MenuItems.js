@@ -27,10 +27,10 @@ export const HeaderItems = [
   },
   {
     title: '現貨專區',
-    path: '/',
+    path: '/products',
   },
   {
-    title: '布置靈感',
+    title: '佈置靈感',
     path: '/inspiration',
   },
   {

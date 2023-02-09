@@ -41,7 +41,7 @@ import Cancelled from './components/PersonalStore/SalesOrderContent/Cancelled';
 
 // user-page branch
 import UserPage from './components/UserPage/UserPage';
-
+import UpdatePassword from './components/UserPage/UpdatePassword';
 import Cart from './components/Cart/Cart';
 
 import Login from './components/Login/Login';
@@ -200,6 +200,7 @@ function App() {
                     <Route path="password/edit" element={<ResetPassword />} />
                     <Route path="register" element={<Register />} />
                     <Route path="user" element={<UserPage />} />
+                    <Route path="updatepwd" element={<UpdatePassword />} />
 
                     {/* ckeckout */}
                     <Route path="cart" element={<Cart />} />

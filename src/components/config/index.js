@@ -10,6 +10,8 @@ export const pathnameLocale = {
   category: '產品分類',
   'product-category': '產品分類',
   productcategory: '產品分類',
-  used: '二手專區',
+  usedproducts: '二手專區',
+  inspiration: '布置靈感',
+  detail1: '小小冒險家的航海風臥室',
 };
 /* eslint-enable */

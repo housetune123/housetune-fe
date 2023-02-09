@@ -303,18 +303,16 @@ function Main() {
           </section>
 
           <section className="container py-md-5 py-3">
-            <p className="text-info-dark text-center">
-              主題探索 / Topic Explore
-            </p>
+            <p className="text-info-dark text-center">佈置靈感 / Inspiration</p>
             <div className="row">
               <div className="col-md-7">
-                <Link to="#/">
+                <a href="/inspiration">
                   <img
                     className="object-cover"
                     src={`${process.env.REACT_APP_IMAGE_URL}/images/main/TopicExplore.jpeg`}
                     alt="#/"
                   />
-                </Link>
+                </a>
               </div>
               <div className="col-md-5">
                 <p className="text-gray-300 text-md-start text-center mt-md-0 mt-4 explore-text">

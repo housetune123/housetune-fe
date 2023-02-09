@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import axios from 'axios';
 import './Inspiration.scss';
 import { Link } from 'react-router-dom';
+import BreadCrumb from '../Layout/BreadCrumb';
 
 function Inspiration() {
   const [list, setList] = useState([]);
@@ -27,16 +28,17 @@ function Inspiration() {
   return (
     <>
       <div className="insp">
-        <div className="position-relative container">
+        <div className="position-relative container pb-5">
           <div>
-            <p className="crumb text-primary-200 mt-4">
+            <BreadCrumb />
+            {/* <p className="crumb text-primary-200">
               <Link to="/" className="text-decoration-none text-primary-200">
                 首頁
               </Link>
-              {'>'}佈置靈感
-            </p>
+              佈置靈感
+            </p> */}
             <h3 className="text-center text-info-dark mt-5">空間佈置靈感</h3>
-            <div className="row mt-5">
+            <div className="row mt-5 pb-5">
               {list.map((v, i) => {
                 return (
                   <div className="col-12 col-md-6 col-lg-4" key={v.insp_id}>
