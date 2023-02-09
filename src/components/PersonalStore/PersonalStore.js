@@ -198,7 +198,7 @@ function PersonalStore({ socket }) {
 
   // 商品分頁
   const [ProductOffset, setProductOffset] = useState(0);
-  const ProductPerPage = 8;
+  const ProductPerPage = 12;
   const ProductEndOffset = ProductOffset + ProductPerPage;
   const ProductCurrentItems = productsFilter.slice(
     ProductOffset,
@@ -415,11 +415,11 @@ function PersonalStore({ socket }) {
                 })}
                 <ReactPaginate
                   breakLabel="..."
-                  nextLabel=">"
+                  nextLabel="下一頁>"
                   onPageChange={ProductPageClick}
                   pageRangeDisplayed={5}
                   pageCount={ProductPageCount}
-                  previousLabel="<"
+                  previousLabel="<上一頁"
                   renderOnZeroPageCount={null}
                   containerClassName="pagination"
                   pageLinkClassName="page-num"
@@ -540,11 +540,11 @@ function PersonalStore({ socket }) {
                   })}
                   <ReactPaginate
                     breakLabel="..."
-                    nextLabel=">"
+                    nextLabel="下一頁>"
                     onPageChange={RatingPageClick}
                     pageRangeDisplayed={5}
                     pageCount={RatingPageCount}
-                    previousLabel="<"
+                    previousLabel="<上一頁"
                     renderOnZeroPageCount={null}
                     containerClassName="pagination"
                     pageLinkClassName="page-num"

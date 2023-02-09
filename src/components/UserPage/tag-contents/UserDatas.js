@@ -1,189 +1,253 @@
 import React from 'react';
+import { useState, useEffect } from 'react';
+import { Link } from 'react-router-dom';
+import axios from 'axios';
+import { useAuth } from '../../Context/Authcontext';
 
 function UserDatas(props) {
+  const { userinfo } = useAuth();
+
+  const [member, setMemeber] = useState({
+    name: '',
+    email: '',
+    phone: '',
+    address: '',
+    bankcode: '',
+    bankaccount: '',
+  });
+
+  axios.defaults.withCredentials = true;
+
+  useEffect(() => {
+    async function getUser() {
+      let res = await axios.get('http://localhost:3001/api/user/data');
+      // console.log(res.data.data);
+      setMemeber({
+        name: res.data.data[0].name,
+        email: res.data.data[0].email,
+        phone: res.data.data[0].phone,
+        address: res.data.data[0].address,
+        bankcode: res.data.data[0].bank_code,
+        bankaccount: res.data.data[0].bank_account,
+      });
+    }
+    getUser();
+  }, []);
+
+  function handleChange(e) {
+    setMemeber({ ...member, [e.target.name]: e.target.value });
+  }
+
+  async function handleSubmit(e) {
+    e.preventDefault();
+
+    try {
+      let res = await axios.put('http://localhost:3001/api/user/update', {
+        id: userinfo.id,
+        member,
+      });
+      // console.log(res.data);
+      alert(res.data.msg);
+      // navigate('/login');
+    } catch (e) {
+      // console.log(e.response);
+      alert(e.response.data.errors[0]['msg']);
+    }
+  }
+
   return (
     <>
       <div className="user-details pt-2">
-        <div className="user-informations pb-1">
-          <div className="member-class pb-3">
-            <span className="px-3">
-              <i className="fa-solid fa-image-portrait"></i>
-              <span className="fw-bold text-info px-3">xiaoming123</span>
-            </span>
-            <button className="btn btn-primary-300 rounded rounded-5 px-4">
-              一般會員
-            </button>
-          </div>
-          <div className="details">
-            <div className="update-title px-3">
-              <i className="fa-solid fa-pen"></i>
-              <span className="fw-bold text-info px-2">編輯會員資料</span>
+        <form onSubmit={handleSubmit}>
+          <div className="user-informations pb-1">
+            <div className="member-class pb-3">
+              <span className="px-3">
+                <i className="fa-solid fa-image-portrait text-info"></i>
+                <span className="fw-bold text-info px-3">
+                  {userinfo.account}
+                </span>
+              </span>
+              <button
+                disabled
+                className="btn btn-primary-300 rounded rounded-5 px-4"
+              >
+                一般會員
+              </button>
             </div>
-            <div className="row update-inputs px-3 pb-3">
-              {/* 更改資料表 */}
-              <div className="row">
-                {/* 姓名 */}
-                <div className="col-12 col-md-6  align-items-center pt-5">
-                  <div className="row align-items-center">
-                    <label
-                      className="col-12 col-sm-4 text-info fw-bold "
-                      htmlFor="userName"
-                    >
-                      姓名
-                    </label>
-                    <div className="col-12 col-sm-8">
-                      <input
-                        className="w-100 form-control "
-                        type="text"
-                        id="userName"
-                        placeholder="王小名"
-                      />
-                    </div>
-                  </div>
-                </div>
-                {/* Email */}
-                <div className="col-12 col-md-6  align-items-center pt-5">
-                  <div className="row align-items-center">
-                    <label
-                      htmlFor="userEmail"
-                      className="col-12 col-sm-4 text-info fw-bold"
-                    >
-                      Email
-                    </label>
-                    <div className="col-12 col-sm-8">
-                      <input
-                        className="w-100 form-control"
-                        id="userEmail"
-                        type="email"
-                        placeholder="xiaoming123@test.com"
-                      />
-                    </div>
-                  </div>
-                </div>
-                {/* 電話 */}
-                <div className="col-12 col-md-6 align-items-center pt-5">
-                  <div className="row align-items-center">
-                    <label
-                      htmlFor="userPhone"
-                      className="col-12 col-sm-4 text-info fw-bold"
-                    >
-                      連絡電話
-                    </label>
-                    <div className="col-12 col-sm-8">
-                      <input
-                        id="userPhone"
-                        type="text"
-                        className="w-100 form-control"
-                        placeholder="0912345678"
-                      />
-                    </div>
-                  </div>
-                </div>
-
-                {/* 地址 */}
-                <div className="col-12 col-md-6 align-items-center pt-5">
-                  <div className="row align-items-center">
-                    <div className="col-12 col-sm-4 text-info fw-bold">
-                      地址
-                    </div>
-                    <div className="col-12 col-sm-8">
-                      <a
-                        href="#/"
-                        className="text-decoration-none fw-bold text-primary-200"
+            <div className="details">
+              <div className="row update-inputs px-3 pb-5">
+                {/* 更改資料表 */}
+                <div className="row">
+                  {/* 姓名 */}
+                  <div className="col-12 col-md-6  align-items-center pt-5">
+                    <div className="row align-items-center">
+                      <label
+                        className="col-12 col-sm-4 text-info fw-bold "
+                        htmlFor="userName"
                       >
-                        新增地址
-                      </a>
-                    </div>
-                  </div>
-                </div>
-
-                {/* 密碼 */}
-                <div className="col-12 col-md-6 align-items-center pt-5">
-                  <div className="row align-items-center">
-                    <label className="col-12 col-sm-4 text-info fw-bold">
-                      密碼
-                    </label>
-                    <div className="col-12 col-sm-8">
-                      <a
-                        href="#/"
-                        className="text-decoration-none fw-bold text-primary-200"
-                      >
-                        設定新的密碼
-                      </a>
-                      {/* 點設定新按鈕出現 input 預設是 hide(d-none) */}
-                      <input
-                        className="input-hide form-control"
-                        type="password"
-                      />
-                    </div>
-                  </div>
-                </div>
-                {/* 帳戶綁定 */}
-                <div className="col-12 col-md-6 align-items-center pt-5">
-                  <div className="row align-items-center">
-                    <div className="col-12 col-sm-4 text-info fw-bold">
-                      帳戶綁定
-                    </div>
-                    <div className="col-12 col-sm-8">
-                      <a
-                        href="#/"
-                        className="text-decoration-none fw-bold text-primary-200"
-                      >
-                        新增綁定
-                      </a>
-                    </div>
-                  </div>
-                </div>
-                {/* 訂閱 checkbox */}
-                <div className="col-12 col-md-6 align-items-center pt-5">
-                  <div className="row">
-                    <div className="col-12 col-sm-4 text-info fw-bold">
-                      訂閱通知
-                    </div>
-                    <div className="col-12 col-sm-8">
-                      <div className="form-check">
+                        姓名
+                      </label>
+                      <div className="col-12 col-sm-8">
                         <input
-                          className="form-check-input"
-                          type="checkbox"
-                          value=""
-                          id="Check-Email"
+                          className="w-100 form-control bg-white"
+                          type="text"
+                          id="userName"
+                          value={member.name}
+                          onChange={handleChange}
+                          name="name"
+                          required
                         />
-                        <label
-                          className="form-check-label text-info fw-bold"
-                          htmlFor="Check-Email"
-                        >
-                          訂閱電子郵報
-                        </label>
                       </div>
-                      <div className="form-check">
+                    </div>
+                  </div>
+                  {/* Email */}
+                  <div className="col-12 col-md-6  align-items-center pt-5">
+                    <div className="row align-items-center">
+                      <label
+                        htmlFor="userEmail"
+                        className="col-12 col-sm-4 text-info fw-bold"
+                      >
+                        Email
+                      </label>
+                      <div className="col-12 col-sm-8">
                         <input
-                          className="form-check-input"
-                          type="checkbox"
-                          value=""
-                          id="Check-SMS"
+                          className="w-100 form-control bg-white"
+                          id="userEmail"
+                          type="email"
+                          value={member.email}
+                          onChange={handleChange}
+                          name="email"
+                          pattern="[a-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,4}$"
+                          required
                         />
-                        <label
-                          className="form-check-label text-info fw-bold"
-                          htmlFor="Check-SMS"
+                      </div>
+                    </div>
+                  </div>
+                  {/* 電話 */}
+                  <div className="col-12 col-md-6 align-items-center pt-5">
+                    <div className="row align-items-center">
+                      <label
+                        htmlFor="userPhone"
+                        className="col-12 col-sm-4 text-info fw-bold"
+                      >
+                        連絡電話
+                      </label>
+                      <div className="col-12 col-sm-8">
+                        <input
+                          id="userPhone"
+                          type="text"
+                          className="w-100 form-control bg-white"
+                          value={member.phone}
+                          onChange={handleChange}
+                          name="phone"
+                          maxlength="11"
+                          required
+                        />
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* 地址 */}
+                  <div className="col-12 col-md-6 align-items-center pt-5">
+                    <div className="row align-items-center">
+                      <label
+                        htmlFor="userAddress"
+                        className="col-12 col-sm-4 text-info fw-bold"
+                      >
+                        地址
+                      </label>
+                      <div className="col-12 col-sm-8">
+                        <input
+                          id="userAddress"
+                          type="text"
+                          className="w-100 form-control bg-white"
+                          value={member.address}
+                          onChange={handleChange}
+                          name="address"
+                          required
+                        />
+                      </div>
+                    </div>
+                  </div>
+                  {/* Bank_code */}
+                  <div className="col-12 col-md-6  align-items-center pt-5">
+                    <div className="row align-items-center">
+                      <label
+                        htmlFor="userBank_code"
+                        className="col-12 col-sm-4 text-info fw-bold"
+                      >
+                        銀行代碼
+                      </label>
+                      <div className="col-12 col-sm-8">
+                        <input
+                          className="w-100 form-control bg-white"
+                          id="userBank_code"
+                          type="bankcode"
+                          value={member.bankcode}
+                          onChange={handleChange}
+                          name="bankcode"
+                          required
+                        />
+                      </div>
+                    </div>
+                  </div>
+                  {/*  Bank_account */}
+                  <div className="col-12 col-md-6  align-items-center pt-5">
+                    <div className="row align-items-center">
+                      <label
+                        htmlFor="userBank_account"
+                        className="col-12 col-sm-4 text-info fw-bold"
+                      >
+                        銀行帳號
+                      </label>
+                      <div className="col-12 col-sm-8">
+                        <input
+                          className="w-100 form-control bg-white"
+                          id="userBank_account"
+                          type="bankaccount"
+                          value={member.bankaccount}
+                          onChange={handleChange}
+                          name="bankaccount"
+                          required
+                        />
+                      </div>
+                    </div>
+                  </div>
+                  {/*  password */}
+                  <div className="col-12 col-md-6  align-items-center pt-5">
+                    <div className="row align-items-center">
+                      <label
+                        htmlFor="userpassword"
+                        className="col-12 col-sm-4 text-info fw-bold"
+                      >
+                        密碼
+                      </label>
+                      <div className="col-12 col-sm-8">
+                        <Link
+                          to="/updatepwd"
+                          className="text-decoration-none text-primary-300 d-none d-lg-inline"
                         >
-                          訂閱SMS
-                        </label>
+                          修改密碼
+                        </Link>
                       </div>
                     </div>
                   </div>
                 </div>
               </div>
             </div>
-          </div>
-          <div className="d-flex justify-content-end">
-            <div className="sava-btn pe-3 py-3">
-              <button className="counponHover btn btn-white border me-2 bg-orange px-4">
-                取消
-              </button>
-              <button className="btn btn-primary-300 px-3">儲存變更</button>
+            <div className="d-flex justify-content-end px-4">
+              <div className="sava-btn pe-3 py-3 ">
+                <button
+                  type="submit"
+                  className="btn btn-primary-300 px-3"
+                  // onClick={handleSubmit}
+                >
+                  儲存
+                </button>
+              </div>
             </div>
           </div>
-        </div>
+        </form>
       </div>
     </>
   );

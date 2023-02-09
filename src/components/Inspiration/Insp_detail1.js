@@ -1,6 +1,7 @@
 import React from 'react';
 import { useState } from 'react';
 import { Link } from 'react-router-dom';
+import BreadCrumb from '../Layout/BreadCrumb';
 
 function Insp_detail1() {
   const [show1, setShow1] = useState(false);
@@ -14,9 +15,10 @@ function Insp_detail1() {
   return (
     <>
       <div className="insp_1">
-        <div className="position-relative container">
+        <div className="position-relative container pb-5">
           <div>
-            <p className="crumb text-primary-200 mt-4">
+            <BreadCrumb />
+            {/* <p className="crumb text-primary-200">
               <Link
                 to="/inspiration"
                 className="text-decoration-none text-primary-200"
@@ -24,7 +26,7 @@ function Insp_detail1() {
                 佈置靈感
               </Link>
               {'>'}小小冒險家的航海風臥室
-            </p>
+            </p> */}
             <h3 className="text-center text-info-dark mt-lg-5 mt-3 title">
               小小冒險家的航海風臥室
             </h3>
@@ -496,7 +498,7 @@ function Insp_detail1() {
                 </div>
               </div>
 
-              <button className="bg-primary-300 d-block mx-auto mt-5">
+              <button className="btn btn-primary-300 d-block mx-auto mt-5">
                 <Link
                   to="/inspiration"
                   className="text-white text-decoration-none"

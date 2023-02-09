@@ -1,41 +1,42 @@
 import { useState, useEffect, Fragment } from 'react';
+import axios from 'axios';
+import { useAuth } from '../../Context/Authcontext';
+
 import OrderDetail from './OrderDetail';
 import OrderComment from './OrderComment';
 
 function Orders() {
+  const { userinfo } = useAuth();
+
   // 將訂單 map 出來
-  const products = [
-    {
-      Id: '1',
-      orderNumber: '20221120000001',
-      Date: '2022/11/20',
-      Total: '5000',
-      Status: '已出貨',
-    },
-    {
-      Id: '2',
-      orderNumber: '20221120000002',
-      Date: '2022/11/20',
-      Total: '6000',
-      Status: '未出貨',
-    },
-    {
-      Id: '3',
-      orderNumber: '2022112000000e',
-      Date: '2022/11/21',
-      Total: '8000',
-      Status: '未出貨',
-    },
-  ];
+  axios.defaults.withCredentials = true;
+  const [orderList, setOrderList] = useState([]);
+  useEffect(() => {
+    async function getOrder() {
+      let res = await axios.post('http://localhost:3001/api/user/order', {
+        id: userinfo.id,
+      });
+      setOrderList(res.data);
+    }
+    getOrder();
+  }, [userinfo]);
 
   // 查閱和評價的手風琴
   const [open, setOpen] = useState(-1);
   const [openComment, setOpenComment] = useState(-1);
 
-  useEffect(() => {
-    console.log('render');
-    console.log(open);
-  }, [open]);
+  // 判斷訂單狀態
+  function orderState(i) {
+    if (i === 1) {
+      return '尚未付款';
+    } else if (i === 2) {
+      return '待出貨';
+    } else if (i === 3) {
+      return '已完成';
+    } else if (i === 4) {
+      return '不成立';
+    }
+  }
 
   return (
     <>
@@ -58,26 +59,30 @@ function Orders() {
                 </thead>
                 {/* 優惠券詳細內容 */}
                 <tbody>
-                  {products.map((val, index) => {
+                  {orderList.map((val, index) => {
+                    const orderDetail = Object.values(
+                      JSON.parse(val.product_id)
+                    );
+                    const couponDiscount = JSON.parse(val.couponInfo);
                     return (
-                      <Fragment key={val.Id}>
+                      <Fragment key={val.ordL_id}>
                         <tr
                           className={`row text-center align-items-center  ${
                             index === 0 ? '' : 'border-top'
                           }`}
-                          id={val.Id}
+                          id={val.ordL_id}
                         >
                           <td className="col-3" data-th="訂單號碼">
-                            {val.orderNumber}
+                            {val.ordL_id}
                           </td>
                           <td className="col-2" data-th="訂單日期">
-                            {val.Date}
+                            {val.order_date}
                           </td>
                           <td className="col-2" data-th="合計">
-                            NT${val.Total}
+                            NT${val.price}
                           </td>
                           <td className="col-2" data-th="訂單狀態">
-                            {val.Status}
+                            {orderState(val.state)}
                           </td>
                           <td
                             className="col-3 row justify-content-around"
@@ -85,66 +90,69 @@ function Orders() {
                           >
                             <button
                               className={`btn ${
-                                val.Id === open
+                                val.ordL_id === open
                                   ? 'btn-primary-300'
                                   : 'btn-white bg-orange'
                               }  col-5`}
                               onClick={(e) => {
-                                // 錯誤邏輯
-                                // if (open === -1) {
-                                //   setOpen(val.Id);
-                                // }
-                                // if (open === val.Id) {
-                                //   setOpen(-1);
-                                // }
                                 e.preventDefault();
                                 // 若點擊的 id 值等於狀態 則讓狀態關閉
                                 // 否則關閉
-                                if (val.Id === open) {
+                                if (val.ordL_id === open) {
                                   setOpen(-1);
                                 } else {
-                                  setOpen(val.Id);
+                                  setOpen(val.ordL_id);
                                 }
                               }}
                             >
-                              查閱 {val.Id === open ? '-' : '+'}
+                              查閱 {val.ordL_id === open ? '-' : '+'}
                             </button>
                             <button
                               className={`btn ${
-                                val.Id === openComment
+                                val.ordL_id === openComment
                                   ? 'btn-primary-300'
                                   : 'btn-white bg-orange'
                               }  col-5`}
                               onClick={() => {
-                                if (val.Id === openComment) {
+                                if (val.ordL_id === openComment) {
                                   setOpenComment(-1);
                                 } else {
-                                  setOpenComment(val.Id);
+                                  setOpenComment(val.ordL_id);
                                 }
                               }}
+                              disabled={val.state === 3 ? false : true}
                             >
-                              評價 {val.Id === openComment ? '-' : '+'}
+                              評價 {val.ordL_id === openComment ? '-' : '+'}
                             </button>
                           </td>
                         </tr>
                         <tr
                           className={`open-detail row text-center align-items-center ${
-                            val.Id === open ? 'show' : 'hide'
+                            val.ordL_id === open ? 'show' : 'hide'
                           }`}
-                          id={val.Id}
+                          id={val.ordL_id}
                         >
-                          <OrderDetail index={val.Id} open={open} />
+                          <OrderDetail
+                            index={val.ordL_id}
+                            open={open}
+                            list={orderList}
+                            detail={orderDetail}
+                            coupon={couponDiscount}
+                          />
                         </tr>
                         <tr
                           className={`open-detail row text-center align-items-center ${
-                            val.Id === openComment ? 'show' : 'hide'
+                            val.ordL_id === openComment ? 'show' : 'hide'
                           }`}
-                          id={val.Id}
+                          id={val.ordL_id}
                         >
-                          <OrderComment
-                            index={val.Id}
-                            openComment={openComment}
-                          />
+                          {val.state === 3 && (
+                            <OrderComment
+                              index={val.ordL_id}
+                              openComment={openComment}
+                              detail={orderDetail}
+                            />
+                          )}
                         </tr>
                       </Fragment>
                     );

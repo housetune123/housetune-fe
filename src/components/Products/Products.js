@@ -57,7 +57,7 @@ function Products() {
 
   // 收藏
   const [like, setLike] = useState([]);
-
+  // 取得收藏資料
   useEffect(() => {
     try {
       async function getLiked() {

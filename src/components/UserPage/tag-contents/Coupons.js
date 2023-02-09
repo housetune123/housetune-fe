@@ -1,6 +1,54 @@
 import React from 'react';
+import { Link, useNavigate } from 'react-router-dom';
+import axios from 'axios';
+import { useAuth } from '../../Context/Authcontext';
+import { useEffect, useState } from 'react';
+
+// 在 user 裡面的 valid coupon
+// 先把優惠券的格式變成一行
+// 再把撈過來的資料（要轉格式 看小賴老師的git）透過 map撈出來
+// 應該不用做分頁
 
 function Coupons(props) {
+  const navigate = useNavigate();
+  const { userinfo, setUserInfo, isLoggedIn, setIsLoggedIn } = useAuth();
+
+  const [addCoupon, setAddCoupons] = useState(false);
+
+  // 優惠券名稱
+  const [coupon, setCoupon] = useState('HAPPYYEIN');
+  // 優惠券細節
+  const [couponDisplay, setCouponDisplay] = useState([]);
+
+  function handleUseCoupon() {
+    // 新增優惠券 ＝> 加入user.validCoupon
+    // 前端再從 user table裡面撈
+    setAddCoupons(false);
+    async function getCoupon() {
+      try {
+        let res = await axios.put(`http://localhost:3001/api/user/addcoupons`, {
+          coupon,
+        });
+        alert('使用成功！');
+        setAddCoupons(true);
+      } catch (err) {
+        alert('無此優惠券或不符合資格！');
+      }
+    }
+    getCoupon();
+  }
+
+  useEffect(() => {
+    async function getUserCoupon() {
+      let result = await axios.get(
+        'http://localhost:3001/api/user/usercoupons'
+      );
+      const coupons = result.data;
+      setCouponDisplay(coupons);
+    }
+    getUserCoupon();
+  }, [addCoupon]);
+
   return (
     <>
       <div className="user-coupons pt-2">
@@ -8,7 +56,7 @@ function Coupons(props) {
           {/* 小標 */}
           <div className="pb-3">
             <span className="px-3">
-              <i className="fa-solid fa-ticket"></i>
+              <i className="fa-solid fa-ticket text-info"></i>
               <span className="fw-bold text-info px-3">優惠券</span>
             </span>
           </div>
@@ -19,10 +67,21 @@ function Coupons(props) {
               <div className="col-12 col-md-6  d-flex align-items-center justify-content-evenly">
                 <input
                   type="text"
+                  value={coupon}
                   className="form-control w-75"
                   placeholder="輸入優惠券代碼..."
+                  onChange={(e) => {
+                    setCoupon(e.target.value);
+                  }}
                 />
-                <button className="btn btn-primary-300">領取</button>
+                <button
+                  className="btn btn-primary-300"
+                  onClick={() => {
+                    handleUseCoupon();
+                  }}
+                >
+                  領取
+                </button>
               </div>
             </div>
             {/* 優惠券列表 */}
@@ -41,56 +100,39 @@ function Coupons(props) {
                 </thead>
                 {/* 優惠券詳細內容 */}
                 <tbody>
-                  <tr className="row text-center align-items-center">
-                    <td className="col-2" data-th="優惠券項目">
-                      歡慶開幕禮!
-                    </td>
-                    <td className="col-2" data-th="折扣">
-                      $1000
-                    </td>
-                    <td className="col-2" data-th="優惠券類型">
-                      滿額折扣
-                    </td>
-                    <td className="col-2" data-th="使用門檻">
-                      低消 $12000
-                    </td>
-                    <td className="col-2" data-th="使用期限">
-                      2022/10/31
-                    </td>
-                    <td
-                      className="col-2 d-flex justify-content-center"
-                      data-th=""
-                    >
-                      <button className="col-12 counponHover btn btn-white bg-orange">
-                        使用
-                      </button>
-                    </td>
-                  </tr>
-                  <tr className="row text-center align-items-center">
-                    <td className="col-2" data-th="優惠券項目">
-                      歡慶開幕禮!
-                    </td>
-                    <td className="col-2" data-th="折扣">
-                      $1000
-                    </td>
-                    <td className="col-2" data-th="優惠券類型">
-                      滿額折扣
-                    </td>
-                    <td className="col-2" data-th="使用門檻">
-                      低消 $12000
-                    </td>
-                    <td className="col-2" data-th="使用期限">
-                      2022/10/31
-                    </td>
-                    <td
-                      className="col-2 d-flex justify-content-center"
-                      data-th=""
-                    >
-                      <button className="col-12 counponHover btn btn-white bg-orange">
-                        使用
-                      </button>
-                    </td>
-                  </tr>
+                  {couponDisplay.length > 0 &&
+                    couponDisplay.map((v, i) => {
+                      return (
+                        <tr
+                          className="row text-center align-items-center"
+                          key={i}
+                        >
+                          <td className="col-2" data-th="優惠券項目">
+                            {v.coupon_name}
+                          </td>
+                          <td className="col-2" data-th="折扣">
+                            ${v.discount}
+                          </td>
+                          <td className="col-2" data-th="優惠券類型">
+                            {v.type}
+                          </td>
+                          <td className="col-2" data-th="使用門檻">
+                            低消 {v.min_expense}
+                          </td>
+                          <td className="col-2" data-th="使用期限">
+                            {v.start_date}~{v.end_date}
+                          </td>
+                          <td
+                            className="col-2 d-flex justify-content-center"
+                            data-th=""
+                          >
+                            <button className="col-12 counponHover btn btn-white bg-orange">
+                              使用
+                            </button>
+                          </td>
+                        </tr>
+                      );
+                    })}
                 </tbody>
               </table>
             </div>

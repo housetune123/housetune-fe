@@ -12,37 +12,41 @@ import { Modal, Button } from 'react-bootstrap';
 
 function UsedProductsDetail() {
   const [usedProduct, setUsedProduct] = useState([]);
+  const [rating, setRating] = useState([]);
   const { usedProdId } = useParams(); //解構復值寫法 把右邊的useParams存的值（是個物件）交給prodId
-  console.log(useParams()); //{prodId: '1'}
-  console.log(usedProdId);
+  // console.log(useParams()); //{prodId: '1'}
+  console.log(rating);
   useEffect(() => {
+    const seller = usedProduct.map((v) => {
+      return v.seller_id;
+    })[0];
     async function getUsedProduct() {
       try {
         let res = await axios.get(
-          `http://localhost:3001/usedproduct/${usedProdId}`
+          `http://localhost:3001/usedproduct/${usedProdId}`,
+          { seller }
         ); //變數名需要和route 裡的變數名一樣
-        console.log('res.data', res.data); //[{…}]陣列裡的物件
+        // console.log('res.data', res.data); //[{…}]陣列裡的物件
         setUsedProduct(res.data);
+        setRating(res.data.rating);
       } catch (e) {
         console.error(e);
       }
     }
     getUsedProduct();
   }, []);
-  //TODO:照片一直出不來
   const settings = {
-    customPaging: function (i) {
+    customPaging: function (index) {
       return (
         <a href="#/">
           {usedProduct.map((v, i) => {
             const imgArray = v.img.split(',');
-            console.log(imgArray[0]);
             return (
               <img
                 key={v.useP_id}
                 className="object-cover"
                 alt=""
-                src={`${process.env.REACT_APP_IMAGE_URL}/images/used/Havbeg.jpg`}
+                src={`${process.env.REACT_APP_IMAGE_URL}/images/used/${imgArray[index]}`}
               />
             );
           })}
@@ -126,16 +130,17 @@ function UsedProductsDetail() {
                 <Slider {...settings}>
                   {usedProduct.map((v, i) => {
                     const img = v.img.split(',');
-                    console.log(img);
-                    return (
-                      <div key={v.useP_id}>
-                        <img
-                          className="object-cover"
-                          alt=""
-                          src={`${process.env.REACT_APP_IMAGE_URL}/images/used/${v.img}`}
-                        ></img>
-                      </div>
-                    );
+                    return img.map((v2, i2) => {
+                      return (
+                        <div key={v.useP_id}>
+                          <img
+                            className="object-cover"
+                            alt=""
+                            src={`${process.env.REACT_APP_IMAGE_URL}/images/used/${v2}`}
+                          ></img>
+                        </div>
+                      );
+                    });
                   })}
                 </Slider>
               </div>
@@ -184,8 +189,7 @@ function UsedProductsDetail() {
                       <div className="py-2 py-md-4">
                         <p className="fs-6 text-gray-400 fs-sml mb-0 pt-1">
                           產品敘述： <br />
-                          {/* TODO: */}
-                          既然，就我個人來說，沙發對我的意義，不能不說非常重大。領悟其中的道理也不是那麼的困難。把沙發輕鬆帶過，顯然並不適合。沙發似乎是一種巧合，但如果我們從一個更大的角度看待問題，這似乎是一種不可避免的事實。鄧拓告訴我們，古今中外有學問的人，有成就的人，總是十分注意積累的。知識就是積累起來的。我們對什麼事都不應該像“過眼煙雲”。希望各位能用心體會這段話。
+                          {v.description}
                         </p>
                       </div>
                       <div className="pt-3 row justify-content-around gx-1 gx-md-0">
@@ -196,12 +200,12 @@ function UsedProductsDetail() {
                           前往{v.name}的賣場
                         </Link>
 
-                        <Link
+                        {/* <Link
                           to=""
                           className="btn bg-gray border border-2 border-primary-200 text-primary-300 btn-cart col-md-5 col-auto btn-seller"
                         >
                           傳送訊息給{v.name}
-                        </Link>
+                        </Link> */}
                       </div>
                     </div>
                     <div className="pt-md-4 pt-3">

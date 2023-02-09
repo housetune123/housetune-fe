@@ -1,11 +1,12 @@
 import axios from 'axios';
 import React from 'react';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import './AddUsedProducts.scss';
-import { useNavigate } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '../Context/Authcontext';
+import { Switch } from '@douyinfe/semi-ui';
 
-function AddUsedProducts() {
+function AddUsedProducts({ setFiles, fid }) {
   const navigate = useNavigate();
   const { userinfo, setUserInfo, isLoggedIn, setIsLoggedIn } = useAuth();
   axios.defaults.withCredentials = true;
@@ -19,6 +20,7 @@ function AddUsedProducts() {
   // add
   const [inputValue, setInputValue] = useState({
     img: '',
+    imgs: [],
     name: '',
     categoryRoom: '',
     categoryProduct: '',
@@ -30,15 +32,76 @@ function AddUsedProducts() {
     valid: '',
   });
 
-  // TODO: sidebar 的 checked 判斷
   function handleChange(e) {
     setInputValue({ ...inputValue, [e.target.name]: e.target.value });
   }
 
   // FileUpload
+  const [fileList, setFileList] = useState('');
+  const [fileStored, setFileStored] = useState([]);
   function handUpload(e) {
-    setInputValue({ ...inputValue, img: e.target.files[0] });
+    let length = e.target.files.length;
+    let a = '';
+    let b = [];
+    for (let i = 0; i < length; i++) {
+      a += ' ,';
+      a += e.target.files[i].name;
+    }
+    setFileList(a);
+    for (let i = 0; i < length; i++) {
+      b.push(e.target.files[i]);
+    }
+    setFileStored(b);
   }
+
+  // 選擇的檔案
+  const [selectedFile, setSelectedFile] = useState([]);
+  // 是否有檔案被挑選
+  const [isFilePicked, setIsFilePicked] = useState(false);
+  // 預覽圖片
+  const [preview, setPreview] = useState([]);
+
+  // 當選擇檔案更動時建立預覽圖
+  useEffect(() => {
+    if (!selectedFile) {
+      setPreview([]);
+      return;
+    }
+
+    if (fileStored.length === 0) {
+      return;
+    }
+
+    const preTmp = [];
+    for (let i = 0; i < fileStored.length; i++) {
+      preTmp.push(URL.createObjectURL(fileStored[i]));
+    }
+    setPreview(preTmp);
+  }, [fileStored]);
+
+  //
+  //
+
+  const [fileCount, setFileCount] = useState(0);
+
+  useEffect(() => {
+    setInputValue({ ...inputValue, imgs: fileStored, img: fileList });
+    setFileCount(fileStored.length);
+  }, [fileStored, fileList]);
+
+  // 手機版發布 toggele
+  const [checked, setChecked] = useState(false);
+  function switchBtn() {
+    setChecked(!checked);
+  }
+
+  useEffect(() => {
+    if (checked === false) {
+      setInputValue({ ...inputValue, valid: 0 });
+    } else {
+      setInputValue({ ...inputValue, valid: 1 });
+    }
+  }, [checked]);
 
   // SubmitBtn
   async function handleSubmit(e) {
@@ -47,6 +110,11 @@ function AddUsedProducts() {
     let formData = new FormData();
     formData.append('id', userinfo.id);
     formData.append('img', inputValue.img);
+    if (inputValue.imgs) {
+      for (let i = 0; i < inputValue.imgs.length; i++) {
+        formData.append('imgs', inputValue.imgs[i]);
+      }
+    }
     formData.append('name', inputValue.name);
     formData.append('categoryRoom', inputValue.categoryRoom);
     formData.append('categoryProduct', inputValue.categoryProduct);
@@ -60,27 +128,13 @@ function AddUsedProducts() {
       'http://localhost:3001/usedproduct/add',
       formData
     );
-    console.log(response.data);
-    // 導到二手商品清單
+
+    console.log(response.data[0]);
+    // 回到二手商品清單
+    alert(response.data.msg);
     navigate('/seller/product');
   }
 
-  // ResetBtn
-  function resetForm() {
-    setInputValue({
-      ...inputValue,
-      img: '',
-      name: '',
-      categoryRoom: '',
-      categoryProduct: '',
-      description: '這裡是新增頁面',
-      originalPrice: '',
-      price: '',
-      amount: '',
-      boughtIn: '',
-      valid: '',
-    });
-  }
   return (
     <>
       <div className="add-used-products py-1">
@@ -133,6 +187,7 @@ function AddUsedProducts() {
                 </div>
               </div>
             </div>
+
             {/* form */}
             <form
               action=""
@@ -146,32 +201,46 @@ function AddUsedProducts() {
                   <h4 className="d-none d-lg-block text-gray-400 fw-bold m-4">
                     基本資訊
                   </h4>
-                  {/* TODO: 上傳多張圖片 "multiple" 僅供多選,但傳到資料庫有問題 */}
                   <div className="mobileStyle row mt-lg-5 align-items-center">
                     <div className="col-lg-1"></div>
                     <div className="d-none d-lg-inline col-lg-2 mb-3 dfaic">
                       <label htmlFor="pic">商品圖片</label>
                     </div>
-                    <div className="col col-lg-8">
+                    <div className="col col-lg-8 d-flex">
+                      <div className={'' + fileStored ? 'd-flex' : 'd-none'}>
+                        {fileStored.map((img, i) => {
+                          return (
+                            <div key={i} className="picBox text-center">
+                              <img
+                                className="img-fluid"
+                                src={preview[i]}
+                                alt=""
+                              />
+                            </div>
+                          );
+                        })}
+                      </div>
+                      {/* mobile fileUpload */}
                       <label className="custom-mobile-upload text-primary-300 d-lg-none">
                         + 新增圖片
                         <input
                           type="file"
+                          name="imgs"
                           multiple="multiple"
                           className="form-control"
                           onChange={handUpload}
                         />
                       </label>
-                      {/* TODO: 判斷圖片張數 */}
+                      {/* pad fileUpload */}
                       <div className="padStyle">
                         <label className="d-none d-lg-block custom-file-upload text-primary-300">
-                          <i className="fa-regular fa-image"></i>
+                          <i className="fa-regular fa-image mt-2"></i>
                           <h6 className="padText">新增圖片</h6>
-                          <div className="padText">(0/5)</div>
+                          <div className="padText">({fileCount}/5)</div>
                           <input
                             type="file"
                             multiple="multiple"
-                            className="form-control"
+                            name="file"
                             onChange={handUpload}
                           />
                         </label>
@@ -204,7 +273,7 @@ function AddUsedProducts() {
                       </div>
                     </div>
                   </div>
-                  <div className="row mt-3 mt-lg-5">
+                  <div className="row mt-lg-5">
                     <div className="col-lg-1"></div>
                     <div className="d-none d-lg-inline col-lg-2 mb-3 dfaic">
                       房間分類
@@ -233,7 +302,7 @@ function AddUsedProducts() {
                       </select>
                     </div>
                   </div>
-                  <div className="row mt-3 mt-lg-5">
+                  <div className="row mt-lg-5">
                     <div className="d-none d-lg-inline col-lg-1"></div>
                     <div className="d-none d-lg-inline col-lg-2 mb-3 dfaic">
                       商品分類
@@ -269,7 +338,7 @@ function AddUsedProducts() {
                   </div>
                   <div className="mobileStyle row mt-3 mt-lg-5">
                     <div className="col-lg-1"></div>
-                    <div className="col-lg-2 mb-3 dfaic">商品描述</div>
+                    <div className="col-lg-2 mb-3">商品描述</div>
                     <div className="col-lg-8">
                       <textarea
                         rows="6"
@@ -428,7 +497,7 @@ function AddUsedProducts() {
                   </div>
                 </div>
                 {/* mobile productinfo */}
-                <div className="bg-white d-lg-none w-100">
+                <div className="bg-white d-lg-none w-100 mt-2">
                   <ul className="mobile_info list-unstyled">
                     <div className="row mt-1">
                       <li className="col-7">
@@ -436,9 +505,9 @@ function AddUsedProducts() {
                       </li>
                       <select
                         name="categoryRoom"
-                        required
+                        value={inputValue.categoryRoom}
                         className={
-                          'bg-white col-5' +
+                          'bg-white col-5 text-end' +
                           (roomCat === null ? ' text-gray-100' : '')
                         }
                         onChange={(e) => {
@@ -455,16 +524,15 @@ function AddUsedProducts() {
                         <option value="4">浴室</option>
                       </select>
                     </div>
-
                     <div className="row mt-3 mb-3">
                       <li className="col-7">
                         <i className="fa-solid fa-list-ul"> 商品分類</i>
                       </li>
                       <select
                         name="categoryProduct"
-                        required
+                        value={inputValue.categoryProduct}
                         className={
-                          'bg-white col-5' +
+                          'bg-white col-5 text-end' +
                           (prodCat === null ? ' text-gray-100' : '')
                         }
                         onChange={(e) => {
@@ -498,7 +566,6 @@ function AddUsedProducts() {
                         className="bg-white col-5 text-end"
                         type="number"
                         name="originalPrice"
-                        required
                         min={0}
                         placeholder="設定"
                         onKeyUp={(e) => {
@@ -515,7 +582,6 @@ function AddUsedProducts() {
                         className="bg-white col-5 text-end"
                         type="number"
                         name="price"
-                        required
                         min={0}
                         placeholder="設定"
                         onKeyUp={(e) => {
@@ -524,7 +590,6 @@ function AddUsedProducts() {
                         onChange={handleChange}
                       />
                     </div>
-
                     <div className="row mt-3 mb-3">
                       <li className="col-7">
                         <i className="fa-solid fa-box"> 商品數量</i>
@@ -533,7 +598,6 @@ function AddUsedProducts() {
                         className="bg-white col-5 text-end"
                         type="number"
                         name="amount"
-                        required
                         min={0}
                         placeholder="0"
                         onMouseUp={handleChange}
@@ -549,7 +613,6 @@ function AddUsedProducts() {
                       </li>
                       <input
                         className="g-white col-5 text-end"
-                        required
                         type="number"
                         name="boughtIn"
                         placeholder="1911"
@@ -570,70 +633,35 @@ function AddUsedProducts() {
                         }}
                       />
                     </div>
-
-                    {/* TODO: toggle 切換 value 1 or 0 */}
-                    {/* <li className="row">
-                      <div className="col">
-                        <i class="fa-solid fa-upload">是否發布</i>
-                      </div>
-                      <div className="col">
-                        <input
-                          type="radio"
-                          id="Y"
-                          name="post"
-                          checked={inputValue.valid === 1}
-                          value={1}
-                          onChange={(e) => {
-                            setInputValue({
-                              ...inputValue,
-                              valid: (e.target.value = 1),
-                            });
-                          }}
-                        />
-                        <label htmlFor="Y" className="ms-2">
-                          是
-                        </label>
-                      </div>
-
-                      <div className="col">
-                        <input
-                          type="radio"
-                          id="N"
-                          name="post"
-                          className="ms-3"
-                          checked={inputValue.valid === 0}
-                          value={0}
-                          onChange={(e) => {
-                            setInputValue({
-                              ...inputValue,
-                              valid: (e.target.value = 0),
-                            });
-                          }}
-                        />
-                        <label htmlFor="N" className="ms-2">
-                          否
-                        </label>
-                      </div>
-                    </li> */}
+                    <div className="row mt-3 justify-content-between">
+                      <li className="col-7">
+                        <i class="fa-solid fa-arrow-up-from-bracket">
+                          {' '}
+                          是否發布
+                        </i>
+                      </li>
+                      <Switch
+                        className="toggle mx-2"
+                        checked={checked}
+                        onChange={switchBtn}
+                        aria-label="a switch for valid"
+                        size="large"
+                      ></Switch>
+                    </div>
                   </ul>
                 </div>
                 <div className="mt-lg-5 p-3 d-flex justify-content-center mb-lg-5">
                   <div className="d-none d-lg-block w-80"></div>
                   <div className="row">
                     <div className="col-6">
-                      <button
-                        type="reset"
-                        className="bg-white"
-                        onClick={resetForm}
-                      >
-                        取消
-                      </button>
+                      <Link to={'/seller/product'}>
+                        <button className="bg-white">取消</button>
+                      </Link>
                     </div>
                     <div className="col-6">
                       <button
                         type="submit"
                         className="text-white bg-primary-200"
-                        onClick={handleSubmit}
                       >
                         送出
                       </button>
