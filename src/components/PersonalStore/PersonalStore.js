@@ -24,6 +24,7 @@ function PersonalStore({ socket }) {
   const [products, setProducts] = useState([]);
   const [rating, setRating] = useState([]);
   const [category, setCategory] = useState([]);
+  const [buyer, setBuyer] = useState([]);
   useEffect(() => {
     try {
       async function getProducts() {
@@ -33,6 +34,7 @@ function PersonalStore({ socket }) {
         setProducts(res.data.data);
         setRating(res.data.rating);
         setCategory(res.data.category);
+        setBuyer(res.data.buyer);
       }
       getProducts();
     } catch (e) {
@@ -239,7 +241,7 @@ function PersonalStore({ socket }) {
                   className={isLoggedIn ? 'btn btn-primary-300 my-2' : 'd-none'}
                   onClick={handleMessage}
                 >
-                  <i class="fa-solid fa-comment-dots me-2" />
+                  <i className="fa-solid fa-comment-dots me-2" />
                   聊聊
                 </button>
               </h4>
@@ -279,7 +281,7 @@ function PersonalStore({ socket }) {
                   className={isLoggedIn ? 'btn btn-primary-300 mx-4' : 'd-none'}
                   onClick={handleMessage}
                 >
-                  <i class="fa-solid fa-comment-dots me-2" />
+                  <i className="fa-solid fa-comment-dots me-2" />
                   聊聊
                 </button>
               </h3>
@@ -447,12 +449,12 @@ function PersonalStore({ socket }) {
                       {/* 星星 */}
                       <ReactStars
                         count={5}
-                        size={24}
+                        size={30}
                         color1={'#ced4da'}
                         color2={'#da5260'}
-                        char={<i className="fa-solid fa-star" />}
                         value={averageStar}
                         edit={false}
+                        half={true}
                       />
                     </div>
                     <div className="m-3">
@@ -504,7 +506,13 @@ function PersonalStore({ socket }) {
                         className="pt-3 border-bottom border-1 border-gray-200"
                       >
                         <div className="d-md-flex justify-content-between">
-                          <p className="mb-2">Ariel Shao</p>
+                          <p className="mb-2">
+                            {buyer
+                              .filter((v2) => {
+                                return v.user_id === v2.user_id;
+                              })
+                              .map((v3) => v3.account)}
+                          </p>
                           <div className="text-gray-200 mb-2 d-flex align-items-start">
                             <p className="me-3">
                               {moment(`${v.posted_at}`, 'YYYYMMDD').fromNow()}
@@ -514,7 +522,6 @@ function PersonalStore({ socket }) {
                               size={20}
                               color1={'#ced4da'}
                               color2={'#da5260'}
-                              char={<i className="fa-solid fa-star" />}
                               value={v.stars}
                               edit={false}
                             />
@@ -523,7 +530,7 @@ function PersonalStore({ socket }) {
                         <div className="d-md-flex align-items-center justify-content-between">
                           <div className="col-3 col-md-2">
                             <img
-                              src={`${process.env.REACT_APP_IMAGE_URL}/images/products/used/${img[0]}`}
+                              src={`${process.env.REACT_APP_IMAGE_URL}/images/used/${img[0]}`}
                               alt=""
                               className="object-cover pb-3 pe-4"
                             />

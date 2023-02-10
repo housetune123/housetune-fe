@@ -119,7 +119,7 @@ function UsedProductsDetail() {
 
   return (
     <>
-      <div className="used-product-detail">
+      <div className="used-product">
         <main className="bg-orange">
           {/* 商品資訊 */}
           <section className="container">
@@ -134,7 +134,7 @@ function UsedProductsDetail() {
                       return (
                         <div key={v.useP_id}>
                           <img
-                            className="object-cover"
+                            className="object-cover product-slider-img"
                             alt=""
                             src={`${process.env.REACT_APP_IMAGE_URL}/images/used/${v2}`}
                           ></img>
@@ -174,8 +174,13 @@ function UsedProductsDetail() {
                       <div className="py-2">
                         <p className="fs-6 text-gray-400 fs-sml mb-0">
                           {/* TODO:幾則評論 */}
-                          賣家：{v.seller_name}
-                          （平均{v.rating}分/10則評論）
+                          賣家：
+                          <Link
+                            to={`/${v.account}`}
+                            className="text-primary-300 btn-cart col-md-5 col-auto btn-seller"
+                          >
+                            {v.name}
+                          </Link>
                         </p>
                       </div>
                       <div className="py-2">
@@ -193,12 +198,12 @@ function UsedProductsDetail() {
                         </p>
                       </div>
                       <div className="pt-3 row justify-content-around gx-1 gx-md-0">
-                        <Link
+                        {/* <Link
                           to={`/${v.account}`}
                           className="btn bg-gray border border-2 border-primary-200 text-primary-300 btn-cart col-md-5 col-auto btn-seller"
                         >
                           前往{v.name}的賣場
-                        </Link>
+                        </Link> */}
 
                         {/* <Link
                           to=""
@@ -228,7 +233,7 @@ function UsedProductsDetail() {
 
           {/* 二手商品說明 */}
           <section className="container pt-4">
-            <div className="row">
+            <div className="row pt-5">
               <p className="col-md-6 text-gray-400 fs-sml">
                 <span className="d-block pb-2">二手商品說明：</span>
                 Housetune二手專區僅作為媒合平台，幫助有年齡的傢俱們找到更需要他的主人及處理收付款相關事宜，後續出貨問題或實物與描述不符需退換貨等情事，需自行與賣家聯絡，並鼓勵踴躍給予賣家評價，協助Housetuner擁有一個更佳的平台！
