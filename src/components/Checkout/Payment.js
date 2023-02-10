@@ -303,7 +303,11 @@ function Payment() {
                 </div>
                 <form
                   method="get"
-                  action="http://localhost:3001/api/payment/creditPay"
+                  action={
+                    paySelected === 'CreditCard'
+                      ? 'http://localhost:3001/api/payment/creditPay'
+                      : 'http://localhost:3001/api/payment/transfer'
+                  }
                 >
                   <input
                     type="hidden"
