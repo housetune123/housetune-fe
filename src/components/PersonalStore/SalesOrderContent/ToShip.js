@@ -72,7 +72,7 @@ function AllOrder() {
   };
 
   return (
-    <div className="container bg-white m-auto">
+    <div className="bg-white m-auto">
       <div className="container p-2 ">
         {/* 訂單清單 */}
         <div className="bg-white px-4">
