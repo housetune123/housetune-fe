@@ -4,7 +4,7 @@ import { useState, useEffect } from 'react';
 import './AddUsedProducts.scss';
 import { Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '../Context/Authcontext';
-import { Switch } from '@douyinfe/semi-ui';
+import { Switch, Modal } from '@douyinfe/semi-ui';
 
 function AddUsedProducts({ setFiles, fid }) {
   const navigate = useNavigate();
@@ -79,9 +79,7 @@ function AddUsedProducts({ setFiles, fid }) {
     setPreview(preTmp);
   }, [fileStored]);
 
-  //
-  //
-
+  // 計算圖片張數
   const [fileCount, setFileCount] = useState(0);
 
   useEffect(() => {
@@ -128,12 +126,33 @@ function AddUsedProducts({ setFiles, fid }) {
       'http://localhost:3001/usedproduct/add',
       formData
     );
-
     console.log(response.data[0]);
-    // 回到二手商品清單
-    alert(response.data.msg);
-    navigate('/seller/product');
   }
+
+  // 彈出視窗
+  const [visible, setVisible] = useState(false);
+  function showDialog(e) {
+    setVisible(true);
+  }
+  function handleOK(e) {
+    if (
+      inputValue.name.length &&
+      inputValue.categoryRoom.length &&
+      inputValue.categoryProduct.length &&
+      inputValue.description.length &&
+      inputValue.originalPrice.length &&
+      inputValue.price.length !== 0
+    ) {
+      setVisible(false);
+      navigate('/seller/product');
+    } else {
+      setVisible(false);
+    }
+  }
+  function hadleCancel(e) {
+    setVisible(false);
+  }
+  function handleAfterClose(e) {}
 
   return (
     <>
@@ -662,9 +681,31 @@ function AddUsedProducts({ setFiles, fid }) {
                       <button
                         type="submit"
                         className="text-white bg-primary-200"
+                        onClick={showDialog}
                       >
                         送出
                       </button>
+                      <Modal
+                        className="fw-bold"
+                        title="Housetune 大聲的說"
+                        visible={visible}
+                        onOk={handleOK}
+                        afterClose={handleAfterClose}
+                        onCancel={hadleCancel}
+                        closeOnEsc={true}
+                        okText={'確定'}
+                        okButtonProps={{ type: 'secondary' }}
+                      >
+                        {inputValue.name.length &&
+                        inputValue.categoryRoom.length &&
+                        inputValue.categoryProduct.length &&
+                        inputValue.description.length &&
+                        inputValue.originalPrice.length &&
+                        inputValue.price.length &&
+                        inputValue.amount.length !== 0
+                          ? '新增商品成功!!'
+                          : '請填入完整資訊!!'}
+                      </Modal>
                     </div>
                   </div>
                 </div>

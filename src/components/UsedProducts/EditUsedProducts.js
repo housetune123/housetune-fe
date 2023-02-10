@@ -4,7 +4,7 @@ import { useEffect, useState } from 'react';
 import './AddUsedProducts.scss';
 import { Link, useNavigate, useParams } from 'react-router-dom';
 import { useAuth } from '../Context/Authcontext';
-import { Switch } from '@douyinfe/semi-ui';
+import { Switch, Modal } from '@douyinfe/semi-ui';
 
 function EditUsedProducts({ setFiles, fid }) {
   const navigate = useNavigate();
@@ -188,10 +188,34 @@ function EditUsedProducts({ setFiles, fid }) {
       formData
     );
     // 回到二手商品清單
-    alert(response.data.msg);
-    navigate('/seller/product');
+    // alert(response.data.msg);
+    // navigate('/seller/product');
   }
 
+  // 彈出視窗
+  const [visible, setVisible] = useState(false);
+  function showDialog(e) {
+    setVisible(true);
+  }
+  function handleOK(e) {
+    // if (
+    //   originValue.name.length &&
+    //   originValue.categoryRoom.length &&
+    //   originValue.categoryProduct.length &&
+    //   originValue.description.length &&
+    //   originValue.originalPrice.length &&
+    //   originValue.price.length !== 0
+    // ) {
+    setVisible(false);
+    navigate('/seller/product');
+    // } else {
+    //   setVisible(false);
+    // }
+  }
+  function hadleCancel(e) {
+    setVisible(false);
+  }
+  function handleAfterClose(e) {}
   return (
     <>
       <div className="add-used-products py-1">
@@ -746,9 +770,23 @@ function EditUsedProducts({ setFiles, fid }) {
                       <button
                         type="submit"
                         className="text-white bg-primary-200"
+                        onClick={showDialog}
                       >
                         修改
                       </button>
+                      <Modal
+                        className="fw-bold"
+                        title="Housetune 大聲的說"
+                        visible={visible}
+                        onOk={handleOK}
+                        afterClose={handleAfterClose}
+                        onCancel={hadleCancel}
+                        closeOnEsc={true}
+                        okText={'確定'}
+                        okButtonProps={{ type: 'secondary' }}
+                      >
+                        修改商品成功!!
+                      </Modal>
                     </div>
                   </div>
                 </div>
