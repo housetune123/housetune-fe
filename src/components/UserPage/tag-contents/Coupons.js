@@ -117,11 +117,6 @@ function Coupons(props) {
                           <td className="col-2" data-th="優惠券項目">
                             {v.coupon_name}
                           </td>
-                          <input
-                            type="hidden"
-                            value={v.coupon_name}
-                            id="coupon_name"
-                          />
                           <td className="col-2" data-th="折扣">
                             ${v.discount}
                           </td>
