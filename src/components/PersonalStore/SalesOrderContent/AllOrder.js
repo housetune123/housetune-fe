@@ -115,7 +115,7 @@ function AllOrder() {
 
   return (
     // 搜尋欄位
-    <div className="container bg-white px-4 py-2">
+    <div className="bg-white px-4 py-2">
       <div className="d-flex px-4 my-4">
         <form className="input-group">
           <select className="form-select" onChange={selectValue}>

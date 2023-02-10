@@ -14,8 +14,8 @@ function SalesOrder() {
   return (
     <>
       <div className="sales-order">
-        <div className="container bg-primary m-auto sales-order-tabs">
-          <ul className={'d-flex justify-content-center nav row mt-2'}>
+        <div className="bg-primary m-auto sales-order-tabs">
+          <ul className={'d-flex justify-content-center nav  mt-2'}>
             {tabButtons.map((v, i) => {
               return (
                 <li
