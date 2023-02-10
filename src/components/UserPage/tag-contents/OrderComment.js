@@ -65,9 +65,9 @@ function OrderComment(props) {
         }
         return (
           <div key={i}>
-            <div className={a.length > 0 ? 'd-none' : ''}>
+            <div className={a.length > 0 ? 'd-none' : 'row align-items-center'}>
               <td className="col-sm-2 col-12 justify-content-center">
-                <div className="tdHeight d-flex flex-column justify-content-center">
+                <div className="tdHeight">
                   {v.prod_id < 2001 ? (
                     <img
                       className="w-100"
@@ -89,8 +89,8 @@ function OrderComment(props) {
                   )}
                 </div>
               </td>
-              <td className="col-12 col-sm-9">
-                <div className="tdHeight text-start d-flex flex-column">
+              <td className="col-12 col-sm-10">
+                <div className="tdHeight text-start d-flex flex-column w-100">
                   <p className="fw-bold">{v.name}</p>
                   <div className="text-gray-200">款式 : {v.shape}</div>
                   {/* 評價 */}
@@ -127,7 +127,7 @@ function OrderComment(props) {
                 </div>
               </td>
               {/* 發布按鈕 */}
-              <td className="col-12 ">
+              <td className="col-12 my-2">
                 <div className="save-comment d-sm-flex justify-content-sm-end px-3">
                   <button
                     className="btn btn-primary-300 px-3 col-auto"
@@ -146,7 +146,7 @@ function OrderComment(props) {
               .filter((s) => s.product_id === v.prod_id)
               .map((f, i) => {
                 return (
-                  <div key={i}>
+                  <div key={i} className="row align-items-center">
                     <td className="col-sm-3 col-12 justify-content-center">
                       <div className="tdHeight d-flex flex-column justify-content-center">
                         {f.product_id < 2001 ? (
@@ -174,7 +174,7 @@ function OrderComment(props) {
                     </td>
 
                     <td className="col-9">
-                      <div className="tdHeight text-start d-flex flex-column">
+                      <div className="tdHeight text-start d-flex flex-column w-100">
                         <p className="fw-bold">{v.name}</p>
                         <div className="text-gray-200">款式 : {v.shape}</div>
                         {/* 評價 */}
@@ -195,9 +195,9 @@ function OrderComment(props) {
                         </div>
                       </div>
                     </td>
-                    <td>
+                    {/* <td>
                       <hr className="py-0" />
-                    </td>
+                    </td> */}
                   </div>
                 );
               })}

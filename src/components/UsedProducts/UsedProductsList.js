@@ -97,7 +97,9 @@ function UsedProductsList({
               <div className="product-img">
                 <img
                   style={{ cursor: 'pointer' }}
-                  src={`${process.env.REACT_APP_IMAGE_URL}/images/used/${v.img}`}
+                  src={`${process.env.REACT_APP_IMAGE_URL}/images/used/${
+                    v.img.split(',')[0]
+                  }`}
                   className="card-img-top bg-gray-200 object-cover"
                   alt={v.product_name}
                   onClick={() => {
