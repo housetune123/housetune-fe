@@ -31,7 +31,7 @@ function Address() {
       {/* 運送地址表單 */}
       <div className="form-floating">
         <select className="form-select" onChange={(e) => {}}>
-          <option value="1">{address.address}</option>
+          <option value="1">{address ? address.address : ''}</option>
           <option value="2">使用新的地址</option>
         </select>
         <label>已儲存的地址</label>
@@ -48,7 +48,7 @@ function Address() {
           type="text"
           className="form-control"
           placeholder="名字"
-          value={address.firstName}
+          value={address ? address.firstName : ''}
           onChange={(e) => {
             const newAddress = { ...address, firstName: e.target.value };
             setAddress({ ...newAddress });
@@ -60,7 +60,7 @@ function Address() {
           type="text"
           className="form-control"
           placeholder="姓氏"
-          value={address.lastName}
+          value={address ? address.lastName : ''}
           onChange={(e) => {
             const newAddress = { ...address, lastName: e.target.value };
             setAddress({ ...newAddress });
@@ -76,7 +76,7 @@ function Address() {
           onKeyUp={(e) => {
             e.target.value = e.target.value.replace(/[^\d]/g, '');
           }}
-          value={address.phone}
+          value={address ? address.phone : ''}
           onChange={(e) => {
             const newAddress = { ...address, phone: e.target.value };
             setAddress({ ...newAddress });
@@ -88,7 +88,7 @@ function Address() {
           type="text"
           className="form-control"
           placeholder="市"
-          value={address.city}
+          value={address ? address.city : ''}
           onChange={(e) => {
             const newAddress = { ...address, city: e.target.value };
             setAddress({ ...newAddress });
@@ -100,7 +100,7 @@ function Address() {
           type="text"
           className="form-control"
           placeholder="區"
-          value={address.district}
+          value={address ? address.district : ''}
           onChange={(e) => {
             const newAddress = { ...address, district: e.target.value };
             setAddress({ ...newAddress });
@@ -112,7 +112,7 @@ function Address() {
           type="text"
           className="form-control"
           placeholder="郵遞區號"
-          value={address.postcode}
+          value={address ? address.postcode : ''}
           onChange={(e) => {
             const newAddress = { ...address, postcode: e.target.value };
             setAddress({ ...newAddress });
@@ -124,7 +124,7 @@ function Address() {
           type="text"
           className="form-control"
           placeholder="地址"
-          value={address.address}
+          value={address ? address.address : ''}
           onChange={(e) => {
             const newAddress = { ...address, address: e.target.value };
             setAddress({ ...newAddress });
@@ -136,7 +136,7 @@ function Address() {
           type="text"
           className="form-control"
           placeholder="公司(選填)"
-          value={address.company}
+          value={address ? address.company : ''}
           onChange={(e) => {
             const newAddress = { ...address, company: e.target.value };
             setAddress({ ...newAddress });

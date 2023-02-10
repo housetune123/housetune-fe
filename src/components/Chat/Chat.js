@@ -66,7 +66,7 @@ function Chat({ socket }) {
           userId: userinfo.id,
         }
       );
-      console.log(response1.data);
+      // console.log(response1.data);
       setChatListAccount(response1.data);
     } catch (e) {}
   }
@@ -75,7 +75,7 @@ function Chat({ socket }) {
       let response = await axios.post('http://localhost:3001/api/chat/switch', {
         otherReciever: otherReciever,
       });
-      console.log(response.data);
+      // console.log(response.data);
       if (response.data.length === 0) {
         alert('無此用戶');
       } else if (response.data[0].account === userinfo.account) {
@@ -93,7 +93,7 @@ function Chat({ socket }) {
     }
   }
   async function sendMessage() {
-    console.log('hi');
+    // console.log('hi');
     if (message !== '') {
       let hour = new Date(Date.now()).getHours();
       let minute = new Date(Date.now()).getMinutes();
@@ -151,7 +151,7 @@ function Chat({ socket }) {
             userId: userinfo.id,
           }
         );
-        console.log(response1.data);
+        // console.log(response1.data);
         setChatListAccount(response1.data);
       } catch (e) {}
     }
@@ -201,7 +201,7 @@ function Chat({ socket }) {
           userId: userinfo.id,
         }
       );
-      console.log(response1.data);
+      // console.log(response1.data);
       setChatListAccount(response1.data);
     }
     changeList();

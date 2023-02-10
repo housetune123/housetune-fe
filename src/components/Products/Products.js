@@ -258,8 +258,8 @@ function Products() {
       quantity: parseInt(amount, 10),
     };
     // 判斷購買數量超過庫存 則不能再加進購物車
-    console.log(item);
-    console.log(items);
+    // console.log(item);
+    // console.log(items);
 
     let overBuy = false;
     let buyingItemIndex;

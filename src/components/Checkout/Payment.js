@@ -34,7 +34,6 @@ function Payment() {
   const address = `${addressData.district + addressData.address},${
     addressData.postcode + addressData.city
   },${addressData.country}`;
-
   // 取產品資訊
   const orderItems = items.map((val) => {
     return {
@@ -196,45 +195,6 @@ function Payment() {
                       支付，以安全地完成購買程序。
                     </p>
                   </div>
-                  {/* LINE Pay */}
-                  {/* <div
-                    className="px-4 py-3 border-bottom border-gray-100"
-                    onClick={() => {
-                      setPaySelected('LinePay');
-                    }}
-                  >
-                    <div className="form-check">
-                      <input
-                        className="form-check-input"
-                        type="radio"
-                        name="pay"
-                        onChange={payChange}
-                        checked={paySelected === 'LinePay'}
-                      />
-                      <label className="d-flex justify-content-between fs-7">
-                        LINE Pay
-                        <div>
-                          <img
-                            src={`${process.env.REACT_APP_IMAGE_URL}/images/payment/LinePay.svg`}
-                            alt="LinePay"
-                          />
-                        </div>
-                      </label>
-                    </div>
-                  </div> */}
-                  {/* <div
-                    className={
-                      paySelected === 'LinePay'
-                        ? 'pay-content active bg-primary text-center py-4'
-                        : 'pay-content bg-primary text-center'
-                    }
-                  >
-                    <p className="fs-7">
-                      按一下「立即付款」後，系統會將您重新導向至 LINE
-                      <br />
-                      Pay，以安全地完成購買程序。
-                    </p>
-                  </div> */}
                   {/* ATM 轉帳 / 銀行匯款 */}
                   <div
                     className="px-4 py-3"

@@ -8,6 +8,8 @@ import ReactStars from 'react-stars';
 import ReactPaginate from 'react-paginate';
 import BreadCrumb from '../Layout/BreadCrumb';
 import './PersonalStore.scss';
+import { useCart } from '../../utils/useCart';
+import { Modal, Button } from 'react-bootstrap';
 
 function PersonalStore({ socket }) {
   const { userinfo, isLoggedIn } = useAuth();
@@ -223,6 +225,61 @@ function PersonalStore({ socket }) {
     RatingScroll.current.scrollIntoView();
   };
 
+  // 加入購物車彈跳視窗及訊息
+  const [show, setShow] = useState(false);
+  const [resultMsg, setResultMsg] = useState({});
+  const { addItem, items, clearCart } = useCart();
+  // console.log('prodDetail', prodDetail);
+  const MessageMap = {
+    1: '新增成功！',
+    2: '該商品已存在購物車！',
+    3: '購物車內含有官方或其他賣家的商品，是否清空購物車？',
+  };
+  function addToCart(v) {
+    const item = {
+      ...v,
+      quantity: 1,
+    };
+    console.log(item);
+    // 購物車為空直接 + 進去
+    if (items.length === 0) {
+      addItem({
+        ...item,
+        id: item.useP_id,
+        seller_id: item.seller_id,
+      });
+      setResultMsg(MessageMap[1]);
+    } else {
+      // 購物車內可以有多位賣家的 id
+      // 先確認是否存在 seller_id ， 再確認有沒有這筆商品的 id
+      let itemObj = items[0];
+      const keys = Object.keys(itemObj);
+      if (keys.includes('seller_id') === true) {
+        // 若賣家不同 => 清空購物車
+        if (v.seller_id !== items[0].seller_id) {
+          setResultMsg(MessageMap[3]);
+        } else {
+          let found = items.find((obj) => {
+            return obj.id === item.useP_id;
+          });
+          if (found === undefined) {
+            addItem({
+              ...item,
+              id: item.useP_id,
+              seller_id: item.seller_id,
+            });
+            setResultMsg(MessageMap[1]);
+          } else {
+            setResultMsg(MessageMap[2]);
+          }
+        }
+      } else {
+        setResultMsg(MessageMap[3]);
+      }
+    }
+    setShow(true);
+  }
+
   return (
     <>
       <main className="bg-orange personal-store">
@@ -384,14 +441,6 @@ function PersonalStore({ socket }) {
                             <h6 className="card-title text-gray-300">
                               {v.name}
                             </h6>
-
-                            {v.amount === 0 ? (
-                              <p className="card-text text-danger">已售完</p>
-                            ) : (
-                              <p className="card-text text-primary-200">
-                                僅剩 {v.amount} 件 !
-                              </p>
-                            )}
                             <button className="btn btn-primary-300 fs-sml w-100 d-block d-md-none">
                               加入購物車
                             </button>
@@ -399,10 +448,8 @@ function PersonalStore({ socket }) {
                           <div className="card-body pt-0 card-btn card-shadow bg-white d-none d-md-block">
                             <button
                               className="btn btn-primary-300 fs-sml w-100"
-                              data-bs-toggle="modal"
-                              data-bs-target="#exampleModal"
                               onClick={() => {
-                                setCart(v);
+                                addToCart(v);
                               }}
                             >
                               加入購物車
@@ -605,129 +652,56 @@ function PersonalStore({ socket }) {
             </div>
           </div>
         </div>
-        {/* modal Cart 彈跳視窗 */}
-        <div
-          className="modal fade"
-          id="exampleModal"
-          tabIndex="-1"
-          aria-labelledby="exampleModalLabel"
-          aria-hidden="true"
+        {/* 彈出視窗 */}
+        <Modal
+          show={show}
+          onHide={() => {
+            setShow(false);
+          }}
         >
-          <div className="modal-dialog modal-dialog-centered">
-            <div className="modal-content rounded-0 border-0">
-              <div className="modal-header border-0">
-                <h1
-                  className="modal-title fs-5 text-gray-300"
-                  id="staticBackdropLabel"
-                >
-                  {cart.name}
-                </h1>
-                <button
-                  type="button"
-                  className="btn-close fs-sml"
-                  data-bs-dismiss="modal"
-                  aria-label="Close"
-                ></button>
-              </div>
-              <div className="modal-body border-0 pt-0">
-                <h5 className="card-title text-info pb-3">NT $ {cart.price}</h5>
-                {/* 選擇款式 */}
-                {cart.amount > 0 ? (
-                  <div className="form-floating">
-                    <select
-                      className="form-select text-gray-400"
-                      id="floatingSelect"
-                      value={shape}
-                      onChange={(e) => {
-                        setShape(e.target.value);
-                      }}
-                    >
-                      <option className="text-gray-400" value="" disabled>
-                        請選擇款式
-                      </option>
-                      <option value="藍色 Blue" className="text-gray-400">
-                        藍色 Blue
-                      </option>
-                      <option value="深灰色 Gray" className="text-gray-400">
-                        深灰色 Gray
-                      </option>
-                      <option value="綠色 Green" className="text-gray-400">
-                        綠色 Green
-                      </option>
-                      <option value="白色 White" className="text-gray-400">
-                        白色 White
-                      </option>
-                    </select>
-                    <label htmlFor="floatingSelect" className="label-fs">
-                      款式
-                    </label>
-                  </div>
-                ) : (
-                  /* 售完 */
-                  <div className="text-info-dark">商品已售完</div>
-                )}
-                {/* 數量、加入購物車 */}
-                {cart.amount > 0 && (
-                  <div className="row pt-2">
-                    <div className="col-5">
-                      <div className="form-floating">
-                        <select
-                          className="form-select text-gray-400"
-                          id="floatingSelect"
-                          value={amount}
-                          onChange={(e) => {
-                            setAmount(e.target.value);
-                          }}
-                        >
-                          <option value="" disabled>
-                            請選擇數量
-                          </option>
-                          {Number(1, cart.amount >= 10 ? 9 : cart.amount).map(
-                            (v2, i) => {
-                              return (
-                                <option
-                                  key={v2}
-                                  value={v2}
-                                  className="text-gray-400"
-                                >
-                                  {v2}
-                                </option>
-                              );
-                            }
-                          )}
-                          {cart.amount >= 10 && (
-                            <option value="10" className="text-gray-400">
-                              10 +
-                            </option>
-                          )}
-                        </select>
-                        <label htmlFor="floatingSelect" className="label-fs">
-                          數量
-                        </label>
-                      </div>
-                    </div>
-                    <div className="col-7">
-                      <button className="btn btn-cart bg-gray border border-2 border-primary-200 text-primary-300 btn-cart w-100 h-100">
-                        加入購物車
-                      </button>
-                    </div>
-                  </div>
-                )}
-                {/* 庫存狀態 */}
-                <div className="py-2">
-                  <p className="fs-6 text-gray-400 fs-sml mb-0">
-                    庫存狀態 :
-                    <span className="text-danger">
-                      {cart.amount === 0
-                        ? '已售完'
-                        : `僅剩 ${cart.amount} 件 !`}
-                    </span>
-                  </p>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
+          <Modal.Header closeButton>
+            <Modal.Title className="text-info fw-bold">提醒</Modal.Title>
+          </Modal.Header>
+          <Modal.Body
+            className="fw-bolder d-flex align-items-center"
+            style={{ minHeight: '5rem' }}
+          >
+            {resultMsg}
+          </Modal.Body>
+          <Modal.Footer>
+            <Button
+              className="btn btn-white"
+              variant="secondary"
+              onClick={() => {
+                setShow(false);
+              }}
+            >
+              關閉
+            </Button>
+            {resultMsg === MessageMap[3] ? (
+              <Button
+                className="btn btn-primary-300"
+                variant="primary"
+                onClick={() => {
+                  setShow(false);
+                  clearCart();
+                }}
+              >
+                確認
+              </Button>
+            ) : (
+              <Button
+                className="clearBtn btn btn-primary-300"
+                variant="primary"
+                onClick={() => {
+                  setShow(false);
+                }}
+              >
+                確認
+              </Button>
+            )}
+          </Modal.Footer>
+        </Modal>
       </main>
     </>
   );

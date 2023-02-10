@@ -18,12 +18,10 @@ function UsedProductsList({
 }) {
   let navigate = useNavigate();
   const { isLoggedIn } = useAuth();
-  console.log('login:' + isLoggedIn);
   // 加入購物車彈跳視窗及訊息
   const [show, setShow] = useState(false);
   const [resultMsg, setResultMsg] = useState({});
   const { addItem, items, clearCart } = useCart();
-  // console.log('prodDetail', prodDetail);
   const MessageMap = {
     1: '新增成功！',
     2: '該商品已存在購物車！',
@@ -34,7 +32,6 @@ function UsedProductsList({
       ...v,
       quantity: 1,
     };
-    console.log(item);
     // 購物車為空直接 + 進去
     if (items.length === 0) {
       addItem({

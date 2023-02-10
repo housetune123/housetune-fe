@@ -14,7 +14,7 @@ function Checkout({ setPayment }) {
   // 設定是否使用優惠券
   const [useCoupon, setUseCoupon] = useState(false);
   // 優惠券名稱
-  const [coupon, setCoupon] = useState('HAPPYYE23');
+  const [coupon, setCoupon] = useState('');
   // 優惠券細節
   const [couponDetail, setCouponDetail] = useState({});
 

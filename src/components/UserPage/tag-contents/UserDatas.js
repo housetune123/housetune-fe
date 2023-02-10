@@ -140,7 +140,7 @@ function UserDatas(props) {
                           value={member.phone}
                           onChange={handleChange}
                           name="phone"
-                          maxlength="11"
+                          maxLength="11"
                           required
                         />
                       </div>
