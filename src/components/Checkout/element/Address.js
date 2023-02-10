@@ -39,7 +39,6 @@ function Address() {
       <div className="form-floating">
         <select className="form-select">
           <option value="TW">台灣</option>
-          {/* <option value="2">中國</option> */}
         </select>
         <label>國家/地區</label>
       </div>

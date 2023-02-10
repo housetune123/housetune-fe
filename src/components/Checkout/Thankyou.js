@@ -137,7 +137,6 @@ function Thankyou(props) {
                       <h3 className="fs-7 fw-bold">付款方式</h3>
                       <div className="fs-7">
                         <span>ATM 轉帳 / 銀行匯款</span>
-                        <span> - $29,000.00</span>
                       </div>
                     </div>
                     <div>
