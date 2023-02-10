@@ -44,7 +44,10 @@ function TrackList() {
           <tbody>
             {LikedList.map((val, index) => {
               return (
-                <tr className="row text-center position-relative">
+                <tr
+                  key={val.prod_id}
+                  className="row text-center position-relative"
+                >
                   {/* RWD 刪除 */}
                   <td className="position-absolute rwd-deleteBtn d-md-none d-block">
                     <button
@@ -57,7 +60,7 @@ function TrackList() {
                     </button>
                   </td>
                   <td className="col-sm-3 col-12 justify-content-center">
-                    <div className="tdHeight  d-flex flex-column  justify-content-center">
+                    <div className="tdHeight w-75  d-flex flex-column  justify-content-center">
                       {val.prod_id ? (
                         <img
                           className="w-100"

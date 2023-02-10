@@ -14,8 +14,6 @@ function UsedProductsDetail() {
   const [usedProduct, setUsedProduct] = useState([]);
   const [rating, setRating] = useState([]);
   const { usedProdId } = useParams(); //解構復值寫法 把右邊的useParams存的值（是個物件）交給prodId
-  // console.log(useParams()); //{prodId: '1'}
-  console.log(rating);
   useEffect(() => {
     const seller = usedProduct.map((v) => {
       return v.seller_id;
@@ -66,7 +64,6 @@ function UsedProductsDetail() {
   const [show, setShow] = useState(false);
   const [resultMsg, setResultMsg] = useState({});
   const { addItem, items, clearCart } = useCart();
-  // console.log('prodDetail', prodDetail);
   const MessageMap = {
     1: '新增成功！',
     2: '該商品已存在購物車！',

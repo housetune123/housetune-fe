@@ -39,7 +39,6 @@ function UsedProducts() {
             likeJson,
             userId,
           });
-          // console.log(res.data);
         }
         addLiked();
       } catch (e) {
@@ -47,7 +46,6 @@ function UsedProducts() {
       }
     }
   }, [liked]);
-  console.log(liked);
 
   //列出所有二手商品
   useEffect(() => {
@@ -207,11 +205,9 @@ function UsedProducts() {
     let newUsedProductsArray = [...usedProducts];
 
     if (cats.length > 0) {
-      console.log('bbb', cats);
       newUsedProductsArray = getCatUsedProducts(newUsedProductsArray, cats);
     }
     if (from !== '' || to !== '') {
-      console.log('bbb', cats);
       newUsedProductsArray = getUsedProductsPriceRange(
         newUsedProductsArray,
         from,
@@ -496,7 +492,6 @@ function UsedProducts() {
                       aria-label="Default select example"
                       onChange={(e) => {
                         setSort(Number(e.target.value));
-                        console.log('sort:', sort);
                       }}
                     >
                       <option value="">精選</option>

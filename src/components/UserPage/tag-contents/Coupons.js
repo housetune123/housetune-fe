@@ -16,7 +16,7 @@ function Coupons(props) {
   const [addCoupon, setAddCoupons] = useState(false);
 
   // 優惠券名稱
-  const [coupon, setCoupon] = useState('HAPPYYEIN');
+  const [coupon, setCoupon] = useState('');
   // 優惠券細節
   const [couponDisplay, setCouponDisplay] = useState([]);
 
@@ -29,10 +29,16 @@ function Coupons(props) {
         let res = await axios.put(`http://localhost:3001/api/user/addcoupons`, {
           coupon,
         });
-        alert('使用成功！');
-        setAddCoupons(true);
+        // console.log(res.data);
+        if (res.data !== '無此優惠券') {
+          alert('使用成功！');
+          setAddCoupons(true);
+        } else {
+          alert('無此優惠券或不符合資格!');
+        }
       } catch (err) {
-        alert('無此優惠券或不符合資格！');
+        alert('發生不可預期的錯誤!');
+        console.log(err);
       }
     }
     getCoupon();
@@ -126,9 +132,12 @@ function Coupons(props) {
                             className="col-2 d-flex justify-content-center"
                             data-th=""
                           >
-                            <button className="col-12 counponHover btn btn-white bg-orange">
+                            <Link
+                              to="/cart"
+                              className="col-12 counponHover btn btn-white bg-orange"
+                            >
                               使用
-                            </button>
+                            </Link>
                           </td>
                         </tr>
                       );
