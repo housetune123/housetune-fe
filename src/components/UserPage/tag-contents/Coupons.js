@@ -3,6 +3,7 @@ import { Link, useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import { useAuth } from '../../Context/Authcontext';
 import { useEffect, useState } from 'react';
+import copy from 'copy-to-clipboard';
 
 // 在 user 裡面的 valid coupon
 // 先把優惠券的格式變成一行
@@ -116,6 +117,11 @@ function Coupons(props) {
                           <td className="col-2" data-th="優惠券項目">
                             {v.coupon_name}
                           </td>
+                          <input
+                            type="hidden"
+                            value={v.coupon_name}
+                            id="coupon_name"
+                          />
                           <td className="col-2" data-th="折扣">
                             ${v.discount}
                           </td>
@@ -132,12 +138,16 @@ function Coupons(props) {
                             className="col-2 d-flex justify-content-center"
                             data-th=""
                           >
-                            <Link
-                              to="/cart"
+                            <button
                               className="col-12 counponHover btn btn-white bg-orange"
+                              onClick={() => {
+                                copy(v.coupon_name);
+                                alert('已複製優惠券代碼!');
+                                navigate('/cart');
+                              }}
                             >
                               使用
-                            </Link>
+                            </button>
                           </td>
                         </tr>
                       );
