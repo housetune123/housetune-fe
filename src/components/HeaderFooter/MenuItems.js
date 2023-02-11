@@ -4,34 +4,38 @@ export const HeaderItems = [
     path: '/',
     submenu: [
       {
+        title: '所有商品',
+        path: '/products',
+      },
+      {
         title: '客廳',
-        path: '/',
+        path: '/products/category/1',
       },
       {
         title: '廚房',
-        path: '/',
+        path: '/products/category/2',
       },
       {
         title: '臥室',
-        path: '/',
+        path: '/products/category/3',
       },
       {
         title: '浴室',
-        path: '/',
+        path: '/products/category/4',
       },
     ],
   },
   {
     title: '現貨專區',
-    path: '/',
+    path: '/products',
   },
   {
-    title: '布置靈感',
+    title: '佈置靈感',
     path: '/inspiration',
   },
   {
     title: '二手專區',
-    path: '/',
+    path: '/usedproducts',
   },
   {
     title: 'F A Q',
@@ -95,19 +99,19 @@ export const FooterItems = [
     submenu: [
       {
         title: '客廳',
-        path: '/',
+        path: '/products/category/1',
       },
       {
         title: '廚房',
-        path: '/',
+        path: '/products/category/2',
       },
       {
         title: '臥室',
-        path: '/',
+        path: '/products/category/3',
       },
       {
         title: '浴室',
-        path: '/',
+        path: '/products/category/4',
       },
     ],
   },
@@ -116,11 +120,7 @@ export const FooterItems = [
     submenu: [
       {
         title: '二手買賣',
-        path: '/',
-      },
-      {
-        title: '聊天室',
-        path: '/',
+        path: '/usedproducts',
       },
     ],
   },

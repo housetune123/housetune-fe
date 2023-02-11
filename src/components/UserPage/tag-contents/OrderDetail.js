@@ -1,202 +1,215 @@
 import React from 'react';
+import { Fragment } from 'react';
 
 function OrderDetail(props) {
-  //   if (props.open === props.index)
+  // 判斷訂單狀態
+  function orderState(i) {
+    if (i === 1) {
+      return '尚未付款';
+    } else if (i === 2) {
+      return '待出貨';
+    } else if (i === 3) {
+      return '已完成';
+    } else if (i === 4) {
+      return '不成立';
+    }
+  }
   return (
     <>
-      {/* 購買商品清單 */}
-      <td className="col-2">
-        <div className="tdHeight  d-flex flex-column justify-content-center">
-          <img
-            className="w-100"
-            src={`${process.env.REACT_APP_IMAGE_URL}images/products/ordimg1.png`}
-            alt="img1"
-          />
-        </div>
-      </td>
-      <td className="col-4">
-        <div className="tdHeight text-start d-flex flex-column justify-content-center">
-          <p className="fw-bold">
-            Menu Curiosity Cabinet H168cm珍古系列 橡木收納櫥櫃
-          </p>
-          <div className="text-gray-200">款式 : 橡木原色(Natural Oak)</div>
-        </div>
-      </td>
-      <td className="col-2">
-        <div className="tdHeight text-info d-flex flex-column justify-content-center">
-          NT$ 12,000
-        </div>
-      </td>
-      <td className="col-2">
-        <div className="tdHeight text-info  d-flex flex-column justify-content-center">
-          2
-        </div>
-      </td>
-      <td className="col-2">
-        <div className="tdHeight text-info  d-flex flex-column justify-content-center">
-          NT$ 24,000
-        </div>
-      </td>
-      {/* 購買商品2 */}
-      <td className="col-2">
-        <div className="tdHeight  d-flex flex-column justify-content-center">
-          <img
-            className="w-100"
-            src={`${process.env.REACT_APP_IMAGE_URL}/images/products/ordimg1.png`}
-            alt="img1"
-          />
-        </div>
-      </td>
-      <td className="col-4">
-        <div className="tdHeight text-start d-flex flex-column justify-content-center">
-          <p className="fw-bold">
-            Menu Curiosity Cabinet H168cm珍古系列 橡木收納櫥櫃
-          </p>
-          <div className="text-gray-200">款式 : 橡木原色(Natural Oak)</div>
-        </div>
-      </td>
-      <td className="col-2">
-        <div className="tdHeight text-info d-flex flex-column justify-content-center">
-          NT$ 12,000
-        </div>
-      </td>
-      <td className="col-2">
-        <div className="tdHeight text-info  d-flex flex-column justify-content-center">
-          2
-        </div>
-      </td>
-      <td className="col-2">
-        <div className="tdHeight text-info  d-flex flex-column justify-content-center">
-          NT$ 24,000
-        </div>
-      </td>
+      {props.list
+        .filter((s) => {
+          return s.ordL_id === props.index;
+        })
+        .map((v, i) => {
+          const Subtotal = props.detail.reduce(
+            (acc, num) => acc + num.total,
+            0
+          );
+          return (
+            <Fragment>
+              {/* 購買商品清單 */}
+              {props.detail.map((det, index) => {
+                const SubPrice = det.total / det.quantity;
+                return (
+                  <Fragment key={index}>
+                    <td className="col-sm-2 col-12 justify-content-center">
+                      <div className="tdHeight  d-flex flex-column  justify-content-center">
+                        {det.prod_id < 2001 ? (
+                          <img
+                            className="w-100"
+                            src={`${
+                              process.env.REACT_APP_IMAGE_URL
+                            }/images/products/${det.categoryR_name}/${
+                              String(det.imgs).split(',')[0]
+                            }`}
+                            alt="img1"
+                          />
+                        ) : (
+                          <img
+                            className="w-100"
+                            src={`${
+                              process.env.REACT_APP_IMAGE_URL
+                            }/images/products/used/${
+                              String(det.imgs).split(',')[0]
+                            }`}
+                            alt="img1"
+                          />
+                        )}
+                      </div>
+                    </td>
+                    <td className="col-4">
+                      <div className="tdHeight text-start d-flex flex-column justify-content-center">
+                        <p className="fw-bold">{det.name}</p>
+                        <div className="text-gray-200">款式 : {det.shape}</div>
+                      </div>
+                    </td>
+                    <td
+                      className="col-2 d-flex align-items-center"
+                      data-th="價格"
+                    >
+                      <div className="tdHeight text-info d-flex flex-column justify-content-center">
+                        NT$ {SubPrice}
+                      </div>
+                    </td>
+                    <td
+                      className="col-2 d-flex align-items-center"
+                      data-th="數量"
+                    >
+                      <div className="tdHeight text-info  d-flex flex-column justify-content-center">
+                        {det.quantity}
+                      </div>
+                    </td>
+                    <td
+                      className="col-2 d-flex align-items-center"
+                      data-th="小計"
+                    >
+                      <div className="tdHeight text-info  d-flex flex-column justify-content-center">
+                        NT$ {det.total}
+                      </div>
+                    </td>
+                  </Fragment>
+                );
+              })}
 
-      <td>
-        <hr className="col-12 py-0" />
-      </td>
+              {/* <hr className="col-12 py-0" /> */}
+              {/* 金額 */}
 
-      {/* <hr className="col-12 py-0" /> */}
-      {/* 金額 */}
-      <td>
-        <div className="total-cash">
-          <div className="row text-start">
-            <div className="col-8"></div>
-            <div className="col-4 cash-detail">
-              <div>
-                小計:<span>NT$48,000</span>
-              </div>
-              <div>
-                優惠券折扣:<span>-NT$2,000</span>
-              </div>
-              <div>
-                運費:<span>NT$1,000</span>
-              </div>
-              <div>
-                合計:<span>NT$47,000</span>
-              </div>
-            </div>
-          </div>
-          <hr className="col-12 py-0" />
-          {/* <hr className="col-12 py-0" /> */}
-          {/* 詳細資訊 */}
-          <div className="every-details row">
-            <div className="about-order col-6">
-              <ul className="list-unstyled text-align">
-                <li className="title">
-                  <span>訂單資訊</span>
-                </li>
-                <li className="row">
-                  <span className="col-6 text-start">訂單號碼:</span>
-                  <span className="col-6 text-start">123123</span>
-                </li>
-                <li className="row">
-                  <span className="col-6 text-start">訂單信箱:</span>
-                  <span className="col-6 text-start">123123</span>
-                </li>
-                <li className="row">
-                  <span className="col-6">訂單日期:</span>
-                  <span className="col-6">122323</span>
-                </li>
-                <li className="row">
-                  <span className="col-6">訂單狀態:</span>
-                  <span className="col-6">123231</span>
-                </li>
-              </ul>
-            </div>
-            <div className="about-customer col-6">
-              <ul className="list-unstyled text-align">
-                <li className="title">
-                  <span className="">顧客資訊</span>
-                </li>
-                <li className="row">
-                  <span className="col-6">名稱:</span>
-                  <span className="col-6">12323</span>
-                </li>
-                <li className="row">
-                  <span className="col-6">電話號碼:</span>
-                  <span className="col-6">122312</span>
-                </li>
-              </ul>
-            </div>
-            <div className="about-deliever col-6">
-              <ul className="list-unstyled text-align">
-                <li className="title">
-                  <span>送貨資訊</span>
-                </li>
-                <li className="row">
-                  <span className="col-6">寄送方式:</span>
-                  <span className="col-6">123213</span>
-                </li>
-                <li className="row">
-                  <span className="col-6">送貨狀態:</span>
-                  <span className="col-6">123123</span>
-                </li>
-                <li className="row">
-                  <span className="col-6">收件人姓名:</span>{' '}
-                  <span className="col-6">123123</span>
-                </li>
-                <li className="row">
-                  <span className="col-6">電話號碼:</span>
-                  <span className="col-6">123123</span>
-                </li>
-                <li className="row">
-                  <span className="col-6">配送編號:</span>
-                  <span className="col-6">123123</span>
-                </li>
-                <li className="row">
-                  <span className="col-6">地址</span>
-                  <span className="col-6">123123</span>
-                </li>
-              </ul>
-            </div>
-            <div className="about-payments col-6">
-              <ul className="list-unstyled text-align">
-                <li className="title">
-                  <span className="">付款方式</span>
-                </li>
-                <li className="row">
-                  <span className="col-6">付款資訊:</span>
-                  <span className="col-6">123123</span>
-                </li>
-                <li className="row">
-                  <span className="col-6">發票號碼:</span>
-                  <span className="col-6">1213</span>
-                </li>
-                <li className="row">
-                  <span className="col-6">類型</span>
-                  <span className="col-6">12312</span>
-                </li>
-              </ul>
-            </div>
-          </div>
-        </div>
-      </td>
+              <td key={v.ordL_id}>
+                <div className="total-cash ">
+                  <div className="d-sm-flex justify-content-sm-end border-primary-100  border-top border-bottom">
+                    <div className=" cash-detail ">
+                      <div className="d-flex ">
+                        小計:<span>NT${Subtotal}</span>
+                      </div>
 
-      <td>
-        <hr className="py-0" />
-      </td>
+                      <div className="d-flex justify-content-between">
+                        優惠券折扣:
+                        {props.coupon.map((n) => {
+                          return (
+                            <span>
+                              -NT${n.discount == null ? 0 : n.discount}
+                            </span>
+                          );
+                        })}
+                      </div>
 
-      {/* <hr className="py-0" /> */}
+                      <div className="d-flex justify-content-between">
+                        運費:<span>NT$0</span>
+                      </div>
+                      <div>
+                        合計:<span>NT${v.price}</span>
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* 詳細資訊 */}
+                  <div className="every-details row ">
+                    <div className="about-order col-12 col-md-6">
+                      <ul className="list-unstyled text-align">
+                        <li className="title">
+                          <span>訂單資訊</span>
+                        </li>
+                        <li className="row">
+                          <span className="col-3 text-start">訂單號碼:</span>
+                          <span className="col-4 text-start">{v.ordL_id}</span>
+                        </li>
+                        <li className="row">
+                          <span className="col-3 text-start">訂單信箱:</span>
+                          <span className="col-4 text-start">{v.email}</span>
+                        </li>
+                        <li className="row">
+                          <span className="col-3">訂單日期:</span>
+                          <span className="col-5">{v.order_date}</span>
+                        </li>
+                        <li className="row">
+                          <span className="col-3">訂單狀態:</span>
+                          <span className="col-4">{orderState(v.state)}</span>
+                        </li>
+                      </ul>
+                    </div>
+                    <div className="about-customer col-12 col-md-6">
+                      <ul className="list-unstyled text-align">
+                        <li className="title">
+                          <span className="">顧客資訊</span>
+                        </li>
+                        <li className="row">
+                          <span className="col-3">名稱:</span>
+                          <span className="col-4">{v.name}</span>
+                        </li>
+                        <li className="row">
+                          <span className="col-3">電話號碼:</span>
+                          <span className="col-4">{v.phone}</span>
+                        </li>
+                      </ul>
+                    </div>
+                    <div className="about-deliever col-12 col-md-6">
+                      <ul className="list-unstyled text-align">
+                        <li className="title">
+                          <span>送貨資訊</span>
+                        </li>
+                        <li className="row">
+                          <span className="col-3">寄送方式:</span>
+                          <span className="col-4">宅配</span>
+                        </li>
+                        <li className="row">
+                          <span className="col-3">送貨狀態:</span>
+                          <span className="col-4">運送中</span>
+                        </li>
+                        <li className="row">
+                          <span className="col-3">收件人姓名:</span>
+                          <span className="col-4">{v.name}</span>
+                        </li>
+                        <li className="row">
+                          <span className="col-3">電話號碼:</span>
+                          <span className="col-4">{v.phone}</span>
+                        </li>
+                        <li className="row">
+                          <span className="col-3">配送編號:</span>
+                          <span className="col-4">20230405021</span>
+                        </li>
+                        <li className="row">
+                          <span className="col-3">地址</span>
+                          <span className="col-5">{v.address}</span>
+                        </li>
+                      </ul>
+                    </div>
+                    <div className="about-payments col-12 col-md-6">
+                      <ul className="list-unstyled text-align">
+                        <li className="title">
+                          <span className="">付款方式</span>
+                        </li>
+                        <li className="row">
+                          <span className="col-3">付款資訊:</span>
+                          <span className="col-4">信用卡</span>
+                        </li>
+                      </ul>
+                    </div>
+                  </div>
+                </div>
+              </td>
+            </Fragment>
+          );
+        })}
     </>
   );
 }

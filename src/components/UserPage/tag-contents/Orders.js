@@ -1,172 +1,158 @@
 import { useState, useEffect, Fragment } from 'react';
-import { Link, animateScroll as scroll, Element } from 'react-scroll';
+import axios from 'axios';
+import { useAuth } from '../../Context/Authcontext';
+
 import OrderDetail from './OrderDetail';
 import OrderComment from './OrderComment';
 
-// Or Access Link,Element,etc as follows
-
 function Orders() {
+  const { userinfo } = useAuth();
+
   // 將訂單 map 出來
-  const products = [
-    {
-      Id: '1',
-      orderNumber: '20221120000001',
-      Date: '2022/11/20',
-      Total: '5000',
-      Status: '已出貨',
-    },
-    {
-      Id: '2',
-      orderNumber: '20221120000002',
-      Date: '2022/11/20',
-      Total: '6000',
-      Status: '未出貨',
-    },
-  ];
+  axios.defaults.withCredentials = true;
+  const [orderList, setOrderList] = useState([]);
+  useEffect(() => {
+    async function getOrder() {
+      let res = await axios.post('http://localhost:3001/api/user/order', {
+        id: userinfo.id,
+      });
+      setOrderList(res.data);
+    }
+    getOrder();
+  }, [userinfo]);
 
   // 查閱和評價的手風琴
   const [open, setOpen] = useState(-1);
   const [openComment, setOpenComment] = useState(-1);
 
-  useEffect(() => {
-    console.log('渲染');
-  }, [open]);
+  // 判斷訂單狀態
+  function orderState(i) {
+    if (i === 1) {
+      return '尚未付款';
+    } else if (i === 2) {
+      return '待出貨';
+    } else if (i === 3) {
+      return '已完成';
+    } else if (i === 4) {
+      return '不成立';
+    }
+  }
 
   return (
     <>
-      {/* <Link to="section1">跳轉到指定區塊</Link> */}
-      {/* <Link
-        activeClass="active"
-        to="textBlock2"
-        spy={true}
-        smooth={true}
-        offset={-70}
-        duration={500}
-      >
-        跳轉到指定區塊
-      </Link> */}
       <div className="user-coupons pt-2">
         <div className="coupon-informations pb-1">
           {/* 內容 */}
           <div className="receive-coupons">
             {/* 優惠券列表 */}
             <div className="px-3 pt-4 d-flex">
-              <table className="order-table text-gray-300 border-primary-100 w-100">
+              <table className="order-table table table-rwd text-gray-300 text-center w-100">
                 {/* 標題 */}
                 <thead>
-                  <tr className="row text-center ">
+                  <tr className="row text-center border-bottom border-primary-100 pb-3 tr-only-hide">
                     <th className="col-3">訂單號碼</th>
                     <th className="col-2">訂單日期</th>
                     <th className="col-2">合計</th>
                     <th className="col-2">訂單狀態</th>
                     <th className="col-3"></th>
                   </tr>
-                  <tr>
-                    <th>
-                      <hr />
-                    </th>
-                  </tr>
                 </thead>
                 {/* 優惠券詳細內容 */}
                 <tbody>
-                  {products.map((val, index) => {
+                  {orderList.map((val, index) => {
+                    const orderDetail = Object.values(
+                      JSON.parse(val.product_id)
+                    );
+                    const couponDiscount = JSON.parse(val.couponInfo);
                     return (
-                      <Fragment key={val.Id}>
+                      <Fragment key={val.ordL_id}>
                         <tr
-                          className="row text-center align-items-center"
-                          id={val.Id}
+                          className={`row text-center align-items-center  ${
+                            index === 0 ? '' : 'border-top'
+                          }`}
+                          id={val.ordL_id}
                         >
-                          <td className="col-3">{val.orderNumber}</td>
-                          <td className="col-2">{val.Date}</td>
-                          <td className="col-2">NT${val.Total}</td>
-                          <td className="col-2">{val.Status}</td>
-                          <td className="col-3 row justify-content-around">
+                          <td className="col-3" data-th="訂單號碼">
+                            {val.ordL_id}
+                          </td>
+                          <td className="col-2" data-th="訂單日期">
+                            {val.order_date}
+                          </td>
+                          <td className="col-2" data-th="合計">
+                            NT${val.price}
+                          </td>
+                          <td className="col-2" data-th="訂單狀態">
+                            {orderState(val.state)}
+                          </td>
+                          <td
+                            className="col-3 row justify-content-around"
+                            data-th=""
+                          >
                             <button
                               className={`btn ${
-                                val.Id === open
+                                val.ordL_id === open
                                   ? 'btn-primary-300'
                                   : 'btn-white bg-orange'
-                              }  col-4`}
-                              onClick={() => {
-                                // if (open === -1) {
-                                //   setOpen(val.Id);
-                                // }
-                                // if (open === val.Id) {
-                                //   setOpen(-1);
-                                // }
-
-                                if (val.Id === open) {
+                              }  col-5`}
+                              onClick={(e) => {
+                                e.preventDefault();
+                                // 若點擊的 id 值等於狀態 則讓狀態關閉
+                                // 否則關閉
+                                if (val.ordL_id === open) {
                                   setOpen(-1);
-                                  return (
-                                    <Link
-                                      to={val.Id}
-                                      smooth={true}
-                                      duration={0}
-                                    ></Link>
-                                  );
                                 } else {
-                                  setOpen(val.Id);
+                                  setOpen(val.ordL_id);
                                 }
                               }}
                             >
-                              {/* <Link
-                                className={`btn ${
-                                  val.Id === open
-                                    ? 'btn-primary-300'
-                                    : 'btn-white bg-orange'
-                                }  col-4`}
-                                to={val.Id}
-                                smooth={true}
-                                duration={0}
-                              > */}
-                              查閱 {val.Id === open ? '-' : '+'}
-                              {/* </Link> */}
+                              查閱 {val.ordL_id === open ? '-' : '+'}
                             </button>
                             <button
                               className={`btn ${
-                                val.Id === openComment
+                                val.ordL_id === openComment
                                   ? 'btn-primary-300'
                                   : 'btn-white bg-orange'
-                              }  col-4`}
+                              }  col-5`}
                               onClick={() => {
-                                // if (openComment === -1) {
-                                //   setOpenComment(val.Id);
-                                // } else {
-                                //   setOpenComment(-1);
-                                // }
-                                if (val.Id === openComment) {
+                                if (val.ordL_id === openComment) {
                                   setOpenComment(-1);
                                 } else {
-                                  setOpenComment(val.Id);
+                                  setOpenComment(val.ordL_id);
                                 }
                               }}
+                              disabled={val.state === 3 ? false : true}
                             >
-                              評價 {val.Id === openComment ? '-' : '+'}
+                              評價 {val.ordL_id === openComment ? '-' : '+'}
                             </button>
                           </td>
                         </tr>
-                        <tr>
-                          <td>
-                            <hr />
-                          </td>
-                        </tr>
                         <tr
-                          // ref={detailRef}
-                          className={`open-detail row text-center align-items-center  ${
-                            val.Id === open ? 'show' : 'hide'
+                          className={`open-detail row text-center align-items-center ${
+                            val.ordL_id === open ? 'show' : 'hide'
                           }`}
-                          id={val.Id}
+                          id={val.ordL_id}
                         >
-                          <OrderDetail index={val.Id} open={open} />
+                          <OrderDetail
+                            index={val.ordL_id}
+                            open={open}
+                            list={orderList}
+                            detail={orderDetail}
+                            coupon={couponDiscount}
+                          />
                         </tr>
                         <tr
-                          // ref={commentRef}
-                          className={`open-detail row text-center align-items-center`}
+                          className={`open-detail row text-center align-items-center ${
+                            val.ordL_id === openComment ? 'show' : 'hide'
+                          }`}
+                          id={val.ordL_id}
                         >
-                          <OrderComment
-                            index={val.Id}
-                            openComment={openComment}
-                          />
+                          {val.state === 3 && (
+                            <OrderComment
+                              index={val.ordL_id}
+                              openComment={openComment}
+                              detail={orderDetail}
+                            />
+                          )}
                         </tr>
                       </Fragment>
                     );
@@ -176,13 +162,6 @@ function Orders() {
             </div>
           </div>
         </div>
-      </div>
-      {/* 測試 */}
-      <div className="vh100" id="textBlock1">
-        測試區域
-      </div>
-      <div className="vh100" id="textBlock2">
-        測試區域
       </div>
     </>
   );

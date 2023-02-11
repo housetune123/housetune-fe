@@ -1,109 +1,138 @@
 import React from 'react';
+import { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
+import axios from 'axios';
+import { useAuth } from '../../Context/Authcontext';
 
+// 從user 裡面的 like 撈
 function TrackList() {
+  const { userinfo } = useAuth();
+  const navigate = useNavigate();
+
+  axios.defaults.withCredentials = true;
+
+  const [LikedList, setLikedList] = useState([]);
+  const [Liked, setLiked] = useState([]);
+
+  useEffect(() => {
+    async function getLiked() {
+      let res = await axios.post('http://localhost:3001/api/user/liked', {
+        id: userinfo.id,
+      });
+      setLikedList(res.data.likedProduct);
+      setLiked(JSON.parse(res.data.liked[0].liked));
+    }
+    getLiked();
+  }, [userinfo, Liked]);
+  //刪除
+  async function EditLiked(newLike) {
+    let likeJson = JSON.stringify(newLike);
+    await axios.put('http://localhost:3001/api/user/liked/edit', {
+      likeJson,
+      id: userinfo.id,
+    });
+  }
   return (
     <>
       <div className="border border-primary-200 px-3 mb-3">
-        <table className="table border-primary-100 text-gray-300">
-          <thead>
-            <tr className="row text-center text-info">
-              <th className="col-2">商品</th>
-              <th className="col-4">商品資訊</th>
-              <th className="col-2">價格</th>
-              <th className="col-2">操作</th>
-              <th className="col-2">刪除</th>
+        <table className="table table-rwd border-primary-100 text-gray-300 border-none">
+          <thead className="border-bottom border-primary-100">
+            <tr className="text-center text-info">
+              <th>收藏商品</th>
             </tr>
           </thead>
           <tbody>
-            <tr className="row text-center">
-              <td className="col-2">
-                <div className="tdHeight  d-flex flex-column justify-content-between">
-                  <img
-                    className="w-100"
-                    src={`${process.env.REACT_APP_IMAGE_URL}/products/ordimg1.png`}
-                    alt="img1"
-                  />
-                </div>
-              </td>
-              <td className="col-4">
-                <div className="tdHeight text-start d-flex flex-column justify-content-center">
-                  <p className="fw-bold">
-                    Menu Curiosity Cabinet H168cm珍古系列 橡木收納櫥櫃
-                  </p>
-                  <div className="text-gray-200">
-                    款式 : 橡木原色(Natural Oak)
-                  </div>
-                </div>
-              </td>
-              <td className="col-2">
-                <div className="tdHeight text-info d-flex flex-column justify-content-center">
-                  NT$ 12,000
-                </div>
-              </td>
-              <td className="col-2">
-                <div className="tdHeight text-info  d-flex flex-column justify-content-evenly">
-                  <button className="btn btn-primary-300 btn-rect">
-                    加入購物車
-                  </button>
-                  <button className="btn btn-primary-300 btn-rect">
-                    立即購買
-                  </button>
-                </div>
-              </td>
-              <td className="col-2">
-                <div className="tdHeight text-info  d-flex align-items-center justify-content-center">
-                  {/* eslint-disable-next-line jsx-a11y/anchor-is-valid */}
-                  <a role="button">
-                    <i className="fa-solid fa-trash-can"></i>
-                  </a>
-                </div>
-              </td>
-            </tr>
-            {/* 商品2 */}
-            <tr className="row text-center">
-              <td className="col-2">
-                <div className="tdHeight  d-flex align-items-center justify-content-center">
-                  <img
-                    className="w-100"
-                    src={`${process.env.REACT_APP_IMAGE_URL}/products/ordimg1.png`}
-                    alt="img1"
-                  />
-                </div>
-              </td>
-              <td className="col-4">
-                <div className="tdHeight text-start d-flex flex-column justify-content-center">
-                  <p className="fw-bold">
-                    Menu Curiosity Cabinet H168cm珍古系列 橡木收納櫥櫃
-                  </p>
-                  <div className="text-gray-200">
-                    款式 : 橡木原色(Natural Oak)
-                  </div>
-                </div>
-              </td>
-              <td className="col-2">
-                <div className="tdHeight text-info d-flex flex-column justify-content-center">
-                  NT$ 12,000
-                </div>
-              </td>
-              <td className="col-2">
-                <div className="tdHeight text-info  d-flex flex-column justify-content-evenly">
-                  <button className="btn btn-primary-300 btn-rect">
-                    加入購物車
-                  </button>
-                  <button className="btn btn-primary-300 btn-rect">
-                    立即購買
-                  </button>
-                </div>
-              </td>
-              <td className="col-2">
-                <div className="tdHeight text-info  d-flex flex-column justify-content-center">
-                  {/* eslint-disable-next-line jsx-a11y/anchor-is-valid */}
-                  <a role="button">
-                    <i className="fa-solid fa-trash-can"></i>
-                  </a>
-                </div>
-              </td>
-            </tr>
+            {LikedList.map((val, index) => {
+              return (
+                <tr
+                  key={val.prod_id}
+                  className="row text-center position-relative"
+                >
+                  {/* RWD 刪除 */}
+                  <td className="position-absolute rwd-deleteBtn d-md-none d-block">
+                    <button
+                      className="btn"
+                      onClick={() => {
+                        console.log('delete');
+                      }}
+                    >
+                      X
+                    </button>
+                  </td>
+                  <td className="col-sm-3 col-12 justify-content-center">
+                    <div className="tdHeight w-75  d-flex flex-column  justify-content-center">
+                      {val.prod_id ? (
+                        <img
+                          className="w-100"
+                          src={`${
+                            process.env.REACT_APP_IMAGE_URL
+                          }/images/products/${val.category_name}/${
+                            val.img.split(',')[0]
+                          }`}
+                          alt="img1"
+                        />
+                      ) : (
+                        <img
+                          className="w-100"
+                          src={`${
+                            process.env.REACT_APP_IMAGE_URL
+                          }/images/products/used/${val.img.split(',')[0]}`}
+                          alt="img1"
+                        />
+                      )}
+                    </div>
+                  </td>
+                  <td className="col-12 col-sm-3">
+                    <div className="tdHeight h-100 text-start d-flex align-items-center">
+                      <div>
+                        <span className="fw-bold">{val.name}</span>
+                      </div>
+                    </div>
+                  </td>
+                  <td className="col-12 col-sm-2">
+                    <div className="h-100 w-100 d-md-flex text-start justify-content-center align-items-center">
+                      <div className="text-gray-200">
+                        <span className="fw-bold">價格: NT$</span>
+                        {val.price}
+                      </div>
+                    </div>
+                  </td>
+                  <td className="col-12 col-sm-2">
+                    <div className="h-100 w-100 text-start d-flex flex-column text-center justify-content-evenly">
+                      <button
+                        className="btn btn-primary-300 btn-rect"
+                        onClick={() => {
+                          if (val.prod_id) {
+                            return navigate(`/products/${val.prod_id}`);
+                          } else {
+                            return navigate(`/usedproducts/${val.useP_id}`);
+                          }
+                        }}
+                      >
+                        顯示更多
+                      </button>
+                    </div>
+                  </td>
+                  <td className="col-12 col-sm-2">
+                    <div className="h-100 text-start d-none d-md-flex align-items-center justify-content-center">
+                      {/* eslint-disable-next-line jsx-a11y/anchor-is-valid */}
+                      <a
+                        role="button"
+                        onClick={() => {
+                          const newLike = Liked.filter((v) => {
+                            return v !== val.prod_id && v !== val.useP_id;
+                          });
+
+                          EditLiked(newLike);
+                        }}
+                      >
+                        <i className="fa-solid fa-trash-can"></i>
+                      </a>
+                    </div>
+                  </td>
+                </tr>
+              );
+            })}
           </tbody>
         </table>
       </div>

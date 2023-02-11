@@ -5,8 +5,10 @@ import 'slick-carousel/slick/slick.css';
 import 'slick-carousel/slick/slick-theme.css';
 import './main.scss';
 import NewArrival from '../Layout/NewArrival';
+import { useCategory } from '../Context/CategoryContext';
 
 function Main() {
+  const { setCategoryProduct } = useCategory();
   // slider設定
   function SamplePrevArrow(props) {
     const { className, style, onClick } = props;
@@ -100,60 +102,84 @@ function Main() {
     {
       img: `${process.env.REACT_APP_IMAGE_URL}/images/main/room-category1.webp`,
       text: '客廳 / Living room',
+      path: '/products/category/1',
     },
     {
       img: `${process.env.REACT_APP_IMAGE_URL}/images/main/room-category2.webp`,
       text: '廚房 / Kitchen',
+      path: '/products/category/2',
     },
     {
       img: `${process.env.REACT_APP_IMAGE_URL}/images/main/room-category3.webp`,
       text: '臥室 / Bedroom',
+      path: '/products/category/3',
     },
     {
       img: `${process.env.REACT_APP_IMAGE_URL}/images/main/room-category4.webp`,
       text: '浴室 / Bathroom',
+      path: '/products/category/4',
     },
   ];
   const FurnitureCategory = [
     {
       img: `${process.env.REACT_APP_IMAGE_URL}/images/main/sofa.webp`,
       text: '沙發 / Sofa',
+      path: '/products',
+      context: ['1'],
     },
     {
       img: `${process.env.REACT_APP_IMAGE_URL}/images/main/chair.webp`,
       text: '椅子 / Chairs',
+      path: '/products',
+      context: ['2'],
     },
     {
       img: `${process.env.REACT_APP_IMAGE_URL}/images/main/table.webp`,
       text: '桌子 / Table',
+      path: '/products',
+      context: ['3'],
     },
     {
       img: `${process.env.REACT_APP_IMAGE_URL}/images/main/cupboard.webp`,
       text: '櫥櫃 / Cupboard',
+      path: '/products',
+      context: ['4'],
     },
     {
       img: `${process.env.REACT_APP_IMAGE_URL}/images/main/beds.webp`,
       text: '床 / Beds',
+      path: '/products',
+      context: ['5'],
     },
     {
       img: `${process.env.REACT_APP_IMAGE_URL}/images/main/lighting.webp`,
       text: '燈 / Lighting',
+      path: '/products',
+      context: ['6'],
     },
     {
       img: `${process.env.REACT_APP_IMAGE_URL}/images/main/textile.webp`,
       text: '紡織 / Textile',
+      path: '/products',
+      context: ['7'],
     },
     {
       img: `${process.env.REACT_APP_IMAGE_URL}/images/main/decorations.webp`,
       text: '裝飾 / Decorations',
+      path: '/products',
+      context: ['8'],
     },
     {
       img: `${process.env.REACT_APP_IMAGE_URL}/images/main/Kitchen-Utensils.webp`,
       text: '廚具 / Kitchenware',
+      path: '/products',
+      context: ['9'],
     },
     {
       img: `${process.env.REACT_APP_IMAGE_URL}/images/main/bathroom.webp`,
       text: '浴室 / Bathroom',
+      path: '/products',
+      context: ['10'],
     },
   ];
   const [category, setCategory] = useState('房間分類 / Room Category');
@@ -165,7 +191,7 @@ function Main() {
           {ImageSlider.map((v, i) => {
             return (
               <div key={i} className="d-flex justify-content-center slider">
-                <img className="object-cover" src={v} alt="#/" />
+                <img className="object-cover-main" src={v} alt="#/" />
               </div>
             );
           })}
@@ -209,22 +235,25 @@ function Main() {
               <div className="row text-center">
                 {category === '房間分類 / Room Category' &&
                   RoomCategory.map((v, i) => {
-                    const { img, text } = v;
                     return (
                       <div
                         key={i}
                         className="col d-flex justify-content-center"
                       >
-                        <Link to="#/" className="text-decoration-none">
+                        <a href={v.path} className="text-decoration-none">
                           <div className="card border border-0 mb-4">
-                            <img src={img} className="card-img-top" alt="#/" />
+                            <img
+                              src={v.img}
+                              className="card-img-top"
+                              alt="#/"
+                            />
                             <div className="card-body card-body-category d-flex align-items-center justify-content-center">
                               <h6 className="card-title text-info mb-0">
-                                {text}
+                                {v.text}
                               </h6>
                             </div>
                           </div>
-                        </Link>
+                        </a>
                       </div>
                     );
                   })}
@@ -238,7 +267,13 @@ function Main() {
                             key={i}
                             className="d-flex justify-content-center"
                           >
-                            <Link to="#/" className="text-decoration-none">
+                            <Link
+                              to={v.path}
+                              className="text-decoration-none"
+                              onClick={() => {
+                                setCategoryProduct(v.context);
+                              }}
+                            >
                               <div className="card border border-0 mb-4">
                                 <img
                                   src={img}
@@ -268,18 +303,16 @@ function Main() {
           </section>
 
           <section className="container py-md-5 py-3">
-            <p className="text-info-dark text-center">
-              主題探索 / Topic Explore
-            </p>
+            <p className="text-info-dark text-center">佈置靈感 / Inspiration</p>
             <div className="row">
               <div className="col-md-7">
-                <Link to="#/">
+                <a href="/inspiration">
                   <img
                     className="object-cover"
                     src={`${process.env.REACT_APP_IMAGE_URL}/images/main/TopicExplore.jpeg`}
                     alt="#/"
                   />
-                </Link>
+                </a>
               </div>
               <div className="col-md-5">
                 <p className="text-gray-300 text-md-start text-center mt-md-0 mt-4 explore-text">

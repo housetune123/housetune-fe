@@ -58,9 +58,22 @@ function Footer() {
 
   // 以下頁面不要顯示 FOOTER
   if (
-    location.pathname === '/checkout/information' &&
-    '/checkout/shipping' &&
-    '/checkout/payment'
+    location.pathname === '/cart/checkout/information' ||
+    location.pathname === '/cart/checkout/shipping' ||
+    location.pathname === '/cart/checkout/payment' ||
+    location.pathname === '/cart/checkout/thankyou' ||
+    location.pathname === '/seller' ||
+    location.pathname === '/seller/product' ||
+    location.pathname === '/seller/rating' ||
+    location.pathname === '/seller/order' ||
+    location.pathname === '/seller/order/unpaid' ||
+    location.pathname === '/seller/order/toship' ||
+    location.pathname === '/seller/order/completed' ||
+    location.pathname === '/seller/order/cancelled' ||
+    location.pathname === '/seller/order' ||
+    location.pathname === '/seller/product/add' ||
+    location.pathname.includes('/seller/product/edit/') ||
+    location.pathname === '*'
   ) {
     return <></>;
   }

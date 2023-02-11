@@ -16,7 +16,7 @@ function BreadCrumb(props) {
       // id類的最後結尾params會忽略
       if (Number(v)) return '';
 
-      // TODO: 看不懂
+      // 判斷 v 是否在 pathnameLocale 內，在的話回傳 pathnameLocale[v]，不在回傳 v
       return pathnameLocale[v] ? pathnameLocale[v] : v;
     });
 
