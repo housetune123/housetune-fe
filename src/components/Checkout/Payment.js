@@ -33,11 +33,11 @@ function Payment() {
   const addressData = JSON.parse(localStorage.getItem('myAddress'));
   const address = `${addressData.district + addressData.address},${
     addressData.postcode + addressData.city
-  },台灣`;
+  },${addressData.country}`;
   // 取產品資訊
   const orderItems = items.map((val) => {
     return {
-      prod_id: val.prod_id,
+      prod_id: val.prod_id || val.useP_id,
       quantity: val.quantity,
       shape: val.shape,
       imgs: val.img,

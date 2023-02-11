@@ -14,7 +14,7 @@ function Shipping(props) {
   const addressData = JSON.parse(localStorage.getItem('myAddress'));
   const address = `${addressData.district + addressData.address},${
     addressData.postcode + addressData.city
-  },台灣`;
+  },${addressData.country}`;
 
   return (
     <>
