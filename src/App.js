@@ -43,7 +43,7 @@ import Cancelled from './components/PersonalStore/SalesOrderContent/Cancelled';
 import UserPage from './components/UserPage/UserPage';
 import UpdatePassword from './components/UserPage/UpdatePassword';
 import Cart from './components/Cart/Cart';
-
+import SalesOrderContent from './components/SalesOrder/SalesOrderContent'
 import Login from './components/Login/Login';
 import Register from './components/Register/Register';
 import ForgotPage from './components/Login/ForgotPage';
