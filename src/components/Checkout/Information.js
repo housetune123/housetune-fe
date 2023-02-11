@@ -11,7 +11,6 @@ import Mobile from './element/Mobile';
 function Information(props) {
   const [checked, setChecked] = useState(true);
   const { userinfo } = useAuth();
-  // const [orderAddress, setOrderAddress] = useState([]);
 
   return (
     <>

@@ -24,13 +24,13 @@ function Thankyou(props) {
   const { userinfo, isLoggedIn } = useAuth();
   const [completeMsg, setCompleteMsg] = useState('');
   const [orderNumber, setOrderNumber] = useState('');
+  const [payment, setPayment] = useState('');
 
   // 判斷登入狀態
   if (!isLoggedIn) {
     // alert('請從正常管道進入!');
     // navigate('/');
   }
-
   useEffect(() => {
     clearCart();
     (async () => {
@@ -38,6 +38,11 @@ function Thankyou(props) {
       setOrderNumber(res.data);
     })();
     setCompleteMsg(JSON.parse(localStorage.getItem('myAddress')));
+
+    const urlParams = new URLSearchParams(window.location.search);
+    if (urlParams.get('payment')) {
+      setPayment('atm');
+    }
   }, []);
 
   // 地址
@@ -87,8 +92,24 @@ function Thankyou(props) {
                 <h5 className="fs-5 mb-4">您的訂單已確認</h5>
                 <div className="fs-6">
                   <h6 className="text-info fw-bold">
-                    謝謝您的惠顧，期待您再度光臨Housetune。
+                    {payment === 'atm'
+                      ? '謝謝您的惠顧，以下是您的匯款資訊，請在三日內匯款完成。'
+                      : '謝謝您的惠顧，我們將盡快寄出商品，期待您再度光臨Housetune。'}
                   </h6>
+                  {payment === 'atm' ? (
+                    <>
+                      <p>銀行匯款資訊：</p>
+                      <p>銀行：玉山銀行 岡山分行</p>
+                      <p>帳號：0956-942-000990</p>
+                      <p>戶名：浩斯度股份有限公司</p>
+                      <p>
+                        您好！此訂單將為您保留 3 天,
+                        如三天內未付款，訂單將被取消。
+                      </p>
+                    </>
+                  ) : (
+                    ''
+                  )}
                 </div>
               </div>
             </div>
@@ -114,11 +135,11 @@ function Thankyou(props) {
                     <div>
                       <h3 className="fs-7 fw-bold">運送地址</h3>
                       <address className="fs-7">
-                        {completeMsg.firstName + completeMsg.lastName}
+                        {completeMsg.lastName + completeMsg.firstName}
                         <br />
                         {address}
                         <br />
-                        {completeMsg.postcode + '' + completeMsg.city}
+                        {completeMsg.postcode + ',' + completeMsg.city}
                         <br />
                         {completeMsg.country}
                         <br />
@@ -136,16 +157,21 @@ function Thankyou(props) {
                     <div className="py-4">
                       <h3 className="fs-7 fw-bold">付款方式</h3>
                       <div className="fs-7">
-                        <span>ATM 轉帳 / 銀行匯款</span>
+                        <span>
+                          {payment === 'atm'
+                            ? 'ATM 轉帳 / 銀行匯款'
+                            : '信用卡支付'}
+                        </span>
                       </div>
                     </div>
                     <div>
                       <h3 className="fs-7 fw-bold">帳單地址</h3>
                       <address className="fs-7">
-                        {completeMsg.firstName + completeMsg.lastName}
+                        {completeMsg.lastName + completeMsg.firstName}
                         <br />
+                        {address}
                         <br />
-                        {completeMsg.postcode + '' + completeMsg.city}
+                        {completeMsg.postcode + ',' + completeMsg.city}
                         <br />
                         {completeMsg.country}
                         <br />
