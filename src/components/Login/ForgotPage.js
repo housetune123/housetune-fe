@@ -81,7 +81,7 @@ function ForgotPage() {
                 <div className="row d-flex justify-content-start justify-content-lg-center">
                   <div className="col-12 col-lg-8">
                     <h6 className="text-info-dark text-center">
-                      系統將會寄發新的密碼，請至輸入的信箱內查詢
+                      系統將會寄發Email給您，請至輸入的信箱內查詢。
                     </h6>
                   </div>
                 </div>
