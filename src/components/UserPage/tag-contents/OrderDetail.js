@@ -185,7 +185,7 @@ function OrderDetail(props) {
                         </li>
                         <li className="row">
                           <span className="col-3">配送編號:</span>
-                          <span className="col-4">20230405021</span>
+                          <span className="col-4">{'E0A' + v.ordL_id}</span>
                         </li>
                         <li className="row">
                           <span className="col-3">地址</span>
@@ -200,7 +200,9 @@ function OrderDetail(props) {
                         </li>
                         <li className="row">
                           <span className="col-3">付款資訊:</span>
-                          <span className="col-4">信用卡</span>
+                          <span className="col-4">
+                            {v.state == 1 ? 'ATM轉帳' : '信用卡'}
+                          </span>
                         </li>
                       </ul>
                     </div>
