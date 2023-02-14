@@ -248,9 +248,7 @@ function AllOrder() {
                           className="col-2"
                           src={`${
                             process.env.REACT_APP_IMAGE_URL
-                          }/images/products/used/${
-                            String(detail.imgs).split(',')[0]
-                          }`}
+                          }/images/used/${String(detail.imgs).split(',')[0]}`}
                           alt={detail.name}
                         />
                         <div className="col-2">

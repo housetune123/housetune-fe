@@ -36,6 +36,10 @@ function Myproduct() {
         accessor: 'amount',
       },
       {
+        Header: '創建日期',
+        accessor: 'created_at',
+      },
+      {
         Header: '商品狀態',
         accessor: 'valid',
         Cell: (props) => {

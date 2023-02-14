@@ -49,9 +49,7 @@ function OrderDetail(props) {
                             className="w-100"
                             src={`${
                               process.env.REACT_APP_IMAGE_URL
-                            }/images/products/used/${
-                              String(det.imgs).split(',')[0]
-                            }`}
+                            }/images/used/${String(det.imgs).split(',')[0]}`}
                             alt="img1"
                           />
                         )}

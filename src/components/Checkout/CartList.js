@@ -117,11 +117,9 @@ function Checkout({ setPayment }) {
                   </div>
                 </div>
                 <div>
-                  <p className="fs-7 fw-bold px-3 text-center">
-                    {val.useP_id ? val.product_name : val.name}
-                  </p>
+                  <p className="fs-7 fw-bold px-3 text-center">{val.name}</p>
                   <p className="fs-8 text-gray-300 px-3 text-center">
-                    {!isSecond ? val.shape : '賣家 : ' + val.name}
+                    {!isSecond ? val.shape : '賣家 : ' + val.seller_name}
                   </p>
                 </div>
                 <div>

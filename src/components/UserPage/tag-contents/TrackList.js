@@ -76,7 +76,7 @@ function TrackList() {
                           className="w-100"
                           src={`${
                             process.env.REACT_APP_IMAGE_URL
-                          }/images/products/used/${val.img.split(',')[0]}`}
+                          }/images/used/${val.img.split(',')[0]}`}
                           alt="img1"
                         />
                       )}

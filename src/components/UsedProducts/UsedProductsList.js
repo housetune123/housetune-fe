@@ -72,7 +72,7 @@ function UsedProductsList({
   }
   // 商品分頁
   const [ProductOffset, setProductOffset] = useState(0);
-  const ProductPerPage = 12;
+  const ProductPerPage = 8;
   const ProductEndOffset = ProductOffset + ProductPerPage;
   const ProductCurrentItems = usedProducts.slice(
     ProductOffset,

@@ -90,7 +90,7 @@ function Main() {
     `${process.env.REACT_APP_IMAGE_URL}/images/main/house1.webp`,
     `${process.env.REACT_APP_IMAGE_URL}/images/main/house2.jpg`,
     `${process.env.REACT_APP_IMAGE_URL}/images/main/house3.webp`,
-    `${process.env.REACT_APP_IMAGE_URL}/images/main/house4.jpg`,
+    `${process.env.REACT_APP_IMAGE_URL}/images/main/house4.webp`,
   ];
 
   // 分類變數
