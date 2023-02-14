@@ -174,6 +174,7 @@ function RegisterGoogle() {
     bankcode: '',
     bankaccount: '',
   });
+  const [a, setA] = useState(['', '', '', '', '', '', '', '']);
 
   // const [errors, setErrors] = useState({
   //   account: '',
@@ -276,7 +277,36 @@ function RegisterGoogle() {
           >
             {/* form title */}
             <div className="mt-1 mb-4 py-2">
-              <h1 className="text-center text-info fw-bold">加入會員</h1>
+              <h1
+                className="text-center text-info fw-bold"
+                onClick={() => {
+                  setA([
+                    'bob83727',
+                    '123456',
+                    '123456',
+                    '',
+                    '',
+                    '0223939889',
+                    '700',
+                    '00034566543000',
+                  ]);
+                  setMemeber({
+                    account: 'bob83727',
+                    password: '123456',
+                    rePassword: '123456',
+                    name: googleInfo.name,
+                    email: googleInfo.email,
+                    phone: '0223939889',
+                    address1: '',
+                    address2: '',
+                    address3: '',
+                    bankcode: '700',
+                    bankaccount: '00034566543000',
+                  });
+                }}
+              >
+                加入會員
+              </h1>
             </div>
             {/* form input */}
             {inputItem.map((it, i) => {
@@ -297,7 +327,7 @@ function RegisterGoogle() {
                       minLength={it.min}
                       onChange={handleChange}
                       name={it.name}
-                      value={it.value ? it.value : null}
+                      value={it.value ? it.value : a[i]}
                       disabled={it.disabled ? it.disabled : false}
                     ></input>
                   </div>

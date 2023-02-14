@@ -43,11 +43,11 @@ import Cancelled from './components/PersonalStore/SalesOrderContent/Cancelled';
 import UserPage from './components/UserPage/UserPage';
 import UpdatePassword from './components/UserPage/UpdatePassword';
 import Cart from './components/Cart/Cart';
-import SalesOrderContent from './components/SalesOrder/SalesOrderContent'
 import Login from './components/Login/Login';
 import Register from './components/Register/Register';
 import ForgotPage from './components/Login/ForgotPage';
 import ResetPassword from './components/Login/ResetPassword';
+import RatingCount from './components/RatingCount';
 
 // 排版元件
 import Header from './components/HeaderFooter/Header';
@@ -245,6 +245,9 @@ function App() {
                       path="seller/product/edit/:useP_id"
                       element={<EditUsedProducts />}
                     />
+
+                    {/* RatingCount */}
+                    <Route path="setrating" element={<RatingCount />} />
 
                     {/* notfound */}
                     <Route path="*" element={<NotFound />} />

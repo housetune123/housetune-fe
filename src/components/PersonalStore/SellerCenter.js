@@ -49,7 +49,7 @@ function PersonalStore() {
 
         <main className="d-flex">
           <div className="seller-aside-box"></div>
-          <aside className="bg-grullo pt-5 seller-aside">
+          <aside className="bg-grullo pt-5 mt-2 seller-aside">
             <ul className="list-unstyled pt-5 ms-4">
               <li className="p-1">
                 <Link

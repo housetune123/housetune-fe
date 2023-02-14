@@ -91,6 +91,7 @@ function Register() {
     bankcode: '',
     bankaccount: '',
   });
+  const [a, setA] = useState([]);
 
   // const [errors, setErrors] = useState({
   //   account: '',
@@ -149,7 +150,61 @@ function Register() {
           >
             {/* form title */}
             <div className="mt-1 mb-4 py-2">
-              <h1 className="text-center text-info fw-bold">加入會員</h1>
+              <h1
+                className="text-center text-info fw-bold"
+                onMouseEnter={() => {
+                  setA([
+                    'user009',
+                    '12345678',
+                    '1234567',
+                    '劉小昊',
+                    'hao@gmail.com',
+                    '0912345678',
+                    '700',
+                    '00012366432000',
+                  ]);
+                  setMemeber({
+                    account: 'user009',
+                    password: '12345678',
+                    rePassword: '1234567',
+                    name: '劉小昊',
+                    email: 'hao@gmail.com',
+                    phone: '0912345678',
+                    address1: '',
+                    address2: '',
+                    address3: '',
+                    bankcode: '700',
+                    bankaccount: '700',
+                  });
+                }}
+                onClick={() => {
+                  setA([
+                    'user009',
+                    '12345678',
+                    '12345678',
+                    '劉小昊',
+                    'hao@gmail.com',
+                    '0912345678',
+                    '700',
+                    '00012366432000',
+                  ]);
+                  setMemeber({
+                    account: 'user009',
+                    password: '12345678',
+                    rePassword: '12345678',
+                    name: '劉小昊',
+                    email: 'hao@gmail.com',
+                    phone: '0912345678',
+                    address1: '',
+                    address2: '',
+                    address3: '',
+                    bankcode: '700',
+                    bankaccount: '700',
+                  });
+                }}
+              >
+                加入會員
+              </h1>
             </div>
             {/* form input */}
             {InputItem.map((it, i) => {
@@ -170,6 +225,7 @@ function Register() {
                       minLength={it.min}
                       onChange={handleChange}
                       name={it.name}
+                      value={a[i] ? a[i] : null}
                     ></input>
                   </div>
                   {/* {errors[it.name]} */}

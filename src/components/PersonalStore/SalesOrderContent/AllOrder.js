@@ -167,7 +167,7 @@ function AllOrder() {
             >
               <div className="d-flex justify-content-between align-items-center border-bottom border-gray-100 p-2 bg-primary">
                 <span>買家帳號：{list.account} </span>
-                <span>訂單日期: {Date}</span>
+                <span>訂單日期：{Date}</span>
               </div>
               <div className="row bg-white align-items-baseline justify-content-between mx-4 py-4">
                 <div className="col-auto">
@@ -234,8 +234,8 @@ function AllOrder() {
                 <div
                   className={
                     index === select && click
-                      ? 'accordion-menu active mt-4'
-                      : 'accordion-menu'
+                      ? 'accordion-menu active mt-4 rounded'
+                      : 'accordion-menu rounded'
                   }
                 >
                   {OrderDetail.map((detail, i) => {

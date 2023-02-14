@@ -236,7 +236,7 @@ function Chat({ socket }) {
     <>
       <div
         className={
-          'position-relative chat justify-content-between d-flex flex-column position-fixed bg-white shadow ' +
+          'position-relative chat justify-content-between d-flex flex-column position-fixed bg-white shadow rounded-top ' +
           (chat && isLoggedIn ? '' : 'd-none')
         }
       >
@@ -298,7 +298,7 @@ function Chat({ socket }) {
           <h4 className="bg-primary-300 text-center text-white py-2 position-relative rounded-top">
             {reciever}
             <i
-              className="fa-solid fa-xmark position-absolute my-2 fs-5"
+              className="fa-solid fa-xmark position-absolute mt-1 fs-5"
               onClick={() => {
                 setChat(false);
               }}

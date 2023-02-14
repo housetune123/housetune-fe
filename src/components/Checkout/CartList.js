@@ -92,6 +92,9 @@ function Checkout({ setPayment }) {
           {/* 購物車商品 */}
           {items.map((val, i) => {
             const img = val.img.split(',');
+
+            console.log(items);
+
             return (
               <div
                 key={val.id}
@@ -114,9 +117,11 @@ function Checkout({ setPayment }) {
                   </div>
                 </div>
                 <div>
-                  <p className="fs-7 fw-bold px-3 text-center">{val.name}</p>
+                  <p className="fs-7 fw-bold px-3 text-center">
+                    {val.useP_id ? val.product_name : val.name}
+                  </p>
                   <p className="fs-8 text-gray-300 px-3 text-center">
-                    {!isSecond ? val.shape : '賣家 : ' + val.seller_name}
+                    {!isSecond ? val.shape : '賣家 : ' + val.name}
                   </p>
                 </div>
                 <div>

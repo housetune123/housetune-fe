@@ -43,6 +43,9 @@ function Footer() {
                   <Link
                     to={item.path}
                     className="text-decoration-none text-info-dark"
+                    onClick={() => {
+                      window.scrollTo(0, 0);
+                    }}
                   >
                     <li key={index} className="py-3 list-unstyled">
                       {item.title}
