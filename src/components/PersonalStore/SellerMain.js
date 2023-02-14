@@ -60,8 +60,8 @@ function SalesOrder() {
 
   return (
     <>
-      <main className="text-center">
-        <div className="row row-cols-1 row-cols-md-4 g-4">
+      <main className="text-center seller-main mt-5">
+        <div className="row row-cols-1 row-cols-md-4 g-5">
           <Link
             to="/seller/product"
             className="text-decoration-none text-gray-400"

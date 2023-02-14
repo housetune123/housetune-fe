@@ -156,6 +156,9 @@ function Header() {
                   ? 'link-primary-300 text-decoration-none fw-bolder fs-7'
                   : 'd-none'
               }
+              onClick={() => {
+                setSidebar(false);
+              }}
             >
               <i className="fa-solid fa-user text-primary-300 fs-5 mx-2" />
               {userinfo.name}
@@ -188,6 +191,11 @@ function Header() {
                   <Link
                     to={item.path}
                     className="text-decoration-none text-info-dark fw-bolder"
+                    onClick={() => {
+                      if (!item.submenu) {
+                        setSidebar(false);
+                      }
+                    }}
                   >
                     {item.title}
                   </Link>
@@ -244,6 +252,9 @@ function Header() {
                 <Link
                   to={item.path}
                   className="text-decoration-none text-info-dark"
+                  onClick={() => {
+                    setSidebar(false);
+                  }}
                 >
                   {item.title}
                 </Link>
@@ -292,7 +303,12 @@ function Header() {
               </div>
             </div>
 
-            <Link to="/">
+            <Link
+              to="/"
+              onClick={() => {
+                setSidebar(false);
+              }}
+            >
               <img
                 src={`${process.env.REACT_APP_IMAGE_URL}/images/logo.png`}
                 alt=""
@@ -310,7 +326,7 @@ function Header() {
                   value={searchWord}
                 />
                 <button
-                  className="btn btn-primary-300 px-3"
+                  className="btn btn-primary-300 px-3 rounded-end"
                   type="submit"
                   onClick={() => {
                     setSearchProduct(searchWord);

@@ -81,6 +81,11 @@ function AllOrder() {
           {OrderList.map((list, index) => {
             const OrderDetail = Object.values(JSON.parse(list.product_id));
             const date = list.order_date.slice(0, 10);
+            const CouponDiscount = JSON.parse(list.couponInfo);
+            const DetailTotal = OrderDetail.reduce(
+              (acc, num) => acc + num.total,
+              0
+            );
             return (
               <div
                 key={list.ordL_id}
@@ -88,7 +93,7 @@ function AllOrder() {
               >
                 <div className="d-flex justify-content-between align-items-center border-bottom border-gray-100 p-2 bg-primary">
                   <span>買家帳號：{list.account} </span>
-                  <span>訂單日期: {date}</span>
+                  <span>訂單日期：{date}</span>
                 </div>
                 <div className="row bg-white align-items-baseline justify-content-between mx-4 py-4">
                   <div className="col-auto">
@@ -157,7 +162,7 @@ function AllOrder() {
                   <div
                     className={
                       index === select && click
-                        ? 'accordion-menu active mt-4'
+                        ? 'accordion-menu active mt-4 rounded'
                         : 'accordion-menu'
                     }
                   >
@@ -216,10 +221,14 @@ function AllOrder() {
                           <p>訂單金額:</p>
                         </div>
                         <div className="d-flex flex-column align-items-end p-2">
-                          <p>NT$48,000</p>
-                          <p>- NT$2,000</p>
-                          <p>NT$1,000</p>
-                          <p>NT$47,000</p>
+                          <p>NT${DetailTotal}</p>
+                          {CouponDiscount.map((n) => {
+                            return (
+                              <p>- NT${n.discount == null ? 0 : n.discount}</p>
+                            );
+                          })}
+                          <p>NT${list.shippingFee}</p>
+                          <p>NT{list.price}</p>
                         </div>
                       </div>
                     </div>

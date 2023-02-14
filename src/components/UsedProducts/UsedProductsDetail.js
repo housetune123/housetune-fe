@@ -129,9 +129,12 @@ function UsedProductsDetail() {
                     const img = v.img.split(',');
                     return img.map((v2, i2) => {
                       return (
-                        <div key={v.useP_id}>
+                        <div
+                          key={v.useP_id}
+                          className="product-slider-img bg-white"
+                        >
                           <img
-                            className="object-cover product-slider-img"
+                            className="object-contain"
                             alt=""
                             src={`${process.env.REACT_APP_IMAGE_URL}/images/used/${v2}`}
                           ></img>

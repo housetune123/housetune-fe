@@ -77,12 +77,14 @@ header {
     transition: 0.5s;
   }
   .cart-amount {
-    font-size: 8px;
-    left: 55%;
-    top: -55%;
+    font-size: 1px;
+    left: 60%;
+    top: -40%;
     background-color: #da5260;
+    width: 17px;
+    height: 17px;
     border-radius: 100%;
-    padding: 3px;
+    padding: 0px 5.5px;
   }
   // search
   .data-result {
@@ -137,13 +139,12 @@ footer {
   }
   .accordion-menu {
     background: #ced4da71;
-    transition: 0.5s;
-    max-height: 0;
+    height: 0;
     overflow: hidden;
   }
 
   .accordion-menu.active {
     transition: 0.5s;
-    max-height: 500px;
+    height: 100%;
   }
 }

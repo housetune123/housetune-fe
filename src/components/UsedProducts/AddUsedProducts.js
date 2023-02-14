@@ -274,7 +274,6 @@ function AddUsedProducts({ setFiles, fid }) {
                     <div className="col col-lg-8 d-flex name">
                       <input
                         type="text"
-                        required
                         className="form-control bg-white"
                         placeholder="請輸入商品名稱"
                         maxLength="50"
@@ -301,7 +300,6 @@ function AddUsedProducts({ setFiles, fid }) {
                       <select
                         name="categoryRoom"
                         value={inputValue.categoryRoom}
-                        required
                         className={
                           'form-control bg-white' +
                           (roomCat === null ? ' text-gray-100' : '')
@@ -362,7 +360,6 @@ function AddUsedProducts({ setFiles, fid }) {
                       <textarea
                         rows="6"
                         placeholder="請輸入商品描述"
-                        required
                         minLength={10}
                         name="description"
                         value={inputValue.description}
@@ -391,7 +388,6 @@ function AddUsedProducts({ setFiles, fid }) {
                         type="number"
                         name="originalPrice"
                         value={inputValue.originalPrice}
-                        required
                         min={1}
                         placeholder="請輸入原價"
                         onKeyUp={(e) => {
@@ -410,7 +406,6 @@ function AddUsedProducts({ setFiles, fid }) {
                         type="number"
                         name="price"
                         value={inputValue.price}
-                        required
                         min={0}
                         placeholder="請輸入售價"
                         onKeyUp={(e) => {
@@ -429,7 +424,6 @@ function AddUsedProducts({ setFiles, fid }) {
                         type="number"
                         name="amount"
                         value={inputValue.amount}
-                        required
                         min={0}
                         placeholder="0"
                         onMouseUp={(e) => {
@@ -456,7 +450,6 @@ function AddUsedProducts({ setFiles, fid }) {
                     <div className="col-lg-4 name">
                       <input
                         className="form-control bg-white"
-                        required
                         type="number"
                         name="boughtIn"
                         value={inputValue.boughtIn}

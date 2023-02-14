@@ -156,7 +156,7 @@ function Myproduct() {
 
   return (
     <>
-      <div className="my-product">
+      <div className="my-product my-4">
         <div className="d-flex justify-content-between align-items-center">
           <h5 className="fw-bold my-4">{data.length} 件商品</h5>
           <Link to="add">

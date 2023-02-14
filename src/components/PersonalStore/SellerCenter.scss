@@ -1,4 +1,6 @@
 .seller-center {
+  min-width: 1500px;
+  overflow: auto;
   .seller-header {
     .logo-image {
       max-height: 70px;
@@ -7,10 +9,11 @@
   }
   .seller-aside-box {
     min-width: 220px;
+    min-height: 100vh;
   }
   .seller-aside {
     position: fixed;
-    min-width: 220px;
+    min-width: 250px;
     height: 100%;
     .aside-icon {
       min-width: 40px;
@@ -23,6 +26,8 @@
 }
 
 .my-product {
+  width: 80%;
+  margin: auto;
   table {
     text-align: center;
     width: 100%;
@@ -59,11 +64,9 @@
 
 .sales-order {
   box-shadow: 0px 0px 8px rgba(0, 0, 0, 0.2);
+  width: 80%;
+  margin: auto;
   .sales-order-tabs {
-    position: sticky;
-    z-index: 1;
-    top: 4.6rem;
-
     .nav-item {
       border-right: 1px solid #746883;
     }
@@ -98,4 +101,9 @@
     transition: 0.3s;
     max-height: 100%;
   }
+}
+
+.seller-main{
+  width: 80%;
+  margin: auto;
 }
