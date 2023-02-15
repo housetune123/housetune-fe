@@ -101,7 +101,7 @@ password : 12345678
 
 - nodeJS
 - express
-- MySQL
+- MySQL ( XAMPP )
 
 ### 使用套件
 
