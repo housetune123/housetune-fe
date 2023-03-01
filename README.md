@@ -25,7 +25,7 @@ https://github.com/housetune123/housetune-be*
 
 ## 安裝方式
 
-先將前、後端專案 clone 到本地端，新增資料庫命名為 housetune 並匯入 sql 檔( housetune.sql )。
+先將前、後端專案 clone 到本地端，新增資料庫使用者帳號admin、密碼為12345，新增資料庫並命名為 housetune ，匯入 sql 檔( housetune.sql )。
 
 完成後分別在終端機安裝 modules。
 
